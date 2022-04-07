@@ -8,6 +8,7 @@
   "unique_records",
   "validate_net_rate",
   "fetch_default_tax_category",
+  "enable_dependent_auto_permission",
   "column_break_3",
   "auto_pos_for_role",
   "is_manufacture",
@@ -76,12 +77,18 @@
    "fieldname": "start_sle_gle_reporting",
    "fieldtype": "Button",
    "label": "Start SLE GLE Reporting"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_dependent_auto_permission",
+   "fieldtype": "Check",
+   "label": "Enable Dependent Auto Permission"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-06-18 21:46:02.526988",
+ "modified": "2022-04-07 15:40:08.995602",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
