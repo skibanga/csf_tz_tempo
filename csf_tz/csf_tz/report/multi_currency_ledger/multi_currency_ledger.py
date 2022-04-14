@@ -264,7 +264,7 @@ def get_gl_entries(filters):
 
 
 	if filters.get('presentation_currency'):
-		return convert_to_presentation_currency(converted_gl_list, currency_map)
+		return convert_to_presentation_currency(converted_gl_list, currency_map, company=filters.get("company"))
 	else:
 		return converted_gl_list
 
