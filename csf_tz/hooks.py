@@ -452,9 +452,6 @@ scheduler_events = {
         "*/15 * * * *": [
             "csf_tz.csftz_hooks.items_revaluation.process_incorrect_balance_qty"
         ],
-        "*/5 * * * *": [
-            "csf_tz.csf_tz.doctype.tz_insurance_cover_note.tz_insurance_cover_note.update_covernote_docs"
-        ]
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
@@ -466,11 +463,11 @@ scheduler_events = {
     # ],
     "weekly": [
         "csf_tz.custom_api.make_stock_reconciliation_for_all_pending_material_request"
-    ]
-    # "monthly": [
+    ],
+    "monthly": [
         # "csf_tz.tasks.monthly",
-        # "csf_tz.csf_tz.doctype.tz_insurance_cover_note.tz_insurance_cover_note.update_covernote_docs"
-    # ]
+        "csf_tz.csf_tz.doctype.tz_insurance_cover_note.tz_insurance_cover_note.update_covernote_docs"
+    ],
 }
 
 jenv = {"methods": ["generate_qrcode:csf_tz.custom_api.generate_qrcode"]}
