@@ -463,10 +463,11 @@ scheduler_events = {
     # ],
     "weekly": [
         "csf_tz.custom_api.make_stock_reconciliation_for_all_pending_material_request"
-    ]
-    # "monthly": [
-    # 	"csf_tz.tasks.monthly"
-    # ]
+    ],
+    "monthly": [
+        # "csf_tz.tasks.monthly",
+        "csf_tz.csf_tz.doctype.tz_insurance_cover_note.tz_insurance_cover_note.update_covernote_docs"
+    ],
 }
 
 jenv = {"methods": ["generate_qrcode:csf_tz.custom_api.generate_qrcode"]}
