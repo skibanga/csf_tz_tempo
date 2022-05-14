@@ -4,6 +4,8 @@
 import frappe
 import requests
 import json
+from datetime import datetime
+from frappe.utils import cint
 from frappe.model.document import Document
 
 class TZInsuranceCoverNote(Document):
@@ -32,22 +34,63 @@ def update_covernote_docs():
 				for key, value in record.items():
 					
 					if key.lower() == 'motor':
+						row = {}
 						doc.insurance_motors = []
-						doc.append('insurance_motors', {h.lower(): v for  h, v in value.items()})
+						for motor_child_key, motor_child_value in value.items():
+							motor_new_value = None
+							if motor_child_value and motor_child_key.lower() in ['createddate', 'updateddate']:
+								unix_timestamp_int = cint(motor_child_value)
+								motor_new_value = datetime.utcfromtimestamp((unix_timestamp_int/1000)).strftime('%Y-%m-%d %H:%M:%S')
+							else:
+								motor_new_value = motor_child_value
+							
+							row[motor_child_key.lower()] = motor_new_value
+						
+						doc.append('insurance_motors', row)
 					
 					if key.lower() == 'company':
+						row = {}
 						doc.insurance_provider = []
-						doc.append('insurance_provider', {
-							h.lower(): json.dumps(v) if h == 'shareholders' else v for  h, v in value.items()
-						})
+						for company_child_key, company_child_value in value.items():
+							company_new_value = None
+							if company_child_value and company_child_key.lower() in ['createddate', 'updateddate', 'incorporationdate', 'initialregistrationdate', 'businesscommencementdate']:
+								unix_timestamp_int = cint(company_child_value)
+								company_new_value = datetime.utcfromtimestamp((unix_timestamp_int/1000)).strftime('%Y-%m-%d %H:%M:%S')
+							
+							elif company_child_key.lower() == 'shareholders':
+								company_new_value = json.dumps(company_child_value)
+							
+							else:
+								company_new_value = company_child_value
+							
+							row[company_child_key.lower()] = company_new_value
+							
+						doc.append('insurance_provider', row)
 					
 					if key.lower() == 'policyholders':
 						doc.policy_holders = []
 						for i, row in enumerate(value):
-							doc.append('policy_holders', {h.lower(): v for  h, v in row.items()})
+							new_row = {}
+							for policy_child_key, policy_child_value in row.items():
+								policy_new_value = None
+								if policy_child_value and policy_child_key.lower() in ['createddate', 'updateddate', 'policyholderbirthdate']:
+									unix_timestamp_int = cint(policy_child_value)
+									policy_new_value = datetime.utcfromtimestamp((unix_timestamp_int/1000)).strftime('%Y-%m-%d %H:%M:%S')
+								
+								else:
+									policy_new_value = policy_child_value
+							
+								new_row[policy_child_key.lower()] = policy_new_value
+							
+							doc.append('policy_holders', new_row)
 					
-					if key.lower() not in ['company', 'motor', 'policyholders']:
+					if key.lower() not in ['covernotestartdate', 'covernoteenddate', 'company', 'motor', 'policyholders']:
 						doc.update({key.lower(): value})
+					
+					if key.lower() in ['covernotestartdate', 'covernoteenddate']:
+						unix_timestamp_int = cint(value)
+						date_value = datetime.utcfromtimestamp((unix_timestamp_int/1000.0)).strftime('%Y-%m-%d %H:%M:%S')
+						doc.update({key.lower(): date_value})
 					
 				doc.vehicle = vehicle.name
 				doc.save(ignore_permissions=True)
