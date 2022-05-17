@@ -105,6 +105,12 @@ frappe.ui.form.on("Sales Invoice", {
 });
 
 frappe.ui.form.on("Sales Invoice Item", {
+    form_render: (frm, cdt, cdn) => {
+        $('[data-fieldname="csf_tz_create_wtax_entry"]').removeClass('btn-default')
+            .addClass('btn-info align-middle text-white font-weight-bold').css({
+                'font-size': '14px', 'border-radius': '6px', 'width': '180px'
+            });
+    },
     item_code: function (frm, cdt, cdn) {
         validate_item_remaining_qty(frm, cdt, cdn);
     },
@@ -126,6 +132,13 @@ frappe.ui.form.on("Sales Invoice Item", {
     warehouse: function (frm, cdt, cdn) {
         validate_item_remaining_stock_qty(frm, cdt, cdn);
     },
+    csf_tz_create_wtax_entry: (frm, cdt, cdn) => {
+        frappe.call('csf_tz.custom_api.make_withholding_tax_gl_entries_for_sales', {
+            doc: frm.doc, method: 'From Front End'
+        }).then(r => {
+            frm.refresh();
+        })
+    }
 });
 
 var validate_item_remaining_qty = function (frm, cdt, cdn) {
