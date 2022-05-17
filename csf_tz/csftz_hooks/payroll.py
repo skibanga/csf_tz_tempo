@@ -107,3 +107,20 @@ def read_multi_pdf(output):
         filedata = fileobj.read()
 
     return filedata
+
+@frappe.whitelist()
+def create_journal_entry(payroll_entry):
+    payroll_entry_doc = frappe.get_doc("Payroll Entry", payroll_entry)
+    if payroll_entry_doc.docstatus != 1 or payroll_entry_doc.salary_slips_submitted == 1:
+        return
+    draft_slips_count = frappe.db.count("Salary Slip", filters={
+                             "payroll_entry": payroll_entry, "docstatus": 0})
+
+    if draft_slips_count > 0:
+        frappe.throw(_("Salary Slips are not submitted"))
+    else:
+        jv_name = payroll_entry_doc.make_accrual_jv_entry()
+        jv_url = frappe.utils.get_url_to_form("Journal Entry", jv_name)
+        si_msgprint = _("Journal Entry Created <a href='{0}'>{1}</a>").format(jv_url,jv_name)
+        frappe.msgprint(si_msgprint)
+        return "True"
