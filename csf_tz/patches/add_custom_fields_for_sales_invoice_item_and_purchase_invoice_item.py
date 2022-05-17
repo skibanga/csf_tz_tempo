@@ -3,7 +3,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def execute():
     new_fields = {
-        'Purchase Invoice': [
+        'Purchase Invoice Item': [
             dict(fieldname='csf_tz_specifics', label='CSF TZ Specifics', fieldtype='Section Break', insert_after='is_free_item'),
             dict(fieldname='csf_tz_wtax_jv_created', label='CSF TZ Wtax JV Created', fieldtype='Check', insert_after='csf_tz_specifics',
             read_only=1, allow_on_submit=1),
