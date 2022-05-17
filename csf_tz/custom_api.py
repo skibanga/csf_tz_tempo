@@ -836,7 +836,7 @@ def get_item_balance(item_code, company, warehouse=None):
 def validate_item_remaining_qty(
     item_code, company, warehouse=None, stock_qty=None, so_detail=None
 ):
-    if not warehouse:
+    if not warehouse or not stock_qty:
         return
     if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
         return
@@ -1677,15 +1677,19 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         )
         frappe.msgprint(_(si_msgprint))
 
+
 # Email Salary Slip
 @frappe.whitelist()
 def get_payroll_employees(payroll_entry):
-    employees = frappe.db.sql(f""" SELECT employee FROM `tabPayroll Employee Detail` WHERE parent='{payroll_entry}' """, as_dict=True)
+    employees = frappe.db.sql(
+        f""" SELECT employee FROM `tabPayroll Employee Detail` WHERE parent='{payroll_entry}' """,
+        as_dict=True,
+    )
     return employees
 
 
 @frappe.whitelist()
 def validate_payroll_entry_field(payroll_entry):
-    payroll_entry = frappe.get_doc('Payroll Entry', payroll_entry)
+    payroll_entry = frappe.get_doc("Payroll Entry", payroll_entry)
     if payroll_entry.docstatus != 1:
         return False
