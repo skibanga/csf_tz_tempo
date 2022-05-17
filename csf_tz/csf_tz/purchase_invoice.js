@@ -66,5 +66,12 @@ frappe.ui.form.on("Purchase Invoice Item", {
             row[i]=frm.doc[i];
         });
         frm.refresh_field("items");
-	},
+    },
+    csf_tz_create_wtax_entry: (frm, cdt, cdn) => {
+        frappe.call('csf_tz.custom_api.make_withholding_tax_gl_entries_for_purchase', {
+            doc: frm.doc, method: 'From Front End'
+        }).then(r => {
+            frm.refresh();
+        });
+    }
 });
