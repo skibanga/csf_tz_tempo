@@ -60,12 +60,6 @@ frappe.ui.form.on("Purchase Invoice", {
 
 });
 frappe.ui.form.on("Purchase Invoice Item", {
-    form_render: (frm, cdt, cdn) => {
-        $('[data-fieldname="csf_tz_create_wtax_entry"]').removeClass('btn-default')
-            .addClass('btn-info align-middle text-white font-weight-bold').css({
-                'font-size': '14px', 'border-radius': '6px', 'width': '180px'
-            });
-    },
     items_add: function(frm, cdt, cdn) {
         var row = frappe.get_doc(cdt, cdn);
         frm.dimensions.forEach(i => {

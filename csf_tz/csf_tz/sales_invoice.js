@@ -105,12 +105,6 @@ frappe.ui.form.on("Sales Invoice", {
 });
 
 frappe.ui.form.on("Sales Invoice Item", {
-    form_render: (frm, cdt, cdn) => {
-        $('[data-fieldname="csf_tz_create_wtax_entry"]').removeClass('btn-default')
-            .addClass('btn-info align-middle text-white font-weight-bold').css({
-                'font-size': '14px', 'border-radius': '6px', 'width': '180px'
-            });
-    },
     item_code: function (frm, cdt, cdn) {
         validate_item_remaining_qty(frm, cdt, cdn);
     },
