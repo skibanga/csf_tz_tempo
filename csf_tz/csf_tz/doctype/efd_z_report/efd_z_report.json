@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "format:{electronic_fiscal_device}-{z_no}",
  "creation": "2019-08-14 11:15:03.370491",
  "doctype": "DocType",
@@ -17,6 +18,7 @@
   "total_vat",
   "total_turnover_ex_sr",
   "total_turnover",
+  "allowable_difference",
   "column_break_13",
   "total_excluding_vat_ticked",
   "total_vat_ticked",
@@ -328,10 +330,16 @@
    "label": "Total Turnover (Ticked)",
    "precision": "2",
    "read_only": 1
+  },
+  {
+   "fieldname": "allowable_difference",
+   "fieldtype": "Currency",
+   "label": "Allowable difference"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-03-05 20:32:29.422258",
+ "links": [],
+ "modified": "2022-05-19 11:50:02.474969",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "EFD Z Report",

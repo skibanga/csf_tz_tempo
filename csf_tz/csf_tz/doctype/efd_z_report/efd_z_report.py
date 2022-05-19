@@ -14,17 +14,15 @@ class EFDZReport(Document):
     def validate(self):
         if not self.efd_z_report_invoices:
             frappe.throw(_("No Sales Invoie Found in the table"))
-        if flt(self.total_turnover, 2) != flt(self.total_turnover_ticked, 2):
+        if abs(flt(self.total_turnover, 2) - flt(self.total_turnover_ticked, 2)) > (self.allowable_difference or 0):
             frappe.throw(_("Sales Invoice Amount is not equal to Money Entered"))
-        if flt(self.net_amount, 2) != flt(self.total_excluding_vat_ticked, 2):
+        if abs(flt(self.net_amount, 2) - flt(self.total_excluding_vat_ticked, 2)) > (self.allowable_difference or 0):
             frappe.throw(
                 _("Total Excluding VAT is not equal to Total Excluding VAT (Ticked)")
             )
-        if flt(self.total_vat, 2) != flt(self.total_vat_ticked, 2):
+        if abs(flt(self.total_vat, 2) - flt(self.total_vat_ticked, 2)) > (self.allowable_difference or 0):
             frappe.throw(_("Total VAT is not equal to Total VAT (Ticked)"))
-        if flt(self.total_turnover_ex_sr, 2) != flt(
-            self.total_turnover_exempted__sp_relief_ticked, 2
-        ):
+        if abs(flt(self.total_turnover_ex_sr, 2) - flt(self.total_turnover_exempted__sp_relief_ticked, 2)) > (self.allowable_difference or 0):
             frappe.throw(
                 _(
                     "Total Turnover Exempted / Sp. Relief is not equal to Total Turnover Exempted / Sp. Relief (Ticked)"
