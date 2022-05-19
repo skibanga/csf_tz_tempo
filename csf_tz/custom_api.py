@@ -16,6 +16,7 @@ from erpnext.stock.doctype.batch.batch import get_batch_qty
 from erpnext.accounts.utils import get_account_currency
 import csf_tz
 from csf_tz import console
+import json
 
 
 @frappe.whitelist()
@@ -1324,8 +1325,11 @@ def validate_net_rate(doc, method):
                     "valuation rate",
                 )
 
-
+@frappe.whitelist()
 def make_withholding_tax_gl_entries_for_purchase(doc, method):
+    if method == 'From Front End':
+        doc = frappe.get_doc(json.loads(doc))
+    
     (
         withholding_payable_account,
         default_currency,
@@ -1352,7 +1356,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             _("Please Setup Withholding Payable Account in Company " + str(doc.company))
         )
     for item in doc.items:
-        if not item.withholding_tax_rate > 0:
+        if not item.withholding_tax_rate > 0 or item.csf_tz_wtax_jv_created == 1:
             continue
         withholding_payable_account_type = (
             frappe.get_value("Account", withholding_payable_account, "account_type")
@@ -1435,7 +1439,12 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             or False
         ):
             jv_doc.submit()
-        item.withholding_tax_entry = jv_doc.name
+
+        if jv_doc.get('name'):
+            item.withholding_tax_entry = jv_doc.get('name')
+            item.csf_tz_wtax_jv_created = 1
+            item.db_update()
+
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = (
             "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(
@@ -1554,8 +1563,11 @@ def get_tax_category(doc_type, company):
         )
     return tax_category[0]["tax_category"] if len(tax_category) > 0 else [""]
 
-
+@frappe.whitelist()
 def make_withholding_tax_gl_entries_for_sales(doc, method):
+    if method == 'From Front End':
+        doc = frappe.get_doc(json.loads(doc))
+    
     (
         withholding_receivable_account,
         default_currency,
@@ -1580,7 +1592,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             )
         )
     for item in doc.items:
-        if not item.withholding_tax_rate > 0:
+        if not item.withholding_tax_rate > 0 or item.csf_tz_wtax_jv_created == 1:
             continue
         withholding_receivable_account_type = (
             frappe.get_value("Account", withholding_receivable_account, "account_type")
@@ -1668,7 +1680,12 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             or False
         ):
             jv_doc.submit()
-        item.withholding_tax_entry = jv_doc.name
+        
+        if jv_doc.get('name'):
+            item.withholding_tax_entry = jv_doc.get('name')
+            item.csf_tz_wtax_jv_created = 1
+            item.db_update()
+
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = (
             "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(
