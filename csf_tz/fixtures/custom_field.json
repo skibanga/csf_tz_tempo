@@ -626,18 +626,6 @@
   },
   {
     "doctype": "Custom Field",
-    "dt": "Sales Order",
-    "fieldname": "cost_center",
-    "fieldtype": "Link",
-    "in_list_view": 0,
-    "insert_after": "delivery_date",
-    "label": "Cost Center",
-    "modified": "2019-12-20 19:25:28.586856",
-    "name": "Sales Order-cost_center",
-    "options": "Cost Center"
-  },
-  {
-    "doctype": "Custom Field",
     "dt": "Address",
     "fieldname": "tax_category",
     "fieldtype": "Link",
