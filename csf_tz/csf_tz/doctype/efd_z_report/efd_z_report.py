@@ -14,26 +14,6 @@ class EFDZReport(Document):
     def validate(self):
         if not self.efd_z_report_invoices:
             frappe.throw(_("No Sales Invoie Found in the table"))
-        if abs(flt(self.total_turnover, 2) - flt(self.total_turnover_ticked, 2)) > (self.allowable_difference or 0):
-            frappe.throw(_("Sales Invoice Amount is not equal to Money Entered"))
-        if abs(flt(self.net_amount, 2) - flt(self.total_excluding_vat_ticked, 2)) > (self.allowable_difference or 0):
-            frappe.throw(
-                _("Total Excluding VAT is not equal to Total Excluding VAT (Ticked)")
-            )
-        if abs(flt(self.total_vat, 2) - flt(self.total_vat_ticked, 2)) > (self.allowable_difference or 0):
-            frappe.throw(_("Total VAT is not equal to Total VAT (Ticked)"))
-        if abs(flt(self.total_turnover_ex_sr, 2) - flt(self.total_turnover_exempted__sp_relief_ticked, 2)) > (self.allowable_difference or 0):
-            frappe.throw(
-                _(
-                    "Total Turnover Exempted / Sp. Relief is not equal to Total Turnover Exempted / Sp. Relief (Ticked)"
-                )
-            )
-        if self.get_number_of_ticked() != self.receipts_issued:
-            frappe.throw(
-                _(
-                    "The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued"
-                )
-            )
 
     def get_number_of_ticked(self):
         total_checked = 0
@@ -112,6 +92,26 @@ class EFDZReport(Document):
         return True
 
     def before_submit(self):
+        if abs(flt(self.total_turnover, 2) - flt(self.total_turnover_ticked, 2)) > (self.allowable_difference or 0):
+            frappe.throw(_("Sales Invoice Amount {0} is not equal to Money Entered {1}".format(flt(self.total_turnover_ticked, 2), flt(self.total_turnover, 2))))
+        if abs(flt(self.net_amount, 2) - flt(self.total_excluding_vat_ticked, 2)) > (self.allowable_difference or 0):
+            frappe.throw(
+                _("Total Excluding VAT is not equal to Total Excluding VAT (Ticked)")
+            )
+        if abs(flt(self.total_vat, 2) - flt(self.total_vat_ticked, 2)) > (self.allowable_difference or 0):
+            frappe.throw(_("Total VAT is not equal to Total VAT (Ticked)"))
+        if abs(flt(self.total_turnover_ex_sr, 2) - flt(self.total_turnover_exempted__sp_relief_ticked, 2)) > (self.allowable_difference or 0):
+            frappe.throw(
+                _(
+                    "Total Turnover Exempted / Sp. Relief is not equal to Total Turnover Exempted / Sp. Relief (Ticked)"
+                )
+            )
+        if self.get_number_of_ticked() != self.receipts_issued:
+            frappe.throw(
+                _(
+                    "The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued"
+                )
+            )
         to_remove = []
         for invoice in self.efd_z_report_invoices:
             if not invoice.include:
