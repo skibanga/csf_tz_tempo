@@ -783,7 +783,7 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
                 AND SO.docstatus= 1 
                 AND SO.company = '%s' 
                 AND SOI.warehouse = '%s' 
-                AND SO.status NOT IN ('Closed', 'On Hold', 'Cancelled')
+                AND SO.status NOT IN ('Closed', 'On Hold', 'Cancelled', 'Completed')
             """ % (
         item_code,
         company,
