@@ -1719,16 +1719,14 @@
     "in_list_view": 0,
     "insert_after": null,
     "label": "Module Def",
-    "modified": "2020-08-13 18:32:53.375956",
     "name": "Property Setter-module_def",
     "options": "Module Def"
   },
   {
     "name": "Vehicle-status",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:44.056337",
-    "modified": "2022-03-08 00:50:55.701216",
     "modified_by": "Administrator",
+    "modified": "2020-08-13 18:32:53.375956",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
     "label": "Status",
@@ -1740,8 +1738,6 @@
   {
     "name": "Vehicle-acquisition_odometer",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:44.255708",
-    "modified": "2022-03-08 00:50:55.524333",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1754,8 +1750,6 @@
   {
     "name": "Vehicle-default_trailer",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:44.468143",
-    "modified": "2022-03-08 00:50:55.368840",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1768,8 +1762,6 @@
   {
     "name": "Vehicle-driver",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:44.791861",
-    "modified": "2022-03-08 00:50:55.187304",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1783,8 +1775,6 @@
   {
     "name": "Vehicle-flatbed_fuel_consumption",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:44.983959",
-    "modified": "2022-03-08 00:50:55.008877",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1797,8 +1787,6 @@
   {
     "name": "Vehicle-empty_container_fuel_consumption",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:45.272127",
-    "modified": "2022-03-08 00:50:54.823205",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1811,8 +1799,6 @@
   {
     "name": "Vehicle-fuel_consumption",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:45.495630",
-    "modified": "2022-03-08 00:50:54.604274",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1825,8 +1811,6 @@
   {
     "name": "Vehicle-number_plate",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:45.716345",
-    "modified": "2022-03-08 00:50:54.412921",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1839,8 +1823,6 @@
   {
     "name": "Vehicle-year",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:45.941084",
-    "modified": "2022-03-08 00:50:54.224925",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1853,8 +1835,6 @@
   {
     "name": "Vehicle-chassis_number",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:46.158884",
-    "modified": "2022-03-08 00:50:53.966135",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1867,8 +1847,6 @@
   {
     "name": "Vehicle-engine_number",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:46.363162",
-    "modified": "2022-03-08 00:50:53.751300",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1881,8 +1859,6 @@
   {
     "name": "Vehicle-fleet_number",
     "owner": "Administrator",
-    "creation": "2022-03-08 00:33:46.553684",
-    "modified": "2022-03-08 00:50:53.337131",
     "modified_by": "Administrator",
     "module_def": "CSF TZ",
     "dt": "Vehicle",
@@ -1895,8 +1871,6 @@
   {
     "name": "Journal Entry-referance_doctype",
     "owner": "Administrator",
-    "creation": "2022-03-08 23:21:44.038734",
-    "modified": "2022-03-08 23:23:52.276124",
     "modified_by": "Administrator",
     "dt": "Journal Entry",
     "label": "Referance DocType",
@@ -1910,8 +1884,6 @@
   {
     "name": "Journal Entry-referance_docname",
     "owner": "Administrator",
-    "creation": "2022-03-08 23:22:14.510215",
-    "modified": "2022-03-08 23:24:03.811966",
     "modified_by": "Administrator",
     "idx": 53,
     "dt": "Journal Entry",
