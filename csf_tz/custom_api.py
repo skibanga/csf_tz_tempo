@@ -432,12 +432,10 @@ def get_repack_template(template_name, qty):
 
 @frappe.whitelist()
 def create_delivery_note(doc=None, method=None, doc_name=None):
-    if not doc and doc_name:
+    if not doc:
         doc = frappe.get_doc("Sales Invoice", doc_name)
-    if not frappe.get_value(
-        "Company", doc.company, "enabled_auto_create_delivery_notes"
-    ):
-        return
+    if not doc:
+        frappe.throw("Sales Invoice doc required")
     if not doc.enabled_auto_create_delivery_notes:
         return
     if doc.update_stock:
@@ -1080,7 +1078,9 @@ def get_list_pending_sales_invoice(invoice_name=None, warehouse=None):
                     COALESCE (SUM(DNI.stock_qty), 0) As DNI_sum_stock_qty,           
                     SI.name AS name,                      
                     SI.posting_date AS posting_date,                      
-                    SI.customer As customer, 
+                    SI.customer As customer,
+                    SI.company As company, 
+                    SI.enabled_auto_create_delivery_notes as enabled_auto_create_delivery_notes,
                     ROW_NUMBER()OVER(PARTITION BY SI.name ORDER BY SI.name) AS RN 
                 FROM `tabSales Invoice` AS SI 
                     INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
@@ -1091,6 +1091,7 @@ def get_list_pending_sales_invoice(invoice_name=None, warehouse=None):
                     AND SI.docstatus= 1              
                     AND SI.update_stock != 1 
                     AND SIT.stock_qty != SIT.delivered_qty 
+                    AND SI.enabled_auto_create_delivery_notes = 1
                     %s 
                 GROUP BY SI.name, SIT.name
                 HAVING SIT.stock_qty > DNI_sum_stock_qty 
@@ -1104,8 +1105,13 @@ def get_list_pending_sales_invoice(invoice_name=None, warehouse=None):
 
 
 def create_delivery_note_for_all_pending_sales_invoice(doc=None, method=None):
+    company_list = frappe.get_all(
+        "Company", fiters={"enabled_auto_create_delivery_notes": 1}, pluk="name"
+    )
     invoices = get_list_pending_sales_invoice()
     for i in invoices:
+        if i.company not in company_list:
+            continue
         invoice = frappe.get_doc("Sales Invoice", i.name)
         create_delivery_note(invoice)
 
@@ -1325,11 +1331,12 @@ def validate_net_rate(doc, method):
                     "valuation rate",
                 )
 
+
 @frappe.whitelist()
 def make_withholding_tax_gl_entries_for_purchase(doc, method):
-    if method == 'From Front End':
+    if method == "From Front End":
         doc = frappe.get_doc(json.loads(doc))
-    
+
     (
         withholding_payable_account,
         default_currency,
@@ -1440,8 +1447,8 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
         ):
             jv_doc.submit()
 
-        if jv_doc.get('name'):
-            item.withholding_tax_entry = jv_doc.get('name')
+        if jv_doc.get("name"):
+            item.withholding_tax_entry = jv_doc.get("name")
             item.csf_tz_wtax_jv_created = 1
             item.db_update()
 
@@ -1563,11 +1570,12 @@ def get_tax_category(doc_type, company):
         )
     return tax_category[0]["tax_category"] if len(tax_category) > 0 else [""]
 
+
 @frappe.whitelist()
 def make_withholding_tax_gl_entries_for_sales(doc, method):
-    if method == 'From Front End':
+    if method == "From Front End":
         doc = frappe.get_doc(json.loads(doc))
-    
+
     (
         withholding_receivable_account,
         default_currency,
@@ -1680,9 +1688,9 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             or False
         ):
             jv_doc.submit()
-        
-        if jv_doc.get('name'):
-            item.withholding_tax_entry = jv_doc.get('name')
+
+        if jv_doc.get("name"):
+            item.withholding_tax_entry = jv_doc.get("name")
             item.csf_tz_wtax_jv_created = 1
             item.db_update()
 
