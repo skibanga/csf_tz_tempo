@@ -15,7 +15,7 @@
  "module": "CSF TZ",
  "name": "Loan Repayment Details",
  "owner": "Administrator",
- "prepared_report": 0,
+ "prepared_report": 1,
  "query": "",
  "ref_doctype": "Loan",
  "report_name": "Loan Repayment Details",
