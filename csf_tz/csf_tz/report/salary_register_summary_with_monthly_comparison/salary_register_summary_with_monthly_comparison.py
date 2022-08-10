@@ -75,7 +75,11 @@ def get_data(filters, company_currency, prev_salary_slips):
 		currency = filters.get('currency')
 
 	salary_slips = get_salary_slips(filters, company_currency)
-	if not salary_slips:
+	if len(salary_slips) == 0:
+		msgprint(_("No salary slip found for the this month: {0} {1}".format(
+			frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
+			frappe.bold(getdate(filters.from_date).year)))
+		)
 		return []
 
 	no_employee_diff = len(salary_slips) - len(prev_salary_slips)
@@ -420,7 +424,7 @@ def get_salary_map(prev_salary_slips):
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_prev_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
         AND sd.parent in (%s)
-        AND do_not_include_in_total = 0
+        AND sd.do_not_include_in_total = 0
         AND sd.parentfield = 'earnings' 
         AND sd.salary_component = 'Basic'
         GROUP BY ss.department, sd.salary_component 
@@ -431,7 +435,7 @@ def get_salary_map(prev_salary_slips):
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_prev_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
         AND sd.parent in (%s)
-        AND do_not_include_in_total = 0 
+        AND sd.do_not_include_in_total = 0 
         AND sd.parentfield = 'earnings' 
         AND sd.salary_component != 'Basic'
         GROUP BY ss.department, sd.salary_component 
@@ -441,7 +445,7 @@ def get_salary_map(prev_salary_slips):
 	prev_ss_deductions = frappe.db.sql("""
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_prev_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name AND sd.parent in (%s)
-        AND do_not_include_in_total = 0 
+        AND sd.do_not_include_in_total = 0 
         AND sd.parentfield = 'deductions' 
         GROUP BY ss.department, sd.salary_component 
         ORDER BY sd.salary_component ASC
@@ -456,7 +460,7 @@ def get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_
 		"prev_last_date": prev_last_date
 	})
 	prev_conditions = get_prev_conditions(custom_filters, company_currency)
-	prev_salary_slips = frappe.db.sql("""select * from `tabSalary Slip` where %s
+	prev_salary_slips = frappe.db.sql("""select name from `tabSalary Slip` where %s
 		order by employee"""% prev_conditions, filters, as_dict=1)
 
 	return prev_salary_slips or []
@@ -493,7 +497,7 @@ def get_salary_slips(filters, company_currency):
     filters.update({"from_date": filters.get("from_date"),
                     "to_date": filters.get("to_date")})
     conditions, filters = get_conditions(filters, company_currency)
-    salary_slips = frappe.db.sql("""select * from `tabSalary Slip` where %s
+    salary_slips = frappe.db.sql("""select name from `tabSalary Slip` where %s
         order by employee""" % conditions, filters, as_dict=1)
 
     return salary_slips or []
@@ -504,7 +508,7 @@ def get_ss_basic_map(salary_slips, currency, company_currency):
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_cur_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
         AND sd.parent in (%s)
-        AND do_not_include_in_total = 0 
+        AND sd.do_not_include_in_total = 0 
         AND sd.parentfield = 'earnings' 
         AND sd.salary_component = 'Basic'
         GROUP BY ss.department, sd.salary_component 
@@ -519,7 +523,7 @@ def get_ss_earning_map(salary_slips, currency, company_currency):
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_cur_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
         AND sd.parent in (%s)
-        AND do_not_include_in_total = 0 
+        AND sd.do_not_include_in_total = 0 
         AND sd.parentfield = 'earnings' 
         AND sd.salary_component != 'Basic'
         GROUP BY ss.department, sd.salary_component 
@@ -533,7 +537,7 @@ def get_ss_ded_map(salary_slips, currency, company_currency):
     ss_deductions = frappe.db.sql("""
         SELECT ss.department, sd.salary_component, SUM(sd.amount) as total_cur_month 
         FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name AND sd.parent in (%s)
-        AND do_not_include_in_total = 0 
+        AND sd.do_not_include_in_total = 0 
         AND sd.parentfield = 'deductions' 
         GROUP BY sd.salary_component 
         ORDER BY ss.department, sd.salary_component ASC""" %
