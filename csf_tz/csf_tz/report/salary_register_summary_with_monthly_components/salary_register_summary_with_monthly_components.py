@@ -13,6 +13,11 @@ def execute(filters=None):
 	prev_first_date, prev_last_date, prev_month, prev_year = get_prev_month_date(filters)
 
 	prev_salary_slips = get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_date)
+	if len(prev_salary_slips) == 0:
+		msgprint(_("No salary slip found for the previous month: {0} {1}".format(
+			frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)))
+		)
+		return []
 
 	
 	columns = get_columns(filters, prev_month, prev_year)
@@ -441,7 +446,6 @@ def get_salary_map(prev_salary_slips):
         GROUP BY ss.department, sd.salary_component 
         ORDER BY sd.salary_component ASC
 	""" % (', '.join(['%s']*len(prev_salary_slips))), tuple([d.name for d in prev_salary_slips]), as_dict=1)
-
 	return prev_ss_basic, prev_ss_earnings, prev_ss_deductions
 
 
