@@ -7,7 +7,7 @@ import numpy as np
 from datetime import datetime, time, timedelta
 from frappe import msgprint, _
 from frappe.utils.nestedset import get_descendants_of
-from frappe.utils import cstr, cint, get_time, add_to_date
+from frappe.utils import cstr, cint, get_time, add_to_date, getdate
 
 
 def execute(filters=None):
@@ -37,7 +37,7 @@ def execute(filters=None):
         df = checkin_data.merge(
             checkout_data,
             how="outer",
-            on=["employee", "employee_name", "department", "shift", "date"]
+            on=["employee", "employee_name", "department", "shift", "date", "week_day"]
         )
         df.fillna("", inplace=True)
         
@@ -71,6 +71,7 @@ def get_columns(filters):
         {"fieldname": "department", "label": _("Department"), "fieldtype": "Data"},
         {"fieldname": "shift", "label": _("Shift"), "fieldtype": "Data"},
         {"fieldname": "date", "label": _("Date"), "fieldtype": "Date"},
+        {"fieldname": "week_day", "label": _("Week Day "), "fieldtype": "Data"},
 
         # for checkin
         {"fieldname": "actual_checkin_time", "label": _("Actual Time to Checkin"), "fieldtype": "Time"},
@@ -147,6 +148,7 @@ def get_checkin_data(conditions, filters, chift_type_details):
                         "department": checkin_d.department,
                         "shift": checkin_d.shift,
                         "date": checkin_d.date,
+                        "week_day": getdate(checkin_d.date).strftime("%A"),
                         "actual_checkin_time": str(shift_type.start_time),
                         "checkin_time": checkin_d.checkin_time,
                         "late_entry_grace_time": late_entry_grace_time,
@@ -165,6 +167,7 @@ def get_checkin_data(conditions, filters, chift_type_details):
                 "department": checkin_d.department,
                 "shift": '',
                 "date": checkin_d.date,
+                "week_day": getdate(checkin_d.date).strftime("%A"),
                 "actual_checkin_time": '',
                 "checkin_time": checkin_d.checkin_time,
                 "late_entry_grace_time": '',
@@ -210,6 +213,7 @@ def get_checkout_data(conditions, filters, chift_type_details):
                         "department": checkout_d.department,
                         "shift": checkout_d.shift,
                         "date": checkout_d.date,
+                        "week_day": getdate(checkout_d.date).strftime("%A"),
                         "actual_checkout_time":  str(shift_type.end_time),
                         "checkout_time": checkout_d.checkout_time,
                         "early_exit_grace_time": early_exit_grace_time,
@@ -228,6 +232,7 @@ def get_checkout_data(conditions, filters, chift_type_details):
                 "department": checkout_d.department,
                 "shift": '',
                 "date": checkout_d.date,
+                "week_day": getdate(checkout_d.date).strftime("%A"),
                 "actual_checkout_time": '',
                 "checkout_time": checkout_d.checkout_time,
                 "early_exit_grace_time": '',
