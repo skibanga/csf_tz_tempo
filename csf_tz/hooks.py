@@ -451,6 +451,10 @@ scheduler_events = {
         "*/15 * * * *": [
             "csf_tz.csftz_hooks.items_revaluation.process_incorrect_balance_qty"
         ],
+        # Routine for every day 3:30am at night
+        "30 3 * * *": [
+            "csf_tz.custom_api.auto_close_dn",
+        ],
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
