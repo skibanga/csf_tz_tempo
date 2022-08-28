@@ -126,6 +126,7 @@ def get_data(filters):
     sales_list = frappe.get_all("Sales Invoice", filters={
         "docstatus": 1,
         "is_return": 0,
+        "status": ["!=", "Credit Note Issued"],
         "company": filters.company,
         "posting_date": ["between", [
             filters.from_date,
