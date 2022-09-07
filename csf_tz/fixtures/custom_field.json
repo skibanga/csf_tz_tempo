@@ -25,20 +25,6 @@
   {
     "allow_on_submit": 1,
     "doctype": "Custom Field",
-    "dt": "Fees",
-    "fieldname": "callback_token",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "insert_after": "healthcare_practitioner",
-    "label": "Callback Token",
-    "modified": "2020-08-10 17:17:36.137062",
-    "name": "Fees-callback_token",
-    "read_only": 1,
-    "translatable": 1
-  },
-  {
-    "allow_on_submit": 1,
-    "doctype": "Custom Field",
     "dt": "Sales Invoice",
     "fieldname": "delivery_status",
     "fieldtype": "Select",
@@ -64,17 +50,6 @@
     "name": "POS Profile-electronic_fiscal_device",
     "options": "Electronic Fiscal Device",
     "reqd": 1
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Fees",
-    "fieldname": "from_date",
-    "fieldtype": "Date",
-    "in_list_view": 0,
-    "insert_after": "vehicle",
-    "label": "From Date",
-    "modified": "2020-08-18 13:10:14.387470",
-    "name": "Fees-from_date"
   },
   {
     "doctype": "Custom Field",
@@ -128,19 +103,6 @@
     "translatable": 1
   },
   {
-    "allow_on_submit": 1,
-    "doctype": "Custom Field",
-    "dt": "Fee Structure",
-    "fieldname": "default_fee_category",
-    "fieldtype": "Link",
-    "in_list_view": 0,
-    "insert_after": "student_category",
-    "label": "Default Fee Category",
-    "modified": "2020-07-31 12:20:15.767419",
-    "name": "Fee Structure-default_fee_category",
-    "options": "Fee Category"
-  },
-  {
     "doctype": "Custom Field",
     "dt": "POS Profile",
     "fieldname": "column_break_1",
@@ -190,19 +152,6 @@
     "name": "Sales Invoice Item-allow_over_sell"
   },
   {
-    "doctype": "Custom Field",
-    "dt": "Program Fee",
-    "fetch_from": "fee_structure.default_fee_category",
-    "fieldname": "default_fee_category",
-    "fieldtype": "Link",
-    "in_list_view": 1,
-    "insert_after": "due_date",
-    "label": "Default Fee Category",
-    "modified": "2020-07-31 12:32:27.126255",
-    "name": "Program Fee-default_fee_category",
-    "options": "Fee Category"
-  },
-  {
     "bold": 1,
     "doctype": "Custom Field",
     "dt": "Supplier",
@@ -213,45 +162,6 @@
     "label": "VRN",
     "modified": "2019-01-04 10:14:48.458823",
     "name": "Supplier-vrn",
-    "translatable": 1
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Program",
-    "fieldname": "fees",
-    "fieldtype": "Section Break",
-    "in_list_view": 0,
-    "insert_after": "courses",
-    "label": "Fees",
-    "modified": "2020-07-31 09:39:52.330874",
-    "name": "Program-fees"
-  },
-  {
-    "allow_on_submit": 1,
-    "doctype": "Custom Field",
-    "dt": "Fees",
-    "fieldname": "bank_reference",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "insert_after": "send_payment_request",
-    "label": "Bank Reference",
-    "modified": "2020-08-10 17:13:35.213803",
-    "name": "Fees-bank_reference",
-    "read_only": 1,
-    "translatable": 1
-  },
-  {
-    "allow_on_submit": 1,
-    "doctype": "Custom Field",
-    "dt": "Student Applicant",
-    "fieldname": "student_applicant_fee",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "insert_after": "paid",
-    "label": "Student Applicant Fee",
-    "modified": "2020-09-08 18:39:21.143298",
-    "name": "Student Applicant-student_applicant_fee",
-    "read_only": 1,
     "translatable": 1
   },
   {
@@ -280,32 +190,6 @@
   },
   {
     "doctype": "Custom Field",
-    "dt": "Program",
-    "fieldname": "program_fee",
-    "fieldtype": "Table",
-    "in_list_view": 0,
-    "insert_after": "fees",
-    "label": "Program Fee",
-    "modified": "2020-07-31 09:39:52.739333",
-    "name": "Program-program_fee",
-    "options": "Program Fee"
-  },
-  {
-    "allow_on_submit": 1,
-    "doctype": "Custom Field",
-    "dt": "Student Applicant",
-    "fieldname": "bank_reference",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "insert_after": "student_applicant_fee",
-    "label": "Bank Reference",
-    "modified": "2020-09-08 18:39:21.460847",
-    "name": "Student Applicant-bank_reference",
-    "read_only": 1,
-    "translatable": 1
-  },
-  {
-    "doctype": "Custom Field",
     "dt": "Stock Reconciliation Item",
     "fieldname": "material_request",
     "fieldtype": "Link",
@@ -328,20 +212,6 @@
     "label": "Sort Items",
     "modified": "2020-07-17 23:53:18.064909",
     "name": "Stock Reconciliation-sort_items"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Fees",
-    "fetch_from": "company.abbr",
-    "fieldname": "abbr",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "insert_after": "company",
-    "label": "Abbr",
-    "modified": "2020-07-22 13:06:42.155142",
-    "name": "Fees-abbr",
-    "read_only": 1,
-    "translatable": 1
   },
   {
     "doctype": "Custom Field",
@@ -513,19 +383,6 @@
   },
   {
     "doctype": "Custom Field",
-    "dt": "Student Applicant",
-    "fieldname": "fee_structure",
-    "fieldtype": "Link",
-    "in_list_view": 0,
-    "insert_after": "application_date",
-    "label": "Fee Structure",
-    "modified": "2020-09-08 18:38:13.430256",
-    "name": "Student Applicant-fee_structure",
-    "options": "Fee Structure",
-    "reqd": 1
-  },
-  {
-    "doctype": "Custom Field",
     "dt": "BOM",
     "fieldname": "source_warehouse",
     "fieldtype": "Link",
@@ -572,18 +429,6 @@
     "modified": "2020-05-29 11:40:04.831550",
     "name": "Stock Entry-repack_template",
     "options": "Repack Template"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Student Applicant",
-    "fieldname": "program_enrollment",
-    "fieldtype": "Link",
-    "in_list_view": 0,
-    "insert_after": "fee_structure",
-    "label": "Program Enrollment",
-    "modified": "2020-09-08 21:42:34.633789",
-    "name": "Student Applicant-program_enrollment",
-    "options": "Program Enrollment"
   },
   {
     "default": "0",
@@ -744,19 +589,6 @@
     "label": "Is Your Company Address",
     "modified": "2020-10-14 17:41:40.878179",
     "name": "Address-is_your_company_address"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Student",
-    "fieldname": "bank",
-    "fieldtype": "Select",
-    "in_list_view": 0,
-    "insert_after": "student_applicant",
-    "label": "Bank",
-    "modified": "2020-07-21 02:47:58.927966",
-    "name": "Student-bank",
-    "options": "\n NMB Bank",
-    "translatable": 1
   },
   {
     "depends_on": "",
@@ -1053,17 +885,6 @@
   },
   {
     "doctype": "Custom Field",
-    "dt": "Fees",
-    "fieldname": "to_date",
-    "fieldtype": "Date",
-    "in_list_view": 0,
-    "insert_after": "from_date",
-    "label": "To Date",
-    "modified": "2020-08-18 13:10:14.889080",
-    "name": "Fees-to_date"
-  },
-  {
-    "doctype": "Custom Field",
     "dt": "Employee",
     "fieldname": "heslb_f4_index_number",
     "fieldtype": "Data",
@@ -1259,29 +1080,6 @@
     "modified": "2020-09-01 01:35:36.035810",
     "name": "Company-fee_bank_account",
     "options": "Account"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Company",
-    "fieldname": "student_applicant_fees_revenue_account",
-    "fieldtype": "Link",
-    "in_list_view": 0,
-    "insert_after": "fee_bank_account",
-    "label": "Student Applicant Fees Revenue Account",
-    "modified": "2020-09-01 01:36:24.342359",
-    "name": "Company-student_applicant_fees_revenue_account",
-    "options": "Account"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Company",
-    "fieldname": "column_break_60",
-    "fieldtype": "Column Break",
-    "in_list_view": 0,
-    "insert_after": "student_applicant_fees_revenue_account",
-    "label": null,
-    "modified": "2020-08-18 15:47:26.978439",
-    "name": "Company-column_break_60"
   },
   {
     "depends_on": "send_fee_details_to_bank",
