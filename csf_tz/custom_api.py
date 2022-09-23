@@ -865,18 +865,33 @@ def validate_item_remaining_qty(
 
         item_remaining_qty = item_balance - qty_to_reduce - pending_si
         if item_remaining_qty < 0:
-            frappe.throw(
-                _(
-                    "Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(
-                        item_code,
-                        item_remaining_qty,
-                        item_balance,
-                        pending_delivery_item_count,
-                        float(stock_qty),
-                        pending_si,
+            if not frappe.db.get_single_value("CSF TZ Settings", "item_qty_poppup_message"):
+                frappe.msgprint(
+                    _(
+                        "Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(
+                            item_code,
+                            item_remaining_qty,
+                            item_balance,
+                            pending_delivery_item_count,
+                            float(stock_qty),
+                            pending_si,
+                        )
+                    ), alert=True
+                )
+
+            else:
+                frappe.throw(
+                    _(
+                        "Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(
+                            item_code,
+                            item_remaining_qty,
+                            item_balance,
+                            pending_delivery_item_count,
+                            float(stock_qty),
+                            pending_si,
+                        )
                     )
                 )
-            )
 
 
 def validate_items_remaining_qty(doc, method):
