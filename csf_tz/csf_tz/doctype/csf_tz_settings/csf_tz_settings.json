@@ -13,6 +13,7 @@
   "auto_pos_for_role",
   "is_manufacture",
   "allow_delete_in_sql_command",
+  "allow_batch_splitting",
   "item_qty_poppup_message",
   "section_break_8",
   "sle_gle_reposting_start_date",
@@ -91,12 +92,18 @@
    "fieldname": "item_qty_poppup_message",
    "fieldtype": "Check",
    "label": "Item Qty Poppup Massage"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_batch_splitting",
+   "fieldtype": "Check",
+   "label": "Allow Batch Splitting"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-09-13 16:56:02.482297",
+ "modified": "2022-11-08 12:04:36.215325",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
