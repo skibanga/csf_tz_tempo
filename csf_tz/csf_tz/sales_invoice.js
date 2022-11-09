@@ -4,8 +4,17 @@ frappe.require([
 
 frappe.ui.form.on("Sales Invoice", {
     setup: function (frm) {
-
-        // frm.trigger("update_stock");
+        frm.set_query("uom", "items", function (frm, cdt, cdn) {
+            let row = locals[cdt][cdn];
+            return {
+                query:
+                    "erpnext.accounts.doctype.pricing_rule.pricing_rule.get_item_uoms",
+                filters: {
+                    value: row.item_code,
+                    apply_on: "Item Code",
+                },
+            };
+        });
     },
     refresh: function (frm) {
         frm.trigger("set_pos");
