@@ -7,6 +7,18 @@ frappe.ui.form.on("Sales Order", {
         if (!frm.doc.customer) {
             return;
         }
+        frappe.call({
+            method: 'csf_tz.csftz_hooks.customer.get_customer_total_unpaid_amount',
+            args: {
+                customer: frm.doc.customer,
+                company: frm.doc.company,
+            },
+            callback: function (r, rt) {
+                if (r.message) {
+                    console.info(r.message);
+                }
+            }
+        });
         setTimeout(function () {
             if (!frm.doc.tax_category) {
                 frappe.call({
