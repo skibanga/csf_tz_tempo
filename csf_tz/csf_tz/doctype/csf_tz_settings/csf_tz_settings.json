@@ -9,6 +9,7 @@
   "validate_net_rate",
   "fetch_default_tax_category",
   "enable_dependent_auto_permission",
+  "limit_uom_as_item_uom",
   "column_break_3",
   "auto_pos_for_role",
   "is_manufacture",
@@ -98,12 +99,18 @@
    "fieldname": "allow_batch_splitting",
    "fieldtype": "Check",
    "label": "Allow Batch Splitting"
+  },
+  {
+   "default": "0",
+   "fieldname": "limit_uom_as_item_uom",
+   "fieldtype": "Check",
+   "label": "Limit UOM as per Item UOM"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-08 12:04:36.215325",
+ "modified": "2022-11-10 15:17:34.403106",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
