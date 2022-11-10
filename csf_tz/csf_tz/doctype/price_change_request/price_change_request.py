@@ -4,7 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from hms_tz.nhif.api.healthcare_utils import msgThrow
+from csf_tz.api.utils import msgThrow
 from frappe.utils import nowdate, get_fullname, get_url_to_form, flt
 from erpnext.stock.doctype.item.item import get_last_purchase_details
 
