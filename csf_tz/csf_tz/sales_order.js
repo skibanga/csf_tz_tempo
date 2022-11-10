@@ -5,8 +5,8 @@ frappe.require([
 
 frappe.ui.form.on("Sales Order", {
     refresh: function (frm) {
-        const limit_uom_as_item_uom = getValue("CSF TZ Settings", "CSF TZ Settings", "limit_uom_as_item_uom");
-        if (limit_uom_as_item_uom == 1) {
+        frm.csf_settings = getDoc("CSF TZ Settings", "CSF TZ Settings");
+        if (frm.csf_settings.limit_uom_as_item_uom == 1) {
             frm.set_query("uom", "items", function (frm, cdt, cdn) {
                 let row = locals[cdt][cdn];
                 return {
@@ -24,18 +24,21 @@ frappe.ui.form.on("Sales Order", {
         if (!frm.doc.customer) {
             return;
         }
-        frappe.call({
-            method: 'csf_tz.csftz_hooks.customer.get_customer_total_unpaid_amount',
-            args: {
-                customer: frm.doc.customer,
-                company: frm.doc.company,
-            },
-            callback: function (r, rt) {
-                if (r.message) {
-                    console.info(r.message);
+        // const show_customer_outstanding = getValue("CSF TZ Settings", "CSF TZ Settings", "show_customer_outstanding_in_sales_order");
+        if (frm.csf_settings.show_customer_outstanding_in_sales_order == 1) {
+            frappe.call({
+                method: 'csf_tz.csftz_hooks.customer.get_customer_total_unpaid_amount',
+                args: {
+                    customer: frm.doc.customer,
+                    company: frm.doc.company,
+                },
+                callback: function (r, rt) {
+                    if (r.message) {
+                        console.info(r.message);
+                    }
                 }
-            }
-        });
+            });
+        }
         setTimeout(function () {
             if (!frm.doc.tax_category) {
                 frappe.call({

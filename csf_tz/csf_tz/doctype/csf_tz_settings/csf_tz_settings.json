@@ -10,6 +10,7 @@
   "fetch_default_tax_category",
   "enable_dependent_auto_permission",
   "limit_uom_as_item_uom",
+  "show_customer_outstanding_in_sales_order",
   "column_break_3",
   "auto_pos_for_role",
   "is_manufacture",
@@ -105,12 +106,18 @@
    "fieldname": "limit_uom_as_item_uom",
    "fieldtype": "Check",
    "label": "Limit UOM as per Item UOM"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_customer_outstanding_in_sales_order",
+   "fieldtype": "Check",
+   "label": "Show Customer Outstanding in Sales Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-10 15:17:34.403106",
+ "modified": "2022-11-10 15:26:10.084553",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
