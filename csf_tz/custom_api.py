@@ -1766,9 +1766,11 @@ def auto_close_dn():
 
 def batch_splitting(doc, method):
     """Splitting of batches before insert of sales invoice
-    this works only if allow batch splitting is ticked on CSF TZ Settings
+    this works only if is_return = 0 and allow batch splitting is ticked on CSF TZ Settings
     """
-
+    if doc.is_return == 1:
+        return 
+       
     if not frappe.db.get_single_value('CSF TZ Settings', "allow_batch_splitting"):
         return
 
