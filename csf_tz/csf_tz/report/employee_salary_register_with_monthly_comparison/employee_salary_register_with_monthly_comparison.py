@@ -304,7 +304,7 @@ def get_prev_conditions(filters, company_currency):
 	"""Conditions that will be used to get salary slips for previous month"""
 	
 	# this is get submitted salary slips for the previous month
-	conditions = "docstatus = 1"
+	conditions = "docstatus <= 1"
 
 	if filters.get("prev_first_date"):
 		conditions += " and start_date >= %(prev_first_date)s"
