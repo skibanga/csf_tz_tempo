@@ -1846,6 +1846,10 @@ def allocate_batches_for_single_items(doc, items, warehouse, sales_order, fields
             for batch_obj in batches:
                 if batch_obj.qty == 0:
                     continue
+
+                if b_qty > 0 and b_qty >= row.stock_qty:
+                    continue
+
                 if row.conversion_factor > 1:
                     b_qty = cint(single_items_allocate_qty_per_conversion_factor(
                         doc, row, batch_obj, sales_order, fields_to_clear, b_qty
