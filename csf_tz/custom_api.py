@@ -1905,7 +1905,7 @@ def allocate_batch_for_duplicate_items(doc, duplicated_items, warehouse, sales_o
                             continue
 
                         if b_qty > 0 and b_qty >= item.stock_qty:
-                            return
+                            continue
 
                         if batch_obj.batch_no not in batch_used:
                             if item.conversion_factor > 1:
