@@ -233,7 +233,7 @@ def get_earnings_data(data, salary_slips, currency, company_currency, prev_ss_ea
 
 		for prev_earning_row in prev_ss_earnings:
 			if (
-				cur_earning_row.get("deaprtment") == prev_earning_row.get("department") and
+				cur_earning_row.get("department") == prev_earning_row.get("department") and
 				cur_earning_row.get("salary_component") == prev_earning_row.get("salary_component")
 			):
 				earn_amount_diff = flt(cur_earning_row.get("total_cur_month") - prev_earning_row.get("total_prev_month"), 2)
