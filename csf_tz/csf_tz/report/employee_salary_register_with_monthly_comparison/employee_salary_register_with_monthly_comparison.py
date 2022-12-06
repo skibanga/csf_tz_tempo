@@ -17,22 +17,29 @@ def execute(filters):
 	cur_year = getdate(filters.from_date).year
 
 	prev_month_name = calendar.month_name[prev_month]
+	columns = get_columns(prev_month_name, cur_month_name, prev_year, cur_year)
 
 	prev_salary_slips = get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_date)
+	cur_salary_slips = get_cur_salary_slips(filters, company_currency)
+	
 	if len(prev_salary_slips) == 0:
 		msgprint(_("No salary slip found for the previous month: {0} {1}".format(
 			frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)))
 		)
-		return []
-
+		return columns, cur_salary_slips
 	
-	columns = get_columns(filters, prev_month_name, cur_month_name, prev_year, cur_year)
-	data, prev_ss_map, cur_ss_map = get_data(filters, company_currency, prev_salary_slips)
-	report_summary = get_report_summary(prev_ss_map, cur_ss_map, prev_month_name, cur_month_name, prev_year, cur_year)
+	if len(cur_salary_slips) == 0:
+		msgprint(_("No salary slip found for the this month: {0} {1}".format(
+			frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
+			frappe.bold(getdate(filters.from_date).year)))
+		)
+		return columns, prev_salary_slips
 
-	return columns, data, None, None, report_summary
+	data = get_data(prev_salary_slips, cur_salary_slips)
 
-def get_columns(filters, prev_month_name, cur_month_name, prev_year, cur_year):
+	return columns, data
+
+def get_columns(prev_month_name, cur_month_name, prev_year, cur_year):
 	columns = [
 		{
 			"fieldname": "employee",
@@ -53,142 +60,67 @@ def get_columns(filters, prev_month_name, cur_month_name, prev_year, cur_year):
 			"width": 150
 		},
 		{
-			"fieldname": "total_basic_prev_month",
-			"label": _("Basic {0}-{1}".format(prev_month_name, prev_year)),
+			"fieldname": "prev_gross_pay",
+			"label": _("Gross Pay {0}-{1}".format(prev_month_name, prev_year)),
 			"fieldtype": "Float",
-			"width": 150,
+			"width": 250,
 			"precision": 2
 		},
 		{
-			"fieldname": "total_basic_cur_month",
-			"label": _("Basic {0}-{1}".format(cur_month_name, cur_year)),
+			"fieldname": "cur_gross_pay",
+			"label": _("Gross Pay {0}-{1}".format(cur_month_name, cur_year)),
 			"fieldtype": "Float",
-			"width": 150,
+			"width": 250,
 			"precision": 2
 		},
 		{
-			"fieldname": "basic_difference_amount",
-			"label": _("Basic Difference Amount"),
-			"fieldtype": "Data",
-			"width": 150
-		},
-		{
-			"fieldname": "total_earnings_prev_month",
-			"label": _("Total Earnings {0}-{1}".format(prev_month_name, prev_year)),
-			"fieldtype": "Float",
-			"width": 150,
-			"precision": 2
-		},
-		{
-			"fieldname": "total_earnings_cur_month",
-			"label": _("Total Earnings {0}-{1}".format(cur_month_name, cur_year)),
-			"fieldtype": "Float",
-			"width": 150,
-			"precision": 2
-		},
-		{
-			"fieldname": "earnings_difference_amount",
-			"label": _("Earnings Difference Amount"),
-			"fieldtype": "Data",
-			"width": 150
-		},
-		{
-			"fieldname": "total_deduction_prev_month",
-			"label": _("Total Deduction {0}-{1}".format(prev_month_name, prev_year)),
-			"fieldtype": "Float",
-			"width": 150,
-			"precision": 2
-		},
-		{
-			"fieldname": "total_deduction_cur_month",
-			"label": _("Total Deduction {0}-{1}".format(cur_month_name, cur_year)),
-			"fieldtype": "Float",
-			"width": 150,
-			"precision": 2
-		},
-		{
-			"fieldname": "deduction_difference_amount",
-			"label": _("Deduction Difference Amount"),
+			"fieldname": "gross_difference_amount",
+			"label": _("Gross Difference Amount"),
 			"fieldtype": "Data",
 			"width": 150
 		},
 	]
 	return columns
 
-def get_data(filters, company_currency, prev_salary_slips):
-	salary_slips = get_cur_salary_slips(filters, company_currency)
-	if len(salary_slips) == 0:
-		msgprint(_("No salary slip found for the this month: {0} {1}".format(
-			frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
-			frappe.bold(getdate(filters.from_date).year)))
-		)
-		return []
-	
-	prev_ss_map = get_prev_salary_map(prev_salary_slips)
-	cur_ss_map = get_cur_salary_map(salary_slips)
-
-	data = get_salary_details(prev_ss_map, cur_ss_map)
-
-	return data, prev_ss_map, cur_ss_map
-
-def get_report_summary(prev_ss_map, cur_ss_map, prev_month_name, cur_month_name, prev_year, cur_year):
-	"""Show the summary of the report"""
-	prev_no_employee = len(prev_ss_map)
-	cur_no_employee = len(cur_ss_map)
-	return [
-		{
-			"value": prev_no_employee,
-			"indicator": "Green",
-			"label": _("Total No of Employee for {0}-{1}".format(
-				frappe.bold(prev_month_name),
-				frappe.bold(prev_year)
-			)),
-			"datatype": "Int",
-		},
-		{
-			"value": cur_no_employee,
-			"indicator": "Green",
-			"label": _("Total No of Employee for {0}-{1}".format(
-				frappe.bold(cur_month_name),
-				frappe.bold(cur_year)
-			)),
-			"datatype": "Int",
-		},
-	]
-
-def get_salary_details(prev_ss, cur_ss):
+def get_data(prev_ss, cur_ss):
 	"""Merge employee details from current and previous months"""
 
 	data = []
 	unique_cur_employees = []
 	unique_prev_employees = []
+
 	for cur_ss_row in cur_ss:
 		for prev_ss_row in prev_ss:
-			if cur_ss_row.employee == prev_ss_row.employee:
-				unique_prev_employees.append(prev_ss_row.get("employee"))
-				unique_cur_employees.append(cur_ss_row.get("employee"))
+			if (
+				cur_ss_row.employee == prev_ss_row.employee and
+				flt(cur_ss_row.cur_gross_pay, 2) == flt(prev_ss_row.prev_gross_pay, 2)
+			):
+				unique_prev_employees.append(prev_ss_row.employee)
+				unique_cur_employees.append(cur_ss_row.employee)
+			
+			elif (
+				cur_ss_row.employee == prev_ss_row.employee and
+				flt(cur_ss_row.cur_gross_pay, 2) != flt(prev_ss_row.prev_gross_pay, 2)
+			):
+				unique_prev_employees.append(prev_ss_row.employee)
+				unique_cur_employees.append(cur_ss_row.employee)
 
-				basic_amount_diff = flt(flt(cur_ss_row.get("basic_cur_month")) - flt(prev_ss_row.get("basic_prev_month")), 2)
-				earnings_amount_diff = flt(flt(cur_ss_row.get("earnings_prev_month")) - flt(prev_ss_row.get("earnings_prev_month")), 2)
-				deductions_amount_diff = flt(flt(cur_ss_row.get("deductions_prev_month")) - flt(prev_ss_row.get("deductions_prev_month")), 2)
-				
+				gross_amount_diff = flt(flt(cur_ss_row.cur_gross_pay) - flt(prev_ss_row.prev_gross_pay), 2)
+
 				cur_ss_row.update({
-					"total_basic_prev_month": prev_ss_row.get("total_basic_prev_month"),
-					"total_earnings_prev_month": prev_ss_row.get("total_earnings_prev_month"),
-					"total_deduction_prev_month": prev_ss_row.get("total_deduction_prev_month"),
-					"basic_difference_amount": get_difference_amount_detail(basic_amount_diff),
-					"earnings_difference_amount": get_difference_amount_detail(earnings_amount_diff),
-					"deduction_difference_amount": get_difference_amount_detail(deductions_amount_diff)
+					"prev_gross_pay": prev_ss_row.prev_gross_pay,
+					"cur_gross_pay": cur_ss_row.cur_gross_pay,
+					"gross_difference_amount": get_difference_amount_detail(gross_amount_diff)
 				})
 				data.append(cur_ss_row)
 
 		# Update employee details for the current month if the employee is not in the list of employees for previous month
-		if cur_ss_row.get("employee") not in unique_cur_employees:
-			unique_cur_employees.append(cur_ss_row.get("employee"))
+		if cur_ss_row.employee not in unique_cur_employees:
+			unique_cur_employees.append(cur_ss_row.employee)
 			cur_ss_row.update({
-				"basic_difference_amount": "+ " + str(cur_ss_row.get("total_basic_cur_month")),
-				"earnings_difference_amount": "+ " + str(cur_ss_row.get("total_earnings_cur_month")),
-				"deduction_difference_amount": "+ " + str(cur_ss_row.get("total_deduction_cur_month"))
+				"prev_gross_pay": 0,
+				"cur_gross_pay": cur_ss_row.cur_gross_pay,
+				"gross_difference_amount": "+ " + str(cur_ss_row.cur_gross_pay)
 			})
 
 			data.append(cur_ss_row)
@@ -199,12 +131,12 @@ def update_unique_prev_employee_ss_details(data, prev_ss, unique_prev_employees)
 	""""Updating unique employee details of previous month if the employee is not in the list of employees for the current month"""
 
 	for prev_row in prev_ss:
-		if prev_row.get("employee") not in unique_prev_employees:
-			unique_prev_employees.append(prev_row.get("employee"))
+		if prev_row.employee not in unique_prev_employees:
+			unique_prev_employees.append(prev_row.employee)
 			prev_row.update({
-				"basic_difference_amount": "+ " + str(prev_row.get("total_basic_prev_month")),
-				"earnings_difference_amount": "+ " + str(prev_row.get("total_earnings_prev_month")),
-				"deduction_difference_amount": "+ " + str(prev_row.get("total_deduction_prev_month"))
+				"prev_gross_pay": prev_row.prev_gross_pay,
+				"cur_gross_pay": 0,
+				"gross_difference_amount": "- " + str(prev_row.prev_gross_pay)
 			})
 
 			data.append(prev_row)
@@ -222,36 +154,6 @@ def get_difference_amount_detail(bsc_amount_diff):
 		result = "0"
 	return result
 
-def get_prev_salary_map(prev_salary_slips):
-	"""Get amount details like total basic, total earnings, and total deductions from salary details for previous month"""
-
-	return frappe.db.sql("""
-        SELECT ss.employee, ss.employee_name, ss.department,
-		SUM(IF((sd.parentfield = "earnings" AND sd.salary_component = "Basic"), sd.amount, 0)) AS total_basic_prev_month,
-		SUM(IF((sd.parentfield = "earnings" AND sd.salary_component != "Basic"), sd.amount, 0)) AS total_earnings_prev_month,
-		SUM(IF((sd.parentfield = "deductions"), sd.amount, 0)) AS total_deduction_prev_month
-        FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
-        AND sd.parent in (%s)
-        AND sd.do_not_include_in_total = 0
-		GROUP BY ss.employee
-        ORDER BY ss.employee
-	""" % (', '.join(['%s']*len(prev_salary_slips))), tuple([d.name for d in prev_salary_slips]), as_dict=1)
-
-def get_cur_salary_map(salary_slips):
-	"""Get amount details like total basic, total earnings, and total deductions from salary details for current month"""
-
-	return frappe.db.sql("""
-        SELECT ss.employee, ss.employee_name, ss.department,
-		SUM(IF((sd.parentfield = "earnings" AND sd.salary_component = "Basic"), sd.amount, 0)) AS total_basic_cur_month,
-		SUM(IF((sd.parentfield = "earnings" AND sd.salary_component != "Basic"), sd.amount, 0)) AS total_earnings_cur_month,
-		SUM(IF((sd.parentfield = "deductions"), sd.amount, 0)) AS total_deduction_cur_month
-        FROM `tabSalary Detail` sd, `tabSalary Slip` ss where sd.parent=ss.name 
-        AND sd.parent in (%s)
-        AND sd.do_not_include_in_total = 0
-		GROUP BY ss.employee
-        ORDER BY ss.employee
-	""" % (', '.join(['%s']*len(salary_slips))), tuple([d.name for d in salary_slips]), as_dict=1)
-
 def get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_date):
 	"""Get submitted salary slips for precious month"""
 
@@ -262,7 +164,7 @@ def get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_
 	})
 	prev_conditions = get_prev_conditions(custom_filters, company_currency)
 	prev_salary_slips = frappe.db.sql("""
-		select name from `tabSalary Slip` where %s
+		select name, employee, employee_name, department, gross_pay as prev_gross_pay from `tabSalary Slip` where %s
 		order by employee"""% 
 	prev_conditions, filters, as_dict=1)
 
@@ -277,7 +179,7 @@ def get_cur_salary_slips(filters, company_currency):
 	})
 	conditions, filters = get_cur_conditions(filters, company_currency)
 	salary_slips = frappe.db.sql("""
-		select name from `tabSalary Slip` where %s
+		select name, employee, employee_name, department, gross_pay as cur_gross_pay from `tabSalary Slip` where %s
         order by employee"""%
 		conditions, filters, as_dict=1)
 	
