@@ -140,6 +140,18 @@ def update_unique_prev_employee_ss_details(data, prev_ss, unique_prev_employees)
 			})
 
 			data.append(prev_row)
+	
+	# add total row for gross of previous month and current month
+	total_prev_gross = sum([d.prev_gross_pay for d in data])
+	total_cur_gross = sum([d.cur_gross_pay for d in data])
+	total_diff = get_difference_amount_detail(flt(flt(total_cur_gross) - flt(total_prev_gross), 2))
+	data.append({"employee_name": ""})
+	data.append({
+		"employee_name": "Total",
+		"prev_gross_pay": total_prev_gross,
+		"cur_gross_pay": total_cur_gross,
+		"gross_difference_amount": total_diff
+	})
 	return data
 
 def get_difference_amount_detail(bsc_amount_diff):
