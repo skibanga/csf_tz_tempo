@@ -1,5 +1,5 @@
 {
- "add_total_row": 1,
+ "add_total_row": 0,
  "columns": [],
  "creation": "2022-11-24 12:27:27.570711",
  "disable_prepared_report": 0,
@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "SHM-Hospital Letter Head",
- "modified": "2022-12-05 13:20:13.732645",
+ "modified": "2022-12-14 18:39:25.656573",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Employee Salary Register with Monthly Comparison",
