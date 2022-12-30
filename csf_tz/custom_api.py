@@ -1929,7 +1929,7 @@ def allocate_batch_for_duplicate_items(doc, duplicated_items, warehouse, fields_
                     doc.append("items", new_row)
 
 
-def single_items_allocate_qty_per_conversion_factor(doc, row, batch_obj, sales_order, fields_to_clear, b_qty):
+def single_items_allocate_qty_per_conversion_factor(doc, row, batch_obj, fields_to_clear, b_qty):
     """"Allocate batch quantities to single items if conversion factor is greater to one for a particular item(s)"""
     
     if batch_obj.qty > 0 and b_qty < row.stock_qty:
@@ -1937,17 +1937,21 @@ def single_items_allocate_qty_per_conversion_factor(doc, row, batch_obj, sales_o
         if remainder - batch_obj.qty >= 0:
             new_qty = batch_obj.qty // row.conversion_factor
             if new_qty > 0:
-                new_row = update_row_item(row, batch_obj, new_qty, sales_order, fields_to_clear, row.conversion_factor)
+                new_row = update_row_item(row, batch_obj, new_qty, fields_to_clear, row.conversion_factor)
                 b_qty += new_qty * row.conversion_factor
                 doc.append("items", new_row) 
+                return b_qty
+            else:
                 return b_qty
         
         elif remainder - batch_obj.qty < 0:
             new_qty = remainder // row.conversion_factor
             if new_qty > 0:
-                new_row = update_row_item(row, batch_obj, new_qty, sales_order, fields_to_clear, row.conversion_factor)
+                new_row = update_row_item(row, batch_obj, new_qty, fields_to_clear, row.conversion_factor)
                 b_qty += new_qty * row.conversion_factor
                 doc.append("items", new_row)
+                return b_qty
+            else:
                 return b_qty
 
 
@@ -1969,6 +1973,8 @@ def duplicated_items_allocate_qty_per_conversion_factor(doc, item, batch_obj, fi
                         "qty_remain_on_batch": ""
                     })
                     return b_qty, batch_used, qty_remain_per_batch_obj
+                else:
+                    return b_qty, batch_used, qty_remain_per_batch_obj
 
             else:
                 new_qty = batch_obj.qty // item.conversion_factor
@@ -1981,6 +1987,8 @@ def duplicated_items_allocate_qty_per_conversion_factor(doc, item, batch_obj, fi
                         "batch_no": "",
                         "qty_remain_on_batch": ""
                     })
+                    return b_qty, batch_used, qty_remain_per_batch_obj
+                else:
                     return b_qty, batch_used, qty_remain_per_batch_obj
         
         elif remainder - batch_obj.qty < 0:
@@ -2003,6 +2011,8 @@ def duplicated_items_allocate_qty_per_conversion_factor(doc, item, batch_obj, fi
                             "qty_remain_on_batch": batch_obj.qty - (new_qty * item.conversion_factor)
                         })
                     return b_qty, batch_used, qty_remain_per_batch_obj
+                else:
+                    return b_qty, batch_used, qty_remain_per_batch_obj
 
             else:
                 new_qty = remainder // item.conversion_factor
@@ -2015,7 +2025,8 @@ def duplicated_items_allocate_qty_per_conversion_factor(doc, item, batch_obj, fi
                     })
                     doc.append("items", new_row)
                     return b_qty, batch_used, qty_remain_per_batch_obj
-
+                else:
+                    return b_qty, batch_used, qty_remain_per_batch_obj
 
 def duplicated_items_allocate_qty_for_non_conversion_factor(doc, item, batch_obj, fields_to_clear, batch_used, qty_remain_per_batch_obj, b_qty):
     """Allocate batch quantities to duplicated items if conversion factor is equat to 1 for a particular item(s)"""
