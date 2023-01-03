@@ -1812,7 +1812,7 @@ def get_item_duplicates(source_doc):
     return single_items, duplicated_items
 
 
-def get_batch_per_item(item_code, warehouse):
+def get_batch_per_item(item_code, posting_date, warehouse):
     """"fetch batch details for item code and warehouse"""
 
     conditions = ""
@@ -1826,9 +1826,10 @@ def get_batch_per_item(item_code, warehouse):
         from `tabStock Ledger Entry` sle 
         inner join `tabBatch` ba on sle.batch_no = ba.batch_id
         where {conditions}
+        AND ba.expiry_date >= %s
         group by sle.batch_no, sle.warehouse
         order by ba.expiry_date
-        """.format(conditions = conditions), as_dict=True
+        """.format(conditions=conditions), posting_date, as_dict=True
     )
     return batch_records
     
@@ -1841,7 +1842,7 @@ def allocate_batches_for_single_items(doc, items, warehouse, fields_to_clear):
 
     for row in items:
         b_qty = 0
-        batches = get_batch_per_item(row.item_code, warehouse)
+        batches = get_batch_per_item(row.item_code, doc.posting_date, warehouse)
 
         if batches:
             for batch_obj in batches:
@@ -1893,7 +1894,7 @@ def allocate_batch_for_duplicate_items(doc, duplicated_items, warehouse, fields_
     unique_names = unique([d.item_code for d in duplicated_items ])
     
     for item_code in unique_names:
-        batches = get_batch_per_item(item_code, warehouse)
+        batches = get_batch_per_item(item_code, doc.posting_date, warehouse)
 
         if batches:
             batch_used = []
