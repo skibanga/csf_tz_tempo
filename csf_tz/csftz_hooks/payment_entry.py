@@ -76,7 +76,6 @@ def get_outstanding_reference_documents(args):
         args.get("party"),
         args.get("party_account"),
         common_filter=args,
-        condition=condition,
     )
 
     for d in outstanding_invoices:
