@@ -89,7 +89,7 @@
    "label": "Enable Dependent Auto Permission"
   },
   {
-   "default": "0",
+   "default": "1",
    "description": "if ticked, a popup message showing description will appear on sales invoice when item qty remaining is less to 0",
    "fieldname": "item_qty_poppup_message",
    "fieldtype": "Check",
@@ -117,7 +117,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-10 15:26:10.084553",
+ "modified": "2022-11-12 01:10:05.016525",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
