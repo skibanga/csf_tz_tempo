@@ -1,6 +1,9 @@
 # Copyright (c) 2023, Aakvatech and contributors
 # For license information, please see license.txt
 
+import pyotp
+from pyqrcode import create as qrcreate
+
 import frappe
 from frappe.model.document import Document
 
@@ -8,6 +11,7 @@ from frappe.model.document import Document
 class OTPRegister(Document):
     def validate(self):
         self.set_party_name()
+        self.set_otp_secret()
 
     def set_party_name(self):
         if not self.party:
@@ -81,3 +85,42 @@ class OTPRegister(Document):
 
         if not self.user_name:
             self.user_name = self.party_name
+
+    def set_otp_secret(self):
+        if not self.otp_secret:
+            self.otp_secret = pyotp.random_base32()
+
+    def get_otp_secret(self):
+        return self.get_password("otp_secret")
+
+
+@frappe.whitelist()
+def register_otp(otp_doc):
+    otp_doc = frappe._dict(frappe.parse_json(otp_doc))
+    otp_doc = frappe.get_doc(otp_doc)
+    if otp_doc.docstatus == 1:
+        frappe.throw("Document is already submitted")
+    if otp_doc.registered:
+        frappe.throw("OTP already registered")
+    if otp_doc.otp_type == "OTP APP":
+        register_otp_app(otp_doc)
+    elif otp_doc.otp_type == "SMS":
+        register_otp_sms(otp_doc)
+    elif otp_doc.otp_type == "Email":
+        register_otp_email(otp_doc)
+
+
+def register_otp_sms(otp_doc=None):
+    frappe.throw("SMS OTP not implemented")
+    return
+
+
+def register_otp_email(otp_doc=None):
+    frappe.throw("Email OTP not implemented")
+    return
+
+
+def register_otp_app(otp_doc):
+    frappe.msgprint(str(otp_doc.get_otp_secret()))
+
+    return

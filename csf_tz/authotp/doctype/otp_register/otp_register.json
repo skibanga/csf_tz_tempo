@@ -13,7 +13,8 @@
   "user_name",
   "column_break_v9xc2",
   "otp_type",
-  "validated"
+  "otp_secret",
+  "registered"
  ],
  "fields": [
   {
@@ -67,20 +68,26 @@
    "reqd": 1
   },
   {
+   "fieldname": "otp_secret",
+   "fieldtype": "Password",
+   "label": "OTP Secret",
+   "read_only": 1
+  },
+  {
    "default": "0",
-   "fieldname": "validated",
+   "fieldname": "registered",
    "fieldtype": "Check",
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
-   "label": "Validated",
+   "label": "Registered",
    "no_copy": 1,
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-06 15:53:13.550942",
+ "modified": "2023-03-07 12:43:15.178647",
  "modified_by": "Administrator",
  "module": "AuthOTP",
  "name": "OTP Register",
