@@ -121,6 +121,6 @@ def register_otp_email(otp_doc=None):
 
 
 def register_otp_app(otp_doc):
-    frappe.msgprint(str(otp_doc.get_otp_secret()))
+    frappe.msgprint(str(f"<img src='https://api.qrserver.com/v1/create-qr-code/?data={otp_doc.get_otp_secret()}&size=220x220&margin=0'>"))
 
     return
