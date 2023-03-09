@@ -9,9 +9,12 @@ from frappe.model.document import Document
 
 
 class OTPRegister(Document):
+    def before_insert(self):
+        self.registered = 0
+        self.set_otp_secret()
+
     def validate(self):
         self.set_party_name()
-        self.set_otp_secret()
 
     def on_submit(self):
         if not self.registered:
@@ -91,8 +94,7 @@ class OTPRegister(Document):
             self.user_name = self.party_name
 
     def set_otp_secret(self):
-        if not self.otp_secret:
-            self.otp_secret = pyotp.random_base32()
+        self.otp_secret = pyotp.random_base32()
 
     def get_otp_secret(self):
         return self.get_password("otp_secret")
