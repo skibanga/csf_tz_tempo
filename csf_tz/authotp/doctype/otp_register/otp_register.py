@@ -128,7 +128,7 @@ def register_otp_email(otp_doc=None):
 
 def register_otp_app(otp_doc):
     issuer_name = frappe.get_cached_value("AuthOTP Settings", "AuthOTP Settings", "otp_issuer_name")
-    uri = pyotp.totp.TOTP(otp_doc.get_otp_secret()).provisioning_uri(name= otp_doc.user_name, issuer_name=issuer_name)
+    uri = pyotp.totp.TOTP(otp_doc.get_otp_secret()).provisioning_uri(name= f"( {otp_doc.user_name} )", issuer_name=issuer_name)
     qr_link = f"https://api.qrserver.com/v1/create-qr-code/?data={uri}&size=220x220&margin=0"
     return qr_link
 
@@ -144,6 +144,16 @@ def validate_otp(otp_doc, otp_code, submit=False):
         if submit:
             otp_doc.submit()
         frappe.msgprint(_("OTP Registered successfully"), alert=True)
+        return True
+    else:
+        frappe.throw(_("Invalid OTP Code"))
+
+
+@frappe.whitelist()
+def validate_doc_otp(otp_register_name, otp_code):
+    otp_doc = frappe.get_cached_doc("OTP Register", otp_register_name)
+    totp = pyotp.TOTP(otp_doc.get_otp_secret())
+    if totp.verify(otp_code):
         return True
     else:
         frappe.throw(_("Invalid OTP Code"))
