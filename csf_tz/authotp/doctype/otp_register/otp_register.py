@@ -1,10 +1,10 @@
 # Copyright (c) 2023, Aakvatech and contributors
 # For license information, please see license.txt
 
-import pyotp
-from pyqrcode import create as qrcreate
 
+import pyotp
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
@@ -12,6 +12,10 @@ class OTPRegister(Document):
     def validate(self):
         self.set_party_name()
         self.set_otp_secret()
+
+    def on_submit(self):
+        if not self.registered:
+            frappe.throw(_("OTP not registered, please register OTP first"))
 
     def set_party_name(self):
         if not self.party:
@@ -99,28 +103,45 @@ def register_otp(otp_doc):
     otp_doc = frappe._dict(frappe.parse_json(otp_doc))
     otp_doc = frappe.get_doc(otp_doc)
     if otp_doc.docstatus == 1:
-        frappe.throw("Document is already submitted")
+        frappe.throw(_("Document is already submitted"))
     if otp_doc.registered:
-        frappe.throw("OTP already registered")
+        frappe.throw(_("OTP already registered"))
     if otp_doc.otp_type == "OTP APP":
-        register_otp_app(otp_doc)
+        return register_otp_app(otp_doc)
     elif otp_doc.otp_type == "SMS":
-        register_otp_sms(otp_doc)
+        return register_otp_sms(otp_doc)
     elif otp_doc.otp_type == "Email":
-        register_otp_email(otp_doc)
+        return register_otp_email(otp_doc)
 
 
 def register_otp_sms(otp_doc=None):
-    frappe.throw("SMS OTP not implemented")
+    frappe.throw(_("SMS OTP not implemented"))
     return
 
 
 def register_otp_email(otp_doc=None):
-    frappe.throw("Email OTP not implemented")
+    frappe.throw(_("Email OTP not implemented"))
     return
 
 
 def register_otp_app(otp_doc):
-    frappe.msgprint(str(f"<img src='https://api.qrserver.com/v1/create-qr-code/?data={otp_doc.get_otp_secret()}&size=220x220&margin=0'>"))
+    issuer_name = frappe.get_cached_value("AuthOTP Settings", "AuthOTP Settings", "otp_issuer_name")
+    uri = pyotp.totp.TOTP(otp_doc.get_otp_secret()).provisioning_uri(name= otp_doc.user_name, issuer_name=issuer_name)
+    qr_link = f"https://api.qrserver.com/v1/create-qr-code/?data={uri}&size=220x220&margin=0"
+    return qr_link
 
-    return
+
+@frappe.whitelist()
+def validate_otp(otp_doc, otp_code, submit=False):
+    otp_doc = frappe._dict(frappe.parse_json(otp_doc))
+    otp_doc = frappe.get_doc(otp_doc)
+    totp = pyotp.TOTP(otp_doc.get_otp_secret())
+    if totp.verify(otp_code):
+        otp_doc.registered = 1
+        otp_doc.save()
+        if submit:
+            otp_doc.submit()
+        frappe.msgprint(_("OTP Registered successfully"), alert=True)
+        return True
+    else:
+        frappe.throw(_("Invalid OTP Code"))

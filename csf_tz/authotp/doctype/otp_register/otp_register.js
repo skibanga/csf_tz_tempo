@@ -29,7 +29,7 @@ frappe.ui.form.on('OTP Register', {
 					},
 					callback: function (r) {
 						if (r.message) {
-							frm.reload_doc();
+							show_popup_for_otp_validation(frm, r.message);
 						}
 					}
 				});
@@ -44,3 +44,59 @@ frappe.ui.form.on('OTP Register', {
 		frm.set_value("user_name", "");
 	},
 });
+
+
+function show_popup_for_otp_validation (frm, qr_code_link) {
+	// show popup to dispaly QR code and validate OTP
+	const fields = [
+		{
+			"fieldtype": "Data",
+			"fieldname": "otp_code",
+			"label": __("OTP Code"),
+			"reqd": 1
+		},
+		{
+			"fieldtype": "Button",
+			"fieldname": "validate_otp",
+			"label": __("Validate OTP"),
+			"click": function () {
+				// validate OTP
+				validate_otp(frm, d);
+			}
+		},
+	];
+	if (qr_code_link) {
+		// add field to show QR code image as first field
+		fields.unshift({
+			"fieldtype": "HTML",
+			"fieldname": "qr_code",
+			"label": __("QR Code"),
+			"options": `<img src="${qr_code_link}" style="width: 100%; height: 100%;"/>`
+
+		});
+	}
+	var d = new frappe.ui.Dialog({
+		title: __("Validate OTP"),
+		fields: fields,
+	});
+	d.show();
+}
+
+function validate_otp (frm, d) {
+	// validate OTP
+	frappe.call({
+		method: "csf_tz.authotp.doctype.otp_register.otp_register.validate_otp",
+		args: {
+			"otp_doc": frm.doc,
+			"otp_code": d.get_value("otp_code"),
+			"submit": true
+		},
+		callback: function (r) {
+			if (r.message) {
+				frm.reload_doc();
+				// close popup
+				d.hide();
+			}
+		}
+	});
+}
