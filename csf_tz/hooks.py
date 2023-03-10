@@ -160,6 +160,10 @@ fixtures = [
                     "Employee-employee_salary_component_limit",
                     "Employee-heslb_f4_index_number",
                     "Sales Invoice Item-is_ignored_in_pending_qty",
+                    "Sales Invoice-authotp",
+                    "Sales Invoice-authotp_method",
+                    "Sales Invoice-column_break_sn02w",
+                    "Sales Invoice-authotp_validated",
                 ),
             ]
         ],
@@ -369,6 +373,7 @@ doc_events = {
             "csf_tz.custom_api.create_delivery_note",
             "csf_tz.custom_api.check_submit_delivery_note",
             "csf_tz.custom_api.make_withholding_tax_gl_entries_for_sales",
+            "csf_tz.authotp.api.sales_invoice.on_submit",
         ],
         "validate": [
             "csf_tz.custom_api.check_validate_delivery_note",

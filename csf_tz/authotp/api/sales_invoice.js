@@ -18,7 +18,21 @@ frappe.ui.form.on('Sales Invoice', {
                 show_popup_for_otp_validation(frm);
             });
         }
+        frm.set_query("authotp_method", function () {
+            return {
+                filters: {
+                    "party_type": "Customer",
+                    "party": frm.doc.customer,
+                    "docstatus": 1,
+                }
+            };
+        });
     },
+    customer: function (frm) {
+        // clear authotp_method and authotp_validated fields on customer change
+        frm.set_value("authotp_method", "");
+        frm.set_value("authotp_validated", 0);
+    }
 });
 
 function show_popup_for_otp_validation (frm) {
@@ -36,12 +50,19 @@ function show_popup_for_otp_validation (frm) {
         fields: fields
     });
     d.set_primary_action(__("Validate OTP"), function () {
+        if (!frm.doc.authotp_method) {
+            frappe.show_alert({
+                message: __("Please set AuthOTP Method in the document"),
+                indicator: 'red'
+            });
+            return;
+        }
         const otp_code = d.get_value("otp_code");
         if (otp_code) {
             frappe.call({
                 method: "csf_tz.authotp.doctype.otp_register.otp_register.validate_doc_otp",
                 args: {
-                    "otp_register_name": "OTPR-23-03-000001-1",
+                    "otp_register_name": frm.doc.authotp_method,
                     "otp_code": otp_code
                 },
                 callback: function (r) {
@@ -50,8 +71,10 @@ function show_popup_for_otp_validation (frm) {
                             message: __("OTP Validated Successfully"),
                             indicator: 'green'
                         });
+                        frm.set_value("authotp_validated", 1);
                         d.hide();
-                        frm.reload_doc();
+                        frm.save();
+                        // frm.reload_doc();
                     }
                 }
             });

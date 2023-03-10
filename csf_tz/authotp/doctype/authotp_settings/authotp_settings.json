@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "active",
   "otp_issuer_name"
  ],
  "fields": [
@@ -17,12 +18,18 @@
    "in_list_view": 1,
    "label": "OTP Issuer Name",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-03-07 12:37:45.459520",
+ "modified": "2023-03-10 22:29:37.951688",
  "modified_by": "Administrator",
  "module": "AuthOTP",
  "name": "AuthOTP Settings",
