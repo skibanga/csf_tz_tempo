@@ -4,7 +4,7 @@
 frappe.ui.form.on('Sales Invoice', {
     refresh: function (frm) {
         // add custom button to validate OTP
-        if (frm.doc.docstatus == 0) {
+        if (frm.doc.docstatus == 0 && !frm.doc.authotp_validated) {
             frm.add_custom_button(__("Validate OTP"), function () {
                 // check if doc is not saved
                 if (frm.is_dirty()) {

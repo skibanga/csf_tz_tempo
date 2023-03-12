@@ -6,6 +6,11 @@ import frappe
 from frappe import _
 
 def on_submit(doc, method):
-    otp_active = frappe.get_cached_value("OTP Settings", "OTP Settings", "active")
+    settings = frappe.get_single("AuthOTP Settings")
+    if not settings:
+        frappe.msgprint(_("Please configure AuthOTP Settings"), title=_("AuthOTP Settings"), indicator="red", alert=True)
+        return
+    
+    otp_active = settings.get("active")
     if otp_active and not doc.authotp_validated:
         frappe.throw(_("OTP not validated, please validated OTP first"))
