@@ -55,14 +55,17 @@ class SpecialClosingBalance(Document):
 								special_closing_balance=self.name
 								))
 						stock_entry_doc.get_items()
-						stock_entry_doc.insert(ignore_permissions=True)
-						if stock_entry_doc:
-							frappe.flags.ignore_account_permission = True
-							stock_entry_doc.submit()
-							# return stock_entry_doc.name
-							# self.stock_entry = stock_entry_doc.name
-							url = frappe.utils.get_url_to_form(stock_entry_doc.doctype, stock_entry_doc.name)
-							frappe.msgprint("Stock Entry Created <a href='{0}'>{1}</a>".format(url,stock_entry_doc.name))
+						try:
+							stock_entry_doc.insert(ignore_permissions=True)
+							if stock_entry_doc:
+								frappe.flags.ignore_account_permission = True
+								stock_entry_doc.submit()
+								# return stock_entry_doc.name
+								# self.stock_entry = stock_entry_doc.name
+								url = frappe.utils.get_url_to_form(stock_entry_doc.doctype, stock_entry_doc.name)
+								frappe.msgprint("Stock Entry Created <a href='{0}'>{1}</a>".format(url,stock_entry_doc.name))
+						except Exception as e:
+							frappe.throw(_("Stock Entry Creation Failed for item {0}").format(item_row.item))
 
 		else:
 			items = []
