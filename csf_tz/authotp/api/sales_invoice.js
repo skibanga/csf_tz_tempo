@@ -30,7 +30,6 @@ frappe.ui.form.on('Sales Invoice', {
     },
     customer: function (frm) {
         // clear authotp_method and authotp_validated fields on customer change
-        frm.set_value("authotp_method", "");
         frm.set_value("authotp_validated", 0);
     }
 });

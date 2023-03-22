@@ -291,7 +291,7 @@ doctype_js = {
     "Sales Invoice": ["csf_tz/sales_invoice.js", "authotp/api/sales_invoice.js"],
     "Sales Order": "csf_tz/sales_order.js",
     "Delivery Note": "csf_tz/delivery_note.js",
-    "Customer": "csf_tz/customer.js",
+    "Customer": ["csf_tz/customer.js","authotp/api/customer.js"],
     "Supplier": "csf_tz/supplier.js",
     "Stock Entry": "csf_tz/stock_entry.js",
     "Account": "csf_tz/account.js",
@@ -368,12 +368,14 @@ doc_events = {
         "validate": "csf_tz.custom_api.getInvoiceExchangeRate"
     },
     "Sales Invoice": {
+        "before_submit": [
+            "csf_tz.authotp.api.sales_invoice.before_submit",
+        ],
         "on_submit": [
             "csf_tz.custom_api.validate_net_rate",
             "csf_tz.custom_api.create_delivery_note",
             "csf_tz.custom_api.check_submit_delivery_note",
             "csf_tz.custom_api.make_withholding_tax_gl_entries_for_sales",
-            "csf_tz.authotp.api.sales_invoice.on_submit",
         ],
         "validate": [
             "csf_tz.custom_api.check_validate_delivery_note",
