@@ -839,8 +839,8 @@ def validate_item_remaining_qty(
         return
     if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
         return
-    is_stock_item = frappe.get_value("Item", item_code, "is_stock_item")
-    if is_stock_item == 1:
+    item = frappe.get_value("Item", item_code)
+    if item.is_stock_item == 1 and item.has_batch_no == 0:
         item_balance = get_item_balance(item_code, company, warehouse) or 0
         if not item_balance:
             frappe.throw(
