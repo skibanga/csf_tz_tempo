@@ -5,8 +5,8 @@ frappe.require([
 
 frappe.ui.form.on("Sales Invoice", {
     refresh: function (frm) {
-        const limit_uom_as_item_uom = getValue("CSF TZ Settings", "CSF TZ Settings", "limit_uom_as_item_uom");
-        if (limit_uom_as_item_uom == 1) {
+        frm.csf_settings = getDoc("CSF TZ Settings", "CSF TZ Settings");
+        if (frm.csf_settings.limit_uom_as_item_uom == 1) {
             frm.set_query("uom", "items", function (frm, cdt, cdn) {
                 let row = locals[cdt][cdn];
                 return {
@@ -103,19 +103,17 @@ frappe.ui.form.on("Sales Invoice", {
         }
     },
     set_pos: function (frm) {
-        frappe.db.get_value("CSF TZ Settings", {}, "auto_pos_for_role").then(r => {
-            if (r.message) {
-                if (
-                    frappe.user_roles.includes(r.message.auto_pos_for_role) &&
-                    frm.doc.docstatus == 0 &&
-                    frappe.session.user != 'Administrator' &&
-                    frm.doc.is_pos != 1
-                ) {
-                    frm.set_value("is_pos", true);
-                    frm.set_df_property("is_pos", "read_only", true);
-                }
+        if (frm.csf_settings.auto_pos_for_role) {
+            if (
+                frappe.user_roles.includes(r.message.auto_pos_for_role) &&
+                frm.doc.docstatus == 0 &&
+                frappe.session.user != 'Administrator' &&
+                frm.doc.is_pos != 1
+            ) {
+                frm.set_value("is_pos", true);
+                frm.set_df_property("is_pos", "read_only", true);
             }
-        });
+        }
     },
 });
 
@@ -151,6 +149,7 @@ frappe.ui.form.on("Sales Invoice Item", {
 });
 
 var validate_item_remaining_qty = function (frm, cdt, cdn) {
+    if (!frm.csf_settings.validate_item_qty) return;
     const item_row = locals[cdt][cdn];
     if (item_row.item_code == null) { return; }
     if (item_row.allow_over_sell == 1) { return; }

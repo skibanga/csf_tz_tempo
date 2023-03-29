@@ -11,6 +11,7 @@
   "enable_dependent_auto_permission",
   "limit_uom_as_item_uom",
   "show_customer_outstanding_in_sales_order",
+  "validate_item_qty",
   "column_break_3",
   "auto_pos_for_role",
   "is_manufacture",
@@ -112,12 +113,18 @@
    "fieldname": "show_customer_outstanding_in_sales_order",
    "fieldtype": "Check",
    "label": "Show Customer Outstanding in Sales Order"
+  },
+  {
+   "default": "1",
+   "fieldname": "validate_item_qty",
+   "fieldtype": "Check",
+   "label": "Validate Item Qty"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-10 15:26:10.084553",
+ "modified": "2023-03-30 01:17:26.273654",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
@@ -144,5 +151,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
