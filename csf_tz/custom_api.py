@@ -839,8 +839,8 @@ def validate_item_remaining_qty(
         return
     if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
         return
-    is_stock_item = frappe.get_value("Item", item_code, "is_stock_item")
-    if is_stock_item == 1:
+    item = frappe.get_value("Item", item_code)
+    if item.is_stock_item == 1 and item.has_batch_no == 0:
         item_balance = get_item_balance(item_code, company, warehouse) or 0
         if not item_balance:
             frappe.throw(
@@ -1486,75 +1486,6 @@ def set_fee_abbr(doc=None, method=None):
         return
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
 
-
-@frappe.whitelist()
-def enroll_all_students(self):
-    """Enrolls students or applicants.
-
-    :param self: Program Enrollment Tool
-
-    This is created to allow enqueue of students creation.
-    The default enroll process fails when there are too many enrollments to do at a go
-    """
-    import json
-
-    self = json.loads(self)
-    self = frappe.get_doc(dict(self))
-
-    if self.get_students_from == "Student Applicant":
-        frappe.msgprint("Remove student applicants that are already created")
-
-    if len(self.students) > 30:
-        frappe.enqueue("csf_tz.custom_api.enroll_students", self=self)
-        return "queued"
-    else:
-        enroll_students(self=self)
-        return len(self.students)
-
-
-@frappe.whitelist()
-def enroll_students(self):
-    """Enrolls students or applicants.
-
-    :param self: Program Enrollment Tool
-
-    This is a copy of ERPNext function meant to allow loading from custom doctypes and frappe.enqueue
-    Used in csf_tz.custom_api.enroll_students
-    """
-    from erpnext.education.api import enroll_student
-
-    total = len(self.students)
-    for i, stud in enumerate(self.students):
-        frappe.publish_realtime(
-            "program_enrollment_tool",
-            dict(progress=[i + 1, total]),
-            user=frappe.session.user,
-        )
-        if stud.student:
-            prog_enrollment = frappe.new_doc("Program Enrollment")
-            prog_enrollment.student = stud.student
-            prog_enrollment.student_name = stud.student_name
-            prog_enrollment.program = self.new_program
-            prog_enrollment.academic_year = self.new_academic_year
-            prog_enrollment.academic_term = self.new_academic_term
-            prog_enrollment.student_batch_name = (
-                stud.student_batch_name
-                if stud.student_batch_name
-                else self.new_student_batch
-            )
-            prog_enrollment.save()
-        elif stud.student_applicant:
-            prog_enrollment = enroll_student(stud.student_applicant)
-            prog_enrollment.academic_year = self.academic_year
-            prog_enrollment.academic_term = self.academic_term
-            prog_enrollment.student_batch_name = (
-                stud.student_batch_name
-                if stud.student_batch_name
-                else self.new_student_batch
-            )
-            prog_enrollment.save()
-
-
 @frappe.whitelist()
 def get_tax_category(doc_type, company):
     fetch_default_tax_category = (
@@ -1766,9 +1697,11 @@ def auto_close_dn():
 
 def batch_splitting(doc, method):
     """Splitting of batches before insert of sales invoice
-    this works only if allow batch splitting is ticked on CSF TZ Settings
+    this works only if is_return = 0 and allow batch splitting is ticked on CSF TZ Settings
     """
-
+    if doc.is_return == 1:
+        return 
+       
     if not frappe.db.get_single_value('CSF TZ Settings', "allow_batch_splitting"):
         return
 
@@ -1819,11 +1752,11 @@ def get_item_duplicates(order_doc):
 def get_batch_per_item(item_code, warehouse):
     """"fetch batch details for item code and warehouse"""
     batch_records = frappe.db.sql("""
-        select batch_no, warehouse, sum(actual_qty) as qty, ba.stock_uom, ba.expiry_date
+        select sle.batch_no, sle.warehouse, sum(sle.actual_qty) as qty, ba.stock_uom, ba.expiry_date
         from `tabStock Ledger Entry` sle 
         inner join `tabBatch` ba on sle.batch_no = ba.batch_id
         where sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != "" and sle.warehouse = '%s'
-        group by batch_no, warehouse
+        group by sle.batch_no, sle.warehouse
         order by ba.expiry_date
         """%(item_code, warehouse), as_dict=True
     )
@@ -1842,8 +1775,14 @@ def allocate_batches_for_single_items(doc, items, warehouse, sales_order, fields
 
         if batches:
             for batch_obj in batches:
+                if batch_obj.qty == 0:
+                    continue
+
+                if b_qty > 0 and b_qty >= row.stock_qty:
+                    continue
+
                 if row.conversion_factor > 1:
-                    b_qty += cint(single_items_allocate_qty_per_conversion_factor(
+                    b_qty = cint(single_items_allocate_qty_per_conversion_factor(
                         doc, row, batch_obj, sales_order, fields_to_clear, b_qty
                     ))
                 
@@ -1861,6 +1800,12 @@ def allocate_batches_for_single_items(doc, items, warehouse, sales_order, fields
                             b_qty = b_qty + remainder
                         
                             doc.append("items", new_row)
+            
+            if b_qty < row.qty:
+                frappe.throw("Qty: {0} available for item: {1} on warehouse: {2} is not enough to complete requested Qty: {3}<br>\
+                Please update sales order: {4} to match the Qty available on stock".format(
+                    frappe.bold(b_qty), frappe.bold(row.item_code), frappe.bold(warehouse), frappe.bold(row.qty), frappe.bold(row.parent)
+                ))
         
         else:
             new_row = update_non_batch_items(row, sales_order, fields_to_clear)
@@ -1887,16 +1832,23 @@ def allocate_batch_for_duplicate_items(doc, duplicated_items, warehouse, sales_o
                 if item_code == item.item_code:
                     b_qty = 0
                     for batch_obj in batches:
+                        if batch_obj.qty == 0:
+                            continue
+
+                        if b_qty > 0 and b_qty >= item.stock_qty:
+                            continue
+
                         if batch_obj.batch_no not in batch_used:
                             if item.conversion_factor > 1:
-                                b_qty += cint(duplicated_items_allocate_qty_per_conversion_factor(
+                                b_qty = cint(duplicated_items_allocate_qty_per_conversion_factor(
                                     doc, item, batch_obj, sales_order, fields_to_clear, batch_used, qty_remain_per_batch_obj, b_qty
                                 ))
                                 
                             else:
-                                b_qty += cint(duplicated_items_allocate_qty_for_non_conversion_factor(
+                                b_qty = cint(duplicated_items_allocate_qty_for_non_conversion_factor(
                                     doc, item, batch_obj, sales_order, fields_to_clear, batch_used, qty_remain_per_batch_obj, b_qty
-                                )) 
+                                ))
+                    
                                 
         else:
             for elem in duplicated_items:

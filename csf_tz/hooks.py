@@ -160,6 +160,10 @@ fixtures = [
                     "Employee-employee_salary_component_limit",
                     "Employee-heslb_f4_index_number",
                     "Sales Invoice Item-is_ignored_in_pending_qty",
+                    "Sales Invoice-authotp",
+                    "Sales Invoice-authotp_method",
+                    "Sales Invoice-column_break_sn02w",
+                    "Sales Invoice-authotp_validated",
                 ),
             ]
         ],
@@ -284,10 +288,10 @@ web_include_css = "/assets/csf_tz/css/theme.css"
 # include js in doctype views
 doctype_js = {
     "Payment Entry": "csf_tz/payment_entry.js",
-    "Sales Invoice": "csf_tz/sales_invoice.js",
+    "Sales Invoice": ["csf_tz/sales_invoice.js", "authotp/api/sales_invoice.js"],
     "Sales Order": "csf_tz/sales_order.js",
     "Delivery Note": "csf_tz/delivery_note.js",
-    "Customer": "csf_tz/customer.js",
+    "Customer": ["csf_tz/customer.js","authotp/api/customer.js"],
     "Supplier": "csf_tz/supplier.js",
     "Stock Entry": "csf_tz/stock_entry.js",
     "Account": "csf_tz/account.js",
@@ -365,6 +369,9 @@ doc_events = {
         "validate": "csf_tz.custom_api.getInvoiceExchangeRate"
     },
     "Sales Invoice": {
+        "before_submit": [
+            "csf_tz.authotp.api.sales_invoice.before_submit",
+        ],
         "on_submit": [
             "csf_tz.custom_api.validate_net_rate",
             "csf_tz.custom_api.create_delivery_note",
