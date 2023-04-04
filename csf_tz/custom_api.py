@@ -839,8 +839,8 @@ def validate_item_remaining_qty(
         return
     if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
         return
-    is_stock_item = frappe.get_value("Item", item_code, "is_stock_item")
-    if is_stock_item == 1:
+    item = frappe.get_value("Item", item_code)
+    if item.is_stock_item == 1 and item.has_batch_no == 0:
         item_balance = get_item_balance(item_code, company, warehouse) or 0
         if not item_balance:
             frappe.throw(
@@ -1485,75 +1485,6 @@ def set_fee_abbr(doc=None, method=None):
     if not send_fee_details_to_bank:
         return
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
-
-
-@frappe.whitelist()
-def enroll_all_students(self):
-    """Enrolls students or applicants.
-
-    :param self: Program Enrollment Tool
-
-    This is created to allow enqueue of students creation.
-    The default enroll process fails when there are too many enrollments to do at a go
-    """
-    import json
-
-    self = json.loads(self)
-    self = frappe.get_doc(dict(self))
-
-    if self.get_students_from == "Student Applicant":
-        frappe.msgprint("Remove student applicants that are already created")
-
-    if len(self.students) > 30:
-        frappe.enqueue("csf_tz.custom_api.enroll_students", self=self)
-        return "queued"
-    else:
-        enroll_students(self=self)
-        return len(self.students)
-
-
-@frappe.whitelist()
-def enroll_students(self):
-    """Enrolls students or applicants.
-
-    :param self: Program Enrollment Tool
-
-    This is a copy of ERPNext function meant to allow loading from custom doctypes and frappe.enqueue
-    Used in csf_tz.custom_api.enroll_students
-    """
-    from erpnext.education.api import enroll_student
-
-    total = len(self.students)
-    for i, stud in enumerate(self.students):
-        frappe.publish_realtime(
-            "program_enrollment_tool",
-            dict(progress=[i + 1, total]),
-            user=frappe.session.user,
-        )
-        if stud.student:
-            prog_enrollment = frappe.new_doc("Program Enrollment")
-            prog_enrollment.student = stud.student
-            prog_enrollment.student_name = stud.student_name
-            prog_enrollment.program = self.new_program
-            prog_enrollment.academic_year = self.new_academic_year
-            prog_enrollment.academic_term = self.new_academic_term
-            prog_enrollment.student_batch_name = (
-                stud.student_batch_name
-                if stud.student_batch_name
-                else self.new_student_batch
-            )
-            prog_enrollment.save()
-        elif stud.student_applicant:
-            prog_enrollment = enroll_student(stud.student_applicant)
-            prog_enrollment.academic_year = self.academic_year
-            prog_enrollment.academic_term = self.academic_term
-            prog_enrollment.student_batch_name = (
-                stud.student_batch_name
-                if stud.student_batch_name
-                else self.new_student_batch
-            )
-            prog_enrollment.save()
-
 
 @frappe.whitelist()
 def get_tax_category(doc_type, company):
