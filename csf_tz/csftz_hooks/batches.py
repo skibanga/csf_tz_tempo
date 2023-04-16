@@ -2,6 +2,7 @@ import frappe
 from frappe import _
 
 
+@frappe.whitelist()
 def get_batch_info(batch_no):
     """
     search for batch info in
