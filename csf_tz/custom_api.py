@@ -1732,7 +1732,6 @@ def batch_splitting(doc, method):
     doc.set_warehouse = warehouse
 
 
-
 def get_item_duplicates(order_doc):
     single_items = []
     duplicated_items = []
@@ -2010,3 +2009,16 @@ def update_non_batch_items(row, sales_order, fields_to_clear):
 
     return new_row
  
+def validate_grand_total(doc, method):
+    """Validate grand total of sales invoice"""
+
+    if len(doc.items) > 0:
+        total_amount = sum([item.amount for item in doc.items])
+
+        payment_amount = sum([payment.amount for payment in doc.payments])
+    
+        if payment_amount and total_amount != payment_amount:
+            frappe.throw(_(f"<h4 class='text-center' style='background-color: #D3D3D3; font-weight: bold; font-size: 14px'>\
+                Total Amount for all Items: <strong>{total_amount}</strong> must be equal to Paid Amount: <strong>{payment_amount}</strong>,<br>\
+                Please check before submitting this invoice </h4>")
+            )
