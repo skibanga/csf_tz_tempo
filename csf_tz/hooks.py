@@ -370,6 +370,7 @@ doc_events = {
     },
     "Sales Invoice": {
         "before_submit": [
+            "csf_tz.custom_api.validate_grand_total",
             "csf_tz.authotp.api.sales_invoice.before_submit",
         ],
         "on_submit": [
