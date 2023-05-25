@@ -1756,14 +1756,22 @@ def get_item_duplicates(order_doc):
 
 def get_batch_per_item(item_code, warehouse):
     """"fetch batch details for item code and warehouse"""
+    
+    conditions = ""
+    if warehouse:
+        conditions = "sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != '' and sle.warehouse = '%s' "%(item_code, warehouse)
+    else:
+        conditions = "sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != '' "%(item_code)
+    
     batch_records = frappe.db.sql("""
         select sle.batch_no, sle.warehouse, sum(sle.actual_qty) as qty, ba.stock_uom, ba.expiry_date
         from `tabStock Ledger Entry` sle 
         inner join `tabBatch` ba on sle.batch_no = ba.batch_id
-        where sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != "" and sle.warehouse = '%s'
+        where {conditions}
+        AND ba.expiry_date >= %s
         group by sle.batch_no, sle.warehouse
         order by ba.expiry_date
-        """%(item_code, warehouse), as_dict=True
+        """.format(conditions=conditions), posting_date, as_dict=True
     )
     return batch_records
     
