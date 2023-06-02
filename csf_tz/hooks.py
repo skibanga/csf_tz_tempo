@@ -94,7 +94,15 @@ doctype_js = {
 # ------------
 
 # before_install = "csf_tz.install.before_install"
-# after_install = "csf_tz.install.after_install"
+after_install = [
+    "csf_tz.patches.custom_fields.custom_fields_for_removed_edu_fields_in_csf_tz.execute",
+    "csf_tz.patches.remove_stock_entry_qty_field.execute",
+    "csf_tz.patches.remove_core_doctype_custom_docperm.execute",
+    "csf_tz.patches.add_custom_fields_for_sales_invoice_item_and_purchase_invoice_item.execute",
+    "csf_tz.patches.add_custom_fields_on_customer_for_auto_close_dn.execute",
+    "csf_tz.patches.custom_fields.create_custom_fields_for_additional_salary.execute",
+    "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute"
+]
 
 # Desk Notifications
 # ------------------
