@@ -101,7 +101,8 @@ after_install = [
     "csf_tz.patches.add_custom_fields_for_sales_invoice_item_and_purchase_invoice_item.execute",
     "csf_tz.patches.add_custom_fields_on_customer_for_auto_close_dn.execute",
     "csf_tz.patches.custom_fields.create_custom_fields_for_additional_salary.execute",
-    "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute"
+    "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute",
+    "csf_tz.patches.custom_fields.payroll_approval_custom_fields"
 ]
 
 # Desk Notifications
@@ -205,6 +206,13 @@ doc_events = {
     },
     "Custom DocPerm": {
         "validate": "csf_tz.csftz_hooks.custom_docperm.grant_dependant_access",
+    },
+    "Payroll Entry": {
+        "before_insert": "csf_tz.csftz_hooks.payroll.before_insert_payroll_entry",
+        "before_update_after_submit": "csf_tz.csftz_hooks.payroll.before_update_after_submit",
+    },
+    "Salary Slip": {
+        "before_insert": "csf_tz.csftz_hooks.payroll.before_insert_salary_slip"
     },
 }
 
