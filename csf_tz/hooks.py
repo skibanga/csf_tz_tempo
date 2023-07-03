@@ -102,7 +102,7 @@ after_install = [
     "csf_tz.patches.add_custom_fields_on_customer_for_auto_close_dn.execute",
     "csf_tz.patches.custom_fields.create_custom_fields_for_additional_salary.execute",
     "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute",
-    "csf_tz.patches.custom_fields.payroll_approval_custom_fields"
+    "csf_tz.patches.custom_fields.payroll_approval_custom_fields.execute"
 ]
 
 # Desk Notifications
