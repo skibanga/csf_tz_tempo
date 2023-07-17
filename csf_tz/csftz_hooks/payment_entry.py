@@ -38,12 +38,15 @@ def get_outstanding_reference_documents(args):
                 return []
             elif supplier_status["hold_type"] == "Payments":
                 if (
-                    not supplier_status["release_date"] or getdate(nowdate()) <= supplier_status["release_date"]
+                    not supplier_status["release_date"]
+                    or getdate(nowdate()) <= supplier_status["release_date"]
                 ):
                     return []
 
     party_account_currency = get_account_currency(args.get("party_account"))
-    company_currency = frappe.get_cached_value("Company", args.get("company"), "default_currency")
+    company_currency = frappe.get_cached_value(
+        "Company", args.get("company"), "default_currency"
+    )
 
     # Get positive outstanding sales /purchase invoices
     condition = ""
@@ -69,7 +72,9 @@ def get_outstanding_reference_documents(args):
             condition += " and {0} between '{1}' and '{2}'".format(
                 fieldname, args.get(date_fields[0]), args.get(date_fields[1])
             )
-            posting_and_due_date.append(ple[fieldname][args.get(date_fields[0]) : args.get(date_fields[1])])
+            posting_and_due_date.append(
+                ple[fieldname][args.get(date_fields[0]) : args.get(date_fields[1])]
+            )
 
     if args.get("company"):
         condition += " and company = {0}".format(frappe.db.escape(args.get("company")))
@@ -85,14 +90,19 @@ def get_outstanding_reference_documents(args):
         max_outstanding=args.get("outstanding_amt_less_than"),
         accounting_dimensions=accounting_dimensions_filter,
     )
-    from erpnext.accounts.doctype.payment_entry.payment_entry import split_invoices_based_on_payment_terms
+    from erpnext.accounts.doctype.payment_entry.payment_entry import (
+        split_invoices_based_on_payment_terms,
+    )
+
     outstanding_invoices = split_invoices_based_on_payment_terms(outstanding_invoices)
 
     for d in outstanding_invoices:
         d["exchange_rate"] = 1
         if party_account_currency != company_currency:
             if d.voucher_type in frappe.get_hooks("invoice_doctypes"):
-                d["exchange_rate"] = frappe.db.get_value(d.voucher_type, d.voucher_no, "conversion_rate")
+                d["exchange_rate"] = frappe.db.get_value(
+                    d.voucher_type, d.voucher_no, "conversion_rate"
+                )
             elif d.voucher_type == "Journal Entry":
                 d["exchange_rate"] = get_exchange_rate(
                     party_account_currency, company_currency, d.posting_date
@@ -102,15 +112,15 @@ def get_outstanding_reference_documents(args):
 
     # Get all SO / PO which are not fully billed or against which full advance not paid
     orders_to_be_billed = []
-    orders_to_be_billed = get_orders_to_be_billed(
-        args.get("posting_date"),
-        args.get("party_type"),
-        args.get("party"),
-        args.get("company"),
-        party_account_currency,
-        company_currency,
-        filters=args,
-    )
+    # orders_to_be_billed = get_orders_to_be_billed(
+    #     args.get("posting_date"),
+    #     args.get("party_type"),
+    #     args.get("party"),
+    #     args.get("company"),
+    #     party_account_currency,
+    #     company_currency,
+    #     filters=args,
+    # )
 
     # Get negative outstanding sales /purchase invoices
     negative_outstanding_invoices = []
