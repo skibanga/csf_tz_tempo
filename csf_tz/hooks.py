@@ -14,7 +14,7 @@ app_license = "GNU General Public License (v3)"
 
 # Override Document Class
 override_doctype_class = {
-	'Salary Slip': 'csf_tz.overrides.salary_slip.SalarySlip',
+    "Salary Slip": "csf_tz.overrides.salary_slip.SalarySlip",
 }
 
 # Includes in <head>
@@ -45,7 +45,7 @@ doctype_js = {
     "Sales Invoice": ["csf_tz/sales_invoice.js", "authotp/api/sales_invoice.js"],
     "Sales Order": "csf_tz/sales_order.js",
     "Delivery Note": "csf_tz/delivery_note.js",
-    "Customer": ["csf_tz/customer.js","authotp/api/customer.js"],
+    "Customer": ["csf_tz/customer.js", "authotp/api/customer.js"],
     "Supplier": "csf_tz/supplier.js",
     "Stock Entry": "csf_tz/stock_entry.js",
     "Account": "csf_tz/account.js",
@@ -102,7 +102,7 @@ after_install = [
     "csf_tz.patches.add_custom_fields_on_customer_for_auto_close_dn.execute",
     "csf_tz.patches.custom_fields.create_custom_fields_for_additional_salary.execute",
     "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute",
-    "csf_tz.patches.custom_fields.payroll_approval_custom_fields.execute"
+    "csf_tz.patches.custom_fields.payroll_approval_custom_fields.execute",
 ]
 
 # Desk Notifications
@@ -214,6 +214,9 @@ doc_events = {
     },
     "Salary Slip": {
         "before_insert": "csf_tz.csftz_hooks.payroll.before_insert_salary_slip"
+    },
+    "Attendance": {
+        "validate": "csf_tz.csftz_hooks.attendance.process_overtime",
     },
 }
 
