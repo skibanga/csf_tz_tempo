@@ -94,7 +94,9 @@ def get_outstanding_reference_documents(args):
         split_invoices_based_on_payment_terms,
     )
 
-    outstanding_invoices = split_invoices_based_on_payment_terms(outstanding_invoices)
+    outstanding_invoices = split_invoices_based_on_payment_terms(
+        outstanding_invoices, args.get("company")
+    )
 
     for d in outstanding_invoices:
         d["exchange_rate"] = 1
