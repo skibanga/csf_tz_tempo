@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from erpnext.education.doctype.program_enrollment.program_enrollment import ProgramEnrollment
+from education.education.doctype.program_enrollment.program_enrollment import ProgramEnrollment
 # from csf_tz import console
 
 
