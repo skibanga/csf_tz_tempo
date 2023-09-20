@@ -56,12 +56,15 @@
                     </td>
                     <td style="border: 1px solid black;">
                         {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{
-                            soltedData[i]['price_per_unit'] }}</div>
+                            (soltedData[i]['price_per_unit']).toLocaleString('en-TZ', {style: 'currency', currency:
+                            'TZS'}) }}
+                            </div>
                             <br>
                             {% } %}
                     </td>
                     <td style="border: 1px solid black;">
-                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{ soltedData[i]['price'] }}
+                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{
+                            (soltedData[i]['price']).toLocaleString('en-TZ', {style: 'currency', currency: 'TZS'}) }}
                             </div>
                             <br>
                             {% } %}
