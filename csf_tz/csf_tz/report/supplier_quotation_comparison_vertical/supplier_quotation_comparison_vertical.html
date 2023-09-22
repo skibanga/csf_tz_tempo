@@ -14,7 +14,7 @@
     (!supplierName.includes(supplier_name) && supplier_name !=="" ) { %} {% supplierName.push(supplier_name); %} {% } %}
     {% if (!itemCode.includes(item_code)) { %} {% itemCode.push(item_code); %} {% } %} {% if
     (!supplier_payment_terms.hasOwnProperty(supplier_name)) { %} {%
-    supplier_payment_terms[supplier_name]=data[i]['custom_payment_terms']; %} {% } %} {% if
+    supplier_payment_terms[supplier_name]=data[i]['terms']; %} {% } %} {% if
     (!supplier_warranty.hasOwnProperty(supplier_name)) { %} {%
     supplier_warranty[supplier_name]=data[i]['custom_warranty']; %} {% } %} {% } %} <h2 style="text-align: center;">
     COMPARISON SHEET</h2>

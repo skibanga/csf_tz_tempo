@@ -42,7 +42,7 @@ def get_data(filters):
             sq_item.lead_time_days,
             sq.supplier.as_("supplier_name"),
             sq.valid_till,
-            sq.custom_payment_terms,
+            sq.terms,
             sq.custom_warranty,
         )
         .where(
@@ -120,7 +120,7 @@ def prepare_data(supplier_quotation_data, filters):
             "request_for_quotation": data.get("request_for_quotation"),
             "valid_till": data.get("valid_till"),
             "lead_time_days": data.get("lead_time_days"),
-            "custom_payment_terms": data.get("custom_payment_terms"),
+            "terms": data.get("terms"),
             "custom_warranty": data.get("custom_warranty"),
         }
         row["price_per_unit"] = flt(row["price"]) / (flt(data.get("stock_qty")) or 1)
