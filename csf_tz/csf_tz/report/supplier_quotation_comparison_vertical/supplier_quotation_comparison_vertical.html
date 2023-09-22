@@ -2,114 +2,170 @@
 </p>
 
 {% var supplierName = []; %}
+{% var itemCode = []; %}
 {% var total_by_supplier = {}; %}
 {% var supplier_payment_terms = {}; %}
+{% var supplier_warranty = {}; %}
+{% var fix_supplier_name = ''; %}
 
-{% for (var i = 0, l = data.length; i < l; i++) { %} {% var supplier_name=data[i]['supplier_name']; %} {%
-    if(!supplierName.includes(supplier_name) && supplier_name !="" ) { %} {% supplierName.push(supplier_name); %} {% }
-    %} {% } %} <h2 style="text-align: center;">COMPARISSION SHEET</h2>
+{% for (var i = 0, l = data.length; i < l; i++) { %} {% var supplier_name=data[i]['supplier_name']; %} {% var
+    item_code=data[i]['item_code']; %} {% if (supplier_name !=="" ) { %} {% fix_supplier_name=supplier_name %} {% } %}
+    {% if (data[i]['supplier_name']==="" ) { %} {% data[i]['supplier_name']=fix_supplier_name %} {% } %} {% if
+    (!supplierName.includes(supplier_name) && supplier_name !=="" ) { %} {% supplierName.push(supplier_name); %} {% } %}
+    {% if (!itemCode.includes(item_code)) { %} {% itemCode.push(item_code); %} {% } %} {% if
+    (!supplier_payment_terms.hasOwnProperty(supplier_name)) { %} {%
+    supplier_payment_terms[supplier_name]=data[i]['terms']; %} {% } %} {% if
+    (!supplier_warranty.hasOwnProperty(supplier_name)) { %} {%
+    supplier_warranty[supplier_name]=data[i]['custom_warranty']; %} {% } %} {% } %} <h2 style="text-align: center;">
+    COMPARISON SHEET</h2>
     <table style="border: 1px solid black; width: 100%;">
         <thead>
             <tr>
-                <th>Item Code</th>
-                {% for (var i = 0, l = supplierName.length; i < l; i++) { %} <th colspan="3">{{ supplierName[i] }}</th>
+                <th>Supplier</th>
+                {% for (var i = 0, l = supplierName.length; i < l; i++) { %} <th
+                    style="border: 1px solid black; text-align:center;" colspan="4">{{ supplierName[i] }}</th>
                     {% } %}
+                    <th>REMARKS</th>
             </tr>
-            <tr>
-                <th></th>
-                {% for (var k = 0, l = supplierName.length; k < l; k++) { %} <th>Qty</th>
-                    <th>UOM</th>
-                    <th>Price</th>
+            <tr style="border: 1px solid black;">
+                <th>Item Code</th>
+                {% for (var k = 0, l = supplierName.length; k < l; k++) { %} <th
+                    style="border: 1px solid black; text-align:center;">UOM</th>
+                    <th style="border: 1px solid black; text-align:center;">Qty</th>
+                    <th style="border: 1px solid black; text-align:center;">Rate</th>
+                    <th style="border: 1px solid black; text-align:center;">Amount</th>
                     {% } %}
             </tr>
         </thead>
         <tbody>
-            {% for (var z = 0, x = data.length; z < x; z++) { %} <tr style="border: 1px solid black;">
-                <td>{{ data[z]['item_code'] }}</td>
-
-                {% if (supplierName.includes(data[z]['supplier_name'])) { %}
-                {% var index = supplierName.indexOf(data[z]['supplier_name']); %}
-                {% var supplier_name = data[z]['supplier_name']; %}
-
-                {% if (total_by_supplier.hasOwnProperty(supplier_name)) { %}
-                {% total_by_supplier[supplier_name] += data[z]['price']; %}
-                {% } else { %}
-                {% total_by_supplier[supplier_name] = data[z]['price']; %}
-                {% } %}
-
-                {% if (!supplier_payment_terms.hasOwnProperty(supplier_name)) { %}
-                {% supplier_payment_terms[supplier_name] = data[z]['custom_custom_field']; %}
-                {% } %}
-
-                {% for (var m = 0; m < index; m++) { %} <td style="border: 1px solid black;">
+            {% for (var z = 0, x = data.length; z < x; z++) { %} {% var supplier_name=data[z]['supplier_name']; %} {% if
+                (total_by_supplier.hasOwnProperty(supplier_name)) { %} {% total_by_supplier[supplier_name]
+                +=data[z]['price']; %} {% } else { %} {% total_by_supplier[supplier_name]=data[z]['price']; %} {% } %}
+                {% } %} {% for (var k=0, n=itemCode.length; k < n; k++) { %} <tr>
+                <td style="border: 1px solid black;">{{ itemCode[k] }}</td>
+                {% for (var x = 0, p = supplierName.length; x < p; x++) { %} {% var soltedData=data.filter(f=>
+                    f.supplier_name == supplierName[x] && f.item_code == itemCode[k]); %}
+                    {% if (soltedData.length > 0) { %}
+                    {% if (soltedData.length > 1) { %}
+                    <td style="border: 1px solid black;">
+                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{ soltedData[i]['uom'] }}</div>
+                            <br>
+                            {% } %}
                     </td>
+                    <td style="border: 1px solid black;">
+                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{ soltedData[i]['qty'] }}</div>
+                            <br>
+                            {% } %}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{
+                            (soltedData[i]['price_per_unit']).toLocaleString('en-TZ', {style: 'currency', currency:
+                            'TZS'}) }}
+                            </div>
+                            <br>
+                            {% } %}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        {% for (var i = 0, l = soltedData.length; i < l; i++) { %} <div>{{
+                            (soltedData[i]['price']).toLocaleString('en-TZ', {style: 'currency', currency: 'TZS'}) }}
+                            </div>
+                            <br>
+                            {% } %}
+                    </td>
+                    {% } else { %}
+                    <td style="border: 1px solid black;">{{ soltedData[0]['uom'] }}</td>
+                    <td style="border: 1px solid black;">{{ soltedData[0]['qty'] }}</td>
+                    <td style="border: 1px solid black;">{{ soltedData[0]['price_per_unit'] }}</td>
+                    <td style="border: 1px solid black;">{{ soltedData[0]['price'] }}</td>
+                    {% } %}
+                    {% } else { %}
+                    <td style="border: 1px solid black;"></td>
+                    <td style="border: 1px solid black;"></td>
                     <td style="border: 1px solid black;"></td>
                     <td style="border: 1px solid black;"></td>
                     {% } %}
-
-                    <td style="border: 1px solid black;">{{ data[z]['qty'] }}</td>
-                    <td style="border: 1px solid black;">{{ data[z]['uom'] }}</td>
-                    <td style="border: 1px solid black;">{{ data[z]['price'] }}</td>
-
-                    {% for (var m = index + 1; m < supplierName.length; m++) { %} <td style="border: 1px solid black;">
-                        </td>
-                        <td style="border: 1px solid black;"></td>
-                        <td style="border: 1px solid black;"></td>
-                        {% } %}
-
-                        {% } else { %}
-                        {% var index = supplierName.indexOf(supplier_name); %}
-                        {% if (total_by_supplier.hasOwnProperty(supplier_name)) { %}
-                        {% total_by_supplier[supplier_name] += data[z]['price']; %}
-                        {% } %}
-
-                        {% for (var m = 0; m < index; m++) { %} <td style="border: 1px solid black;">
+                    {% } %}
+                    <td style="border: 1px solid black;"></td>
+                    </tr>
+                    {% } %}
+                    <tr>
+                        <th style="border: 1px solid black;">PAYMENT TERMS</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {{ supplier_payment_terms[supplierName[m]] }}
                             </td>
-                            <td style="border: 1px solid black;"></td>
-                            <td style="border: 1px solid black;"></td>
                             {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">WARRANTY</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {{ supplier_warranty[supplierName[m]] }}
+                            </td>
+                            {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">TOTAL</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {% const formattedMoney = ((total_by_supplier[supplierName[m]])).toLocaleString('en-TZ',
+                            {style: 'currency', currency: 'TZS'}); %}
+                            {{ formattedMoney }}
 
-                            <td style="border: 1px solid black;">{{ data[z]['qty'] }}</td>
-                            <td style="border: 1px solid black;">{{ data[z]['uom'] }}</td>
-                            <td style="border: 1px solid black;">{{ data[z]['price'] }}</td>
+                            </td>
+                            {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">VAT 18%</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {% const formattedMoney = ((total_by_supplier[supplierName[m]] *
+                            0.18)).toLocaleString('en-TZ', {style: 'currency', currency: 'TZS'}); %}
+                            {{ formattedMoney }}
+                            </td>
+                            {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">GRAND TOTAL</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {% const formattedMoney = ((total_by_supplier[supplierName[m]] +
+                            (total_by_supplier[supplierName[m]] * 0.18))).toLocaleString('en-TZ', {style: 'currency',
+                            currency: 'TZS'}); %}
+                            {{ formattedMoney }}
+                            </td>
+                            {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">REMARKS</th>
+                        <td colspan="{{ supplierName.length * 4 }}" style="border: 1px solid black; text-align: right;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">PREPARED BY</th>
+                        <th colspan="{{ supplierName.length * 4 }}"
+                            style="border: 1px solid black; text-align: center;">
+                            CHECKED BY
+                        </th>
+                        <th style="border: 1px solid black; text-align: left;">AUTHORISED BY</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; font-weight: bold;">Name:</td>
+                        <td colspan="{{ supplierName.length * 4 }}"
+                            style="border: 1px solid black; text-align: left; font-weight: bold;">
+                            Name:
+                        </td>
+                        <td style="border: 1px solid black; text-align: left; font-weight: bold;">Name:</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; font-weight: bold;">Signature:</td>
+                        <td colspan="{{ supplierName.length * 4 }}"
+                            style="border: 1px solid black; text-align: left; font-weight: bold;">
+                            Signature:
+                        </td>
+                        <td style="border: 1px solid black; text-align: left; font-weight: bold;">Signature:</td>
+                    </tr>
 
-                            {% for (var m = index + 1; m < supplierName.length; m++) { %} <td
-                                style="border: 1px solid black;">
-                                </td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;"></td>
-                                {% } %}
-                                {% } %}
-                                </tr>
-                                {% } %}
-                                <!-- <tr>
-                                    <td style="border: 1px solid black;">PAYMENT TERMS</td>
-                                    {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="3"
-                                        style="border: 1px solid black; text-align: right;">
-                                        </td>
-                                        {% } %}
-                                </tr> -->
-                                <tr>
-                                    <td style="border: 1px solid black;">TOTAL</td>
-                                    {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="3"
-                                        style="border: 1px solid black; text-align: right;">{{
-                                        total_by_supplier[supplierName[m]] }}</td>
-                                        {% } %}
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid black;">VAT 18%</td>
-                                    {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="3"
-                                        style="border: 1px solid black; text-align: right;">{{
-                                        total_by_supplier[supplierName[m]] * 0.18 }}</td>
-                                        {% } %}
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid black;">GRAND TOTAL</td>
-                                    {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="3"
-                                        style="border: 1px solid black; text-align: right;">{{
-                                        total_by_supplier[supplierName[m]] + (total_by_supplier[supplierName[m]] * 0.18)
-                                        }}</td>
-                                        {% } %}
-                                </tr>
+
         </tbody>
     </table>
