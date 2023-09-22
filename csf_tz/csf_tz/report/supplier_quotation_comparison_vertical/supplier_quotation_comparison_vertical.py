@@ -43,6 +43,7 @@ def get_data(filters):
             sq.supplier.as_("supplier_name"),
             sq.valid_till,
             sq.custom_payment_terms,
+            sq.custom_warranty,
         )
         .where(
             (sq_item.parent == sq.name)
@@ -120,6 +121,7 @@ def prepare_data(supplier_quotation_data, filters):
             "valid_till": data.get("valid_till"),
             "lead_time_days": data.get("lead_time_days"),
             "custom_payment_terms": data.get("custom_payment_terms"),
+            "custom_warranty": data.get("custom_warranty"),
         }
         row["price_per_unit"] = flt(row["price"]) / (flt(data.get("stock_qty")) or 1)
 

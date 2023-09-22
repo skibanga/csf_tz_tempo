@@ -5,6 +5,7 @@
 {% var itemCode = []; %}
 {% var total_by_supplier = {}; %}
 {% var supplier_payment_terms = {}; %}
+{% var supplier_warranty = {}; %}
 {% var fix_supplier_name = ''; %}
 
 {% for (var i = 0, l = data.length; i < l; i++) { %} {% var supplier_name=data[i]['supplier_name']; %} {% var
@@ -13,8 +14,10 @@
     (!supplierName.includes(supplier_name) && supplier_name !=="" ) { %} {% supplierName.push(supplier_name); %} {% } %}
     {% if (!itemCode.includes(item_code)) { %} {% itemCode.push(item_code); %} {% } %} {% if
     (!supplier_payment_terms.hasOwnProperty(supplier_name)) { %} {%
-    supplier_payment_terms[supplier_name]=data[i]['custom_payment_terms']; %} {% } %} {% } %} <h2
-    style="text-align: center;">COMPARISON SHEET</h2>
+    supplier_payment_terms[supplier_name]=data[i]['custom_payment_terms']; %} {% } %} {% if
+    (!supplier_warranty.hasOwnProperty(supplier_name)) { %} {%
+    supplier_warranty[supplier_name]=data[i]['custom_warranty']; %} {% } %} {% } %} <h2 style="text-align: center;">
+    COMPARISON SHEET</h2>
     <table style="border: 1px solid black; width: 100%;">
         <thead>
             <tr>
@@ -90,6 +93,14 @@
                         {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
                             style="border: 1px solid black; text-align: right;">
                             {{ supplier_payment_terms[supplierName[m]] }}
+                            </td>
+                            {% } %}
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">WARRANTY</th>
+                        {% for (var m = 0; m < supplierName.length; m++) { %} <td colspan="4"
+                            style="border: 1px solid black; text-align: right;">
+                            {{ supplier_warranty[supplierName[m]] }}
                             </td>
                             {% } %}
                     </tr>
