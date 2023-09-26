@@ -221,7 +221,11 @@ def set_eligible_and_excess_overtime(
         else:
             excess_normal = datetime.strptime(str("00:00:00"), "%H:%M:%S")
 
-        excess_overtime = overtime_normal + excess_normal
+        excess_overtime = overtime_normal + timedelta(
+            hours=excess_normal.hour,
+            minutes=excess_normal.minute,
+            seconds=excess_normal.second,
+        )
         doc.eligible_overtime_normal = "00:00:00"
         doc.excess_overtime_normal = excess_overtime or "00:00:00"
 
@@ -236,7 +240,11 @@ def set_eligible_and_excess_overtime(
         else:
             excess_holiday = datetime.strptime(str("00:00:00"), "%H:%M:%S")
 
-        excess_overtime_holiday = overtime_holiday + excess_holiday
+        excess_overtime_holiday = overtime_holiday + timedelta(
+            hours=excess_holiday.hour,
+            minutes=excess_holiday.minute,
+            seconds=excess_holiday.second,
+        )
         doc.eligible_overtime_holiday = "00:00:00"
         doc.excess_overtime_holiday = excess_overtime_holiday or "00:00:00"
 
