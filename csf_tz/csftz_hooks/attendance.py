@@ -199,9 +199,11 @@ def set_eligible_and_excess_overtime(
     )
 
     if is_holiday == False:
-        eligible_overtime_normal = time_diff(
-            str(eligible_working_hours), str(threshold)
-        )
+        if eligible_working_hours > threshold:
+            eligible_overtime_normal = time_diff(
+                str(eligible_working_hours), str(threshold)
+            )
+
         excess_overtime_normal = excess_in_timedelta + excess_out_timedelta
     else:
         eligible_overtime_holiday = eligible_working_hours
