@@ -5,130 +5,185 @@ import frappe
 
 
 def get_xml(doc):
-    xml = get_first_xml_part(doc)
-    xml += get_payments_xml_part(doc)
-    xml += get_last_xml_part(doc)
-    return xml
+	xml = get_first_xml_part(doc)
+	xml += get_payments_xml_part(doc)
+	xml += get_last_xml_part(doc)
+	return xml
 
 
 def get_first_xml_part(doc):
-    settings_doc = frappe.get_cached_doc("Stanbic Setting", doc.stanbic_setting)
-    part = f"""<?xml version="1.0" encoding="UTF-8"?>
+	settings_doc = frappe.get_cached_doc("Stanbic Setting", doc.stanbic_setting)
+	part = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
 	<CstmrCdtTrfInitn>
 		<GrpHdr>
-		<MsgId>{doc.name}</MsgId>
-		<CreDtTm>{doc.modified}</CreDtTm>
-		<Authstn>
-			<Cd>AUTH</Cd>
-		</Authstn>
-		<NbOfTxs>{doc.number_of_transactions}</NbOfTxs>
-		<CtrlSum>{doc.control_sum}</CtrlSum>
-		<InitgPty>
-			<Nm>{settings_doc.payment_type}</Nm>
-			<Id>
-				<OrgId>
-					<Othr>
-					<Id>{settings_doc.customerid}</Id>
-						<SchmeNm>
-							<Prtry>{settings_doc.initiating_party_name}</Prtry>
-						</SchmeNm>
-					</Othr>
-				</OrgId>
-			</Id>
-		</InitgPty>
+			<MsgId>{doc.name}</MsgId>
+			<CreDtTm>{doc.modified}</CreDtTm>
+			<?Authstn>
+				<Cd>?AUTH</Cd>
+			</?Authstn>
+			<NbOfTxs>{doc.number_of_transactions}</NbOfTxs>
+			<CtrlSum>{doc.control_sum}</CtrlSum>
+			<InitgPty>
+				<Nm>{settings_doc.initiating_party_name}</Nm>
+				<Id>
+					<OrgId>
+						<BICOrBEI></BICOrBEI>
+						<Othr>
+						<Id>{settings_doc.customerid}</Id>
+							<SchmeNm>
+								<Prtry>{settings_doc.payment_type}</Prtry>
+							</SchmeNm>
+						</Othr>
+					</OrgId>
+				</Id>
+			</InitgPty>
 		</GrpHdr>
 		<PmtInf>
 			<PmtInfId>{doc.name}</PmtInfId>
 				<PmtMtd>TRF</PmtMtd>
 				<BtchBookg>false</BtchBookg>
-				<NbOfTxs>1</NbOfTxs>
-				<CtrlSum>20.00</CtrlSum>
 			<PmtTpInf>
-				<InstrPrty>HIGH</InstrPrty>
+				<InstrPrty>NORM</InstrPrty>
+				<LclInstrm>
+					<Prtry>AVAIL</Prtry>
+				</LclInstrm>
+				<CtgyPurp>
+					<Prtry>61</Prtry>
+				</CtgyPurp>
 			</PmtTpInf>
-			<ReqdExctnDt>2014-07-23</ReqdExctnDt>
+			<ReqdExctnDt>{doc.posting_date}</ReqdExctnDt>
 			<Dbtr>
-				<Nm>ORDERING CUSTOMER NAME</Nm>
+				<Nm>{settings_doc.initiating_party_name}</Nm>
+				<PstlAdr>
+					<Ctry>{settings_doc.ordering_bank_country_code.upper()}</Ctry>
+				</PstlAdr>
+				<Id>
+					<OrgId>
+						<Othr>
+						</Othr>
+					</OrgId>
+				</Id>
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
+					<IBAN></IBAN>
 					<Othr>
-						<Id>22006622</Id>
+						<Id>{settings_doc.ordering_customer_account_number}</Id>
 					</Othr>
 				</Id>
-				<Ccy>ZAR</Ccy>
+				<Tp>
+					<Cd>{settings_doc.ordering_account_type}</Cd>
+				</Tp>
+				<Ccy>{settings_doc.ordering_account_currency}</Ccy>
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
+					<BIC>{settings_doc.ordering_bank_bic}</BIC>
 					<ClrSysMmbId>
-						<MmbId>020909</MmbId>
+						<MmbId>{settings_doc.ordering_bank_sort_code}</MmbId>
 					</ClrSysMmbId>
-					<Nm>StandardBankZ.A</Nm>
+					<?Nm>?StandardBankZ.A</?Nm>
 					<PstlAdr>
-						<Ctry>ZA</Ctry>
+						<Ctry>{settings_doc.ordering_bank_country_code.upper()}</Ctry>
 					</PstlAdr>
 				</FinInstnId>
 			</DbtrAgt>
-    """
-    return part
+			<ChrgBr>{settings_doc.charges_bearer}</ChrgBr>
+			<ChrgsAcct>
+				<Id>
+				</Id>
+			</ChrgsAcct>
+			<ChrgsAcctAgt>
+				<FinInstnId>
+				</FinInstnId>
+			</ChrgsAcctAgt>
+	"""
+	return part
 
 
 def get_payment_part(payment):
-    part = """
+	part = f"""
 			<CdtTrfTxInf>
 				<PmtId>
-					<InstrId>5574152</InstrId>
-					<EndToEndId>5574152</EndToEndId>
+					<?InstrId>?5574152</?InstrId>
+					<EndToEndId>{payment.salary_slip}</EndToEndId>
 				</PmtId>
+				<PmtTpInf>
+					<InstrPrty>NORM</InstrPrty>
+					<SvcLvl>
+					</SvcLvl>
+					<CtgyPurp>
+						<Prtry>61</Prtry>
+					</CtgyPurp>
+				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy="ZAR">20.00</InstdAmt>
+					<InstdAmt Ccy={payment.beneficiary_account_currency}>{payment.transfer_amount}</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>
+						<BIC>{payment.beneficiary_bank_bic}</BIC>
 						<ClrSysMmbId>
-							<MmbId>654321</MmbId>
+							<MmbId>{payment.beneficiary_bank_sort_code}</MmbId>
 						</ClrSysMmbId>
+						<Nm>{payment.beneficiary_bank_name}</Nm>
 						<PstlAdr>
-							<Ctry>ZA</Ctry>
+							<Ctry>{payment.beneficiary_bank_country_code}</Ctry>
 						</PstlAdr>
 					</FinInstnId>
 				</CdtrAgt>
 				<Cdtr>
-					<Nm>BENEFICIARY NAME</Nm>
+					<Nm>{payment.beneficiary_name}</Nm>
 					<PstlAdr>
-						<Ctry>ZA</Ctry>
+						<StrtNm></StrtNm>
+						<PstCd></PstCd>
+						<Ctry>{payment.beneficiary_country.upper() if payment.beneficiary_country else "TZ"}</Ctry>
+						<AdrLine>{payment.beneficiary_address}</AdrLine>
 					</PstlAdr>
 				</Cdtr>
 				<CdtrAcct>
 					<Id>
-					<Othr>
-						<Id>151113087</Id>
-					</Othr>
+						<IBAN></IBAN>
+						<Othr>
+							<Id>{payment.beneficiary_account_number}</Id>
+						</Othr>
 					</Id>
+					<Tp>
+						<Prtry>{payment.beneficiary_account_type}</Prtry>
+					</Tp>
 				</CdtrAcct>
 				<RmtInf>
-					<Ustrd>BENEFICIARY STATEMENT REF</Ustrd>
+					<Ustrd>{payment.salary_slip}</Ustrd>
+					<Strd>
+						<CdtrRefInf>
+							<Tp>
+								<CdOrPrtry>
+									<Prtry></Prtry>
+								</CdOrPrtry>
+							</Tp>
+							<Ref>{payment.salary_slip}</Ref>
+						</CdtrRefInf>
+					</Strd>
 				</RmtInf>
 			</CdtTrfTxInf>
-    """
+	"""
 
-    return part
+	return part
 
 
 def get_payments_xml_part(doc):
-    parts = ""
+	parts = ""
 
-    for payment in doc.stanbic_payments_info:
-        parts += get_payment_part(payment)
+	for payment in doc.stanbic_payments_info:
+		parts += get_payment_part(payment)
 
-    return parts
+	return parts
 
 
 def get_last_xml_part(doc):
-    part = """
+	part = """
 	</PmtInf>
 	</CstmrCdtTrfInitn>
 </Document>
-    """
-    return part
+	"""
+	return part

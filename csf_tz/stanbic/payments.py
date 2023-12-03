@@ -22,5 +22,4 @@ def make_payments_initiation(payroll_entry_name, currency, stanbic_setting_name=
     payments_initiation_doc.payroll_entry = payroll_entry_name
     payments_initiation_doc.stanbic_setting = stanbic_setting_name
     payments_initiation_doc.set_data()
-    payments_initiation_doc.insert(ignore_permissions=True)
     return payments_initiation_doc

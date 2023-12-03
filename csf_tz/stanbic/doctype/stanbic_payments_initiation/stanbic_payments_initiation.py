@@ -13,8 +13,10 @@ class StanbicPaymentsInitiation(Document):
     def set_data(self):
         payroll_entry_doc = frappe.get_cached_doc("Payroll Entry", self.payroll_entry)
         self.set_entries(payroll_entry_doc)
-        self.validate()
+        self.insert(ignore_permissions=True)
+        self.reload()
         self.xml = get_xml(self)
+        self.save(ignore_permissions=True)
 
     def set_entries(self, payroll_entry_doc=None):
         if not payroll_entry_doc:
@@ -32,7 +34,6 @@ class StanbicPaymentsInitiation(Document):
             entry.employee = slip.employee
             entry.transfer_currency = slip.currency
             entry.transfer_amount = slip.net_pay
-            entry.beneficiary_bank_country_code = "TZ"
             self.number_of_transactions += 1
             self.control_sum += slip.net_pay
 
