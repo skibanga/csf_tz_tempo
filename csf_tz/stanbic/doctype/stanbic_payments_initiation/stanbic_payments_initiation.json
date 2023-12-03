@@ -33,6 +33,8 @@
   "charges_bearer",
   "section_break_ppvse",
   "stanbic_payments_info",
+  "request_section",
+  "xml",
   "section_break_obzlw",
   "stanbic_response_log"
  ],
@@ -72,7 +74,7 @@
   },
   {
    "fieldname": "number_of_transactions",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Number of transactions"
   },
   {
@@ -81,7 +83,7 @@
   },
   {
    "fieldname": "control_sum",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Control Sum"
   },
   {
@@ -209,13 +211,24 @@
    "fieldtype": "Data",
    "label": "Stanbic Response Log",
    "read_only": 1
+  },
+  {
+   "fieldname": "request_section",
+   "fieldtype": "Section Break",
+   "label": "Request"
+  },
+  {
+   "fieldname": "xml",
+   "fieldtype": "Code",
+   "label": "XML",
+   "options": "XML"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-30 00:36:40.086150",
+ "modified": "2023-12-03 13:38:09.612072",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Initiation",
