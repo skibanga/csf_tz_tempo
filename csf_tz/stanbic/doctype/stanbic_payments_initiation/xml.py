@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe.utils import flt
 
 
 def get_xml(doc):
@@ -23,7 +24,7 @@ def get_first_xml_part(doc):
 				<Cd>?AUTH</Cd>
 			</?Authstn>
 			<NbOfTxs>{doc.number_of_transactions}</NbOfTxs>
-			<CtrlSum>{doc.control_sum}</CtrlSum>
+			<CtrlSum>{flt(doc.control_sum, 2):.2f}</CtrlSum>
 			<InitgPty>
 				<Nm>{settings_doc.initiating_party_name}</Nm>
 				<Id>
@@ -118,7 +119,7 @@ def get_payment_part(payment):
 					</CtgyPurp>
 				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy={payment.beneficiary_account_currency}>{payment.transfer_amount}</InstdAmt>
+					<InstdAmt Ccy={payment.beneficiary_account_currency}>{flt(payment.transfer_amount, 2):.2f}</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>
