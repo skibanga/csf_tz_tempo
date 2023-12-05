@@ -11,7 +11,7 @@ def execute():
                 translatable= 1,
             ),
             dict(
-                fieldname= "employee_country_codes",
+                fieldname= "employee_country_code",
                 fieldtype="Link",
                 options="Country",
                 label="Employee Country",
