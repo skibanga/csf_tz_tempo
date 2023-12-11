@@ -1,5 +1,5 @@
 import frappe
-from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.field.field import create_fields
 
 def execute():
     fields = {
@@ -11,18 +11,34 @@ def execute():
                 translatable= 1,
             ),
             dict(
-                fieldname= "custom_employee_country_codes",
+                fieldname= "employee_country_code",
                 fieldtype="Link",
                 options="Country",
                 label="Employee Country",
             ),
             dict(
-                fieldname= "custom_employee_country",
+                fieldname= "employee_country",
                 fieldtype="Data",
                 fetch_from="employee_country.code",
                 label="Employee Country",         
                 translatable= 1,
             ),
+            dict(
+                fieldname= "bank_country",
+                fieldtype="Link",
+                options="country",
+                label="Bank Country",
+                insert_after="bank_code",
+            ),
+            dict(
+                fieldname= "bank_country_code",
+                fieldtype="Data",
+                options="country",                
+                fetch_from="bank_country.code",
+                label="Bank Country Code",
+                read_only= 1,         
+                translatable= 1,
+            ),
         ]
     }
-    create_custom_fields(fields, update=True) 
+    create_fields(fields, update=True) 
