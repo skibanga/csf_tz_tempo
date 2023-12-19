@@ -41,4 +41,4 @@ def execute():
             ),
         ]
     }
-    create_fields(fields, update=True) 
+    create_custom_fields(fields, update=True) 
