@@ -8,9 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
+  "column_break_gnbjj",
   "currency",
   "sftp_details_section",
+  "sftp_url",
   "user",
+  "column_break_32vde",
   "private_key",
   "port",
   "pgp_details_section",
@@ -26,6 +29,7 @@
   "ordering_account_type",
   "ordering_account_currency",
   "ordering_bank_bic",
+  "column_break_inqe1",
   "ordering_bank_sort_code",
   "ordering_bank_country",
   "ordering_bank_country_code",
@@ -163,11 +167,28 @@
    "fieldname": "pgp_private_key",
    "fieldtype": "Attach",
    "label": "Company PGP Private Key"
+  },
+  {
+   "fieldname": "sftp_url",
+   "fieldtype": "Data",
+   "label": "SFTP URL"
+  },
+  {
+   "fieldname": "column_break_32vde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gnbjj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_inqe1",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-30 00:34:01.790222",
+ "modified": "2023-12-04 17:58:31.763840",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Setting",

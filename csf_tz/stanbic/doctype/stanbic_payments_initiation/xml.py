@@ -20,21 +20,14 @@ def get_first_xml_part(doc):
 		<GrpHdr>
 			<MsgId>{doc.name}</MsgId>
 			<CreDtTm>{doc.modified}</CreDtTm>
-			<?Authstn>
-				<Cd>?AUTH</Cd>
-			</?Authstn>
 			<NbOfTxs>{doc.number_of_transactions}</NbOfTxs>
 			<CtrlSum>{flt(doc.control_sum, 2):.2f}</CtrlSum>
 			<InitgPty>
 				<Nm>{settings_doc.initiating_party_name}</Nm>
 				<Id>
 					<OrgId>
-						<BICOrBEI></BICOrBEI>
 						<Othr>
-						<Id>{settings_doc.customerid}</Id>
-							<SchmeNm>
-								<Prtry>{settings_doc.payment_type}</Prtry>
-							</SchmeNm>
+						<Id>{settings_doc.customerid}/{settings_doc.user}</Id>
 						</Othr>
 					</OrgId>
 				</Id>
@@ -59,16 +52,9 @@ def get_first_xml_part(doc):
 				<PstlAdr>
 					<Ctry>{settings_doc.ordering_bank_country_code.upper()}</Ctry>
 				</PstlAdr>
-				<Id>
-					<OrgId>
-						<Othr>
-						</Othr>
-					</OrgId>
-				</Id>
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
-					<IBAN></IBAN>
 					<Othr>
 						<Id>{settings_doc.ordering_customer_account_number}</Id>
 					</Othr>
@@ -80,32 +66,20 @@ def get_first_xml_part(doc):
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
-					<BIC>{settings_doc.ordering_bank_bic}</BIC>
 					<ClrSysMmbId>
 						<MmbId>{settings_doc.ordering_bank_sort_code}</MmbId>
 					</ClrSysMmbId>
-					<?Nm>?StandardBankZ.A</?Nm>
 					<PstlAdr>
 						<Ctry>{settings_doc.ordering_bank_country_code.upper()}</Ctry>
 					</PstlAdr>
 				</FinInstnId>
 			</DbtrAgt>
-			<ChrgBr>{settings_doc.charges_bearer}</ChrgBr>
-			<ChrgsAcct>
-				<Id>
-				</Id>
-			</ChrgsAcct>
-			<ChrgsAcctAgt>
-				<FinInstnId>
-				</FinInstnId>
-			</ChrgsAcctAgt>
-	"""
+			<ChrgBr>{settings_doc.charges_bearer}</ChrgBr>"""
 	return part
 
 
 def get_payment_part(payment):
-	part = f"""
-			<CdtTrfTxInf>
+	part = f"""<CdtTrfTxInf>
 				<PmtId>
 					<?InstrId>?5574152</?InstrId>
 					<EndToEndId>{payment.salary_slip}</EndToEndId>
@@ -119,7 +93,7 @@ def get_payment_part(payment):
 					</CtgyPurp>
 				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy={payment.beneficiary_account_currency}>{flt(payment.transfer_amount, 2):.2f}</InstdAmt>
+					<InstdAmt Ccy="{payment.beneficiary_account_currency}">{flt(payment.transfer_amount, 2):.2f}</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>
@@ -129,17 +103,14 @@ def get_payment_part(payment):
 						</ClrSysMmbId>
 						<Nm>{payment.beneficiary_bank_name}</Nm>
 						<PstlAdr>
-							<Ctry>{payment.beneficiary_bank_country_code}</Ctry>
+							<Ctry>{payment.beneficiary_bank_country_code.upper()}</Ctry>
 						</PstlAdr>
 					</FinInstnId>
 				</CdtrAgt>
 				<Cdtr>
 					<Nm>{payment.beneficiary_name}</Nm>
 					<PstlAdr>
-						<StrtNm></StrtNm>
-						<PstCd></PstCd>
 						<Ctry>{payment.beneficiary_country.upper() if payment.beneficiary_country else "TZ"}</Ctry>
-						<AdrLine>{payment.beneficiary_address}</AdrLine>
 					</PstlAdr>
 				</Cdtr>
 				<CdtrAcct>
@@ -166,8 +137,7 @@ def get_payment_part(payment):
 						</CdtrRefInf>
 					</Strd>
 				</RmtInf>
-			</CdtTrfTxInf>
-	"""
+			</CdtTrfTxInf>"""
 
 	return part
 
@@ -182,9 +152,7 @@ def get_payments_xml_part(doc):
 
 
 def get_last_xml_part(doc):
-	part = """
-	</PmtInf>
+	part = """</PmtInf>
 	</CstmrCdtTrfInitn>
-</Document>
-	"""
+</Document>"""
 	return part
