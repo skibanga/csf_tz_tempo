@@ -81,7 +81,6 @@ def get_first_xml_part(doc):
 def get_payment_part(payment):
 	part = f"""<CdtTrfTxInf>
 				<PmtId>
-					<?InstrId>?5574152</?InstrId>
 					<EndToEndId>{payment.salary_slip}</EndToEndId>
 				</PmtId>
 				<PmtTpInf>
