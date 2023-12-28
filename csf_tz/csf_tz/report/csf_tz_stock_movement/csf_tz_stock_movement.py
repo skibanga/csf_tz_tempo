@@ -275,6 +275,10 @@ def get_stock_ledger_entries(filters, items):
         .orderby(CombineDatetime(sle.posting_date, sle.posting_time))
         .orderby(sle.creation)
     )
+    if filters.warehouse:
+        query = query.where(sle.warehouse == filters.get("warehouse"))  
+    if filters.item_code:
+        query = query.where(sle.item_code == filters.get("item_code"))	
 
     return query.run(as_dict=True)
 
@@ -286,8 +290,6 @@ def get_items(filters):
     if item_code := filters.get("item_code"):
         conditions.append(item.name == item_code)
     else:
-        if brand := filters.get("brand"):
-            conditions.append(item.brand == brand)
         if item_group := filters.get("item_group"):
             if condition := get_item_group_condition(item_group, item):
                 conditions.append(condition)
