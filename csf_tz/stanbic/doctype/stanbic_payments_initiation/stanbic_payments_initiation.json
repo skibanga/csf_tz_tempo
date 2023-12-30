@@ -35,6 +35,7 @@
   "stanbic_payments_info",
   "request_section",
   "xml",
+  "encrypted_xml",
   "section_break_obzlw",
   "stanbic_response_log"
  ],
@@ -221,14 +222,21 @@
    "fieldname": "xml",
    "fieldtype": "Code",
    "label": "XML",
-   "options": "XML"
+   "options": "XML",
+   "read_only": 1
+  },
+  {
+   "fieldname": "encrypted_xml",
+   "fieldtype": "Code",
+   "label": "Encrypted XML",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-03 13:38:09.612072",
+ "modified": "2023-12-30 11:47:31.080455",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Initiation",

@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from csf_tz.stanbic.doctype.stanbic_payments_initiation.xml import get_xml
+from csf_tz.stanbic.pgp import encrypt_pgp
 
 
 class StanbicPaymentsInitiation(Document):
@@ -16,6 +17,10 @@ class StanbicPaymentsInitiation(Document):
         self.insert(ignore_permissions=True)
         self.reload()
         self.xml = get_xml(self)
+        public_key = frappe.get_cached_value(
+            "Stanbic Setting", self.stanbic_setting, "pgp_public_key"
+        )
+        self.encrypted_xml = encrypt_pgp(self.xml, public_key)
         self.save(ignore_permissions=True)
 
     def set_entries(self, payroll_entry_doc=None):
@@ -41,6 +46,7 @@ class StanbicPaymentsInitiation(Document):
         self.validate_entries(self.payroll_entry)
 
     def validate_entries(self, payroll_entry_doc=None):
+        # to be add validation as it required
         pass
 
     def get_salary_slips(self):
