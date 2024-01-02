@@ -13,7 +13,6 @@ class InterCompanyStockTransfer(Document):
         for item in self.items_child:
             
             valuation_rate = get_valuation_rate(item.item_code, self.default_from_warehouse)
-            frappe.throw(str(valuation_rate))
             
             item_list_from.append({
                 "item_name": item.item_name,
