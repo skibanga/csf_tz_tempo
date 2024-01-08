@@ -86,6 +86,8 @@ class DeliveryExchangeItem(Document):
                         "stock_entry_type": "Delivery Exchange",
                         "posting_date": today(),
                         "items": stock_items,
+                        "ref_doctype": self.doctype,
+                        "ref_docname": self.name,
                     }
                 )
             doc.insert(ignore_permissions=True)
