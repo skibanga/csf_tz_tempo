@@ -21,8 +21,8 @@ frappe.ui.form.on('Delivery Exchange Item', {
 		});
 	},
 
-	document_id: (frm) => {
-		if (frm.doc.document_id) {
+	ref_docname: (frm) => {
+		if (frm.doc.ref_docname) {
 			fetch_item_details(frm)
 		}
 	}
@@ -33,8 +33,8 @@ function fetch_item_details(frm) {
 	frappe.call({
 		method: 'csf_tz.csf_tz.doctype.delivery_exchange_item.delivery_exchange_item.get_item_details',
 		args: {
-			'doctype': frm.doc.document,
-			'doctype_id': frm.doc.document_id,
+			'doctype': frm.doc.ref_doctype,
+			'doctype_id': frm.doc.ref_docname,
 			'packed': false,
 			// 'item_code': row.item_sold_or_delivered,
 		},

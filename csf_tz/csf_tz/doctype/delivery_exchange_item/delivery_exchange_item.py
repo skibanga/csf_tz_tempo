@@ -13,10 +13,10 @@ class DeliveryExchangeItem(Document):
         for index, row in enumerate(self.stock_items):
             table_name = self.stock_items[0].parentfield.replace("_", " ").title()
             validate = get_item_details(
-                self.document, self.document_id, item_code=row.item_sold_or_delivered
+                self.ref_doctype, self.ref_docname, item_code=row.item_sold_or_delivered
             )
             if not validate:
-                msg += f"In table <b>{table_name}</b>, Row {index + 1}, Item <b>{row.item_sold_or_delivered}</b> does not exist in <b>{self.document} {self.document_id}</b> </br>"
+                msg += f"In table <b>{table_name}</b>, Row {index + 1}, Item <b>{row.item_sold_or_delivered}</b> does not exist in <b>{self.ref_doctype} {self.ref_docname}</b> </br>"
             item_exchange_rate = frappe.db.get_value(
                 "Item Price",
                 {
@@ -33,10 +33,10 @@ class DeliveryExchangeItem(Document):
         for index, row in enumerate(self.non_stock_items):
             table_name = self.non_stock_items[0].parentfield.replace("_", " ").title()
             validate = get_item_details(
-                self.document, self.document_id, item_code=row.item_sold_or_delivered
+                self.ref_doctype, self.ref_docname, item_code=row.item_sold_or_delivered
             )
             if not validate:
-                msg += f"In table <b>{table_name}</b>, Row {index + 1}, Item <b>{row.item_sold_or_delivered}</b> does not exist in <b>{self.document} {self.document_id}</b> </br>"
+                msg += f"In table <b>{table_name}</b>, Row {index + 1}, Item <b>{row.item_sold_or_delivered}</b> does not exist in <b>{self.ref_doctype} {self.ref_docname}</b> </br>"
             item_exchange_rate = frappe.db.get_value(
                 "Item Price",
                 {
@@ -86,8 +86,8 @@ class DeliveryExchangeItem(Document):
                         "stock_entry_type": "Delivery Exchange",
                         "posting_date": today(),
                         "items": stock_items,
-                        "ref_doctype": self.doctype,
-                        "ref_docname": self.name,
+                        # "ref_doctype": self.doctype,
+                        # "ref_docname": self.name,
                     }
                 )
             doc.insert(ignore_permissions=True)

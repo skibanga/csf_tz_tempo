@@ -10,9 +10,9 @@
  "field_order": [
   "company",
   "section_break_5c7ku",
-  "document",
+  "ref_doctype",
   "column_break_4tsfy",
-  "document_id",
+  "ref_docname",
   "section_break_cslzt",
   "stock_items",
   "non_stock_items",
@@ -22,20 +22,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "document",
-   "fieldtype": "Select",
-   "label": "Document  Type",
-   "options": "Sales Invoice\nDelivery Note"
-  },
-  {
-   "fieldname": "document_id",
-   "fieldtype": "Dynamic Link",
-   "in_list_view": 1,
-   "label": " Document ID",
-   "options": "document",
-   "reqd": 1
-  },
   {
    "fieldname": "column_break_4tsfy",
    "fieldtype": "Column Break"
@@ -90,12 +76,26 @@
    "options": "Delivery Exchange Item",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "ref_doctype",
+   "fieldtype": "Select",
+   "label": "Refference Doctype",
+   "options": "Sales Invoice\nDelivery Note"
+  },
+  {
+   "fieldname": "ref_docname",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Refference Docname",
+   "options": "ref_doctype",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-08 16:41:30.169619",
+ "modified": "2024-01-10 18:20:41.055091",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Delivery Exchange Item",
