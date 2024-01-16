@@ -43,7 +43,7 @@ class InterCompanyStockTransfer(Document):
         entry_from = frappe.get_doc({
             "doctype": "Stock Entry",
             "company": self.from_company,
-            "stock_entry_type": "To Company",
+            "stock_entry_type": "From Company",
             "from_warehouse": self.default_to_warehouse,
             "to_warehouse": self.default_from_warehouse,
             "items": item_list_from,
@@ -55,7 +55,7 @@ class InterCompanyStockTransfer(Document):
         entry_to = frappe.get_doc({
             "doctype": "Stock Entry",
             "company": self.to_company,
-            "stock_entry_type": "From Company",
+            "stock_entry_type": "To Company",
             "from_warehouse": self.default_from_warehouse,
             "to_warehouse": self.default_to_warehouse,
             "items": item_list_to,
