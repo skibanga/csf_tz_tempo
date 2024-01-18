@@ -41,13 +41,13 @@ frappe.ui.form.on("Company", {
 	refresh: function(frm) {
 		frm.add_custom_button(__('Auto create accounts'), function() {
 			frm.trigger("auto_create_account");
-		}, __("CSF_Tz"));
+		}, __("Setup"));
 		frm.add_custom_button(__('create Item Tax Template'), function() {
 			frm.trigger("create_tax_template");
-		}, __("CSF_Tz"));
+		}, __("Setup"));
 		frm.add_custom_button(__('Create Tax Category'), function() {
 			frm.trigger("make_tax_category");
-		}, __("CSF_Tz"));
+		}, __("Setup"));
 	},
 
 	auto_create_account: function(frm) {
