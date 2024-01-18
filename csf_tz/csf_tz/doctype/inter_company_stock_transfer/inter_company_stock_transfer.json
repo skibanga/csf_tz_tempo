@@ -29,7 +29,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "TGBC-.YY.-",
+   "options": "ICST-.YY.-",
    "print_hide": 1,
    "set_only_once": 1
   },
@@ -120,7 +120,7 @@
    "link_fieldname": "stock_entry_type"
   }
  ],
- "modified": "2024-01-04 13:47:33.730883",
+ "modified": "2024-01-16 17:14:24.381045",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Inter Company Stock Transfer",

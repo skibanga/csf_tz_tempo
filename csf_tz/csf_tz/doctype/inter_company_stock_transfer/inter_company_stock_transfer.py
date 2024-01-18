@@ -19,10 +19,10 @@ class InterCompanyStockTransfer(Document):
                 "item_code": item.item_code,
                 "uom": item.uom,
                 "qty": item.qty,
-                "bom_no": item.bom_no,
-                "transfer_qty": item.transfer_qty,
+                # "bom_no": item.bom_no,
+                # "transfer_qty": item.transfer_qty,
                 "s_warehouse": self.default_from_warehouse,
-                "t_warehouse": self.default_to_warehouse,
+                # "t_warehouse": self.default_to_warehouse,
                 "valuation_rate": valuation_rate,
             })
             
@@ -33,17 +33,18 @@ class InterCompanyStockTransfer(Document):
                 "item_code": item.item_code,
                 "uom": item.uom,
                 "qty": item.qty,
-                "bom_no": item.bom_no,
-                "transfer_qty": item.transfer_qty,
-                "s_warehouse": self.default_to_warehouse,
-                "t_warehouse": self.default_from_warehouse,
+                # "bom_no": item.bom_no,
+                # "transfer_qty": item.transfer_qty,
+                # "s_warehouse": self.default_to_warehouse,
+                "t_warehouse": self.default_to_warehouse,
                 "valuation_rate": valuation_rate,
+                "cost_center": ""
             })
 
         entry_from = frappe.get_doc({
             "doctype": "Stock Entry",
             "company": self.from_company,
-            "stock_entry_type": "To Company",
+            "stock_entry_type": "From Company",
             "from_warehouse": self.default_to_warehouse,
             "to_warehouse": self.default_from_warehouse,
             "items": item_list_from,
@@ -55,7 +56,7 @@ class InterCompanyStockTransfer(Document):
         entry_to = frappe.get_doc({
             "doctype": "Stock Entry",
             "company": self.to_company,
-            "stock_entry_type": "From Company",
+            "stock_entry_type": "To Company",
             "from_warehouse": self.default_from_warehouse,
             "to_warehouse": self.default_to_warehouse,
             "items": item_list_to,
