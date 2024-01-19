@@ -1,5 +1,5 @@
 import frappe
-from frappe.custom.doctype.field.field import create_fields
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def execute():
     fields = {
@@ -41,4 +41,4 @@ def execute():
             ),
         ]
     }
-    create_fields(fields, update=True) 
+    create_custom_fields(fields, update=True) 

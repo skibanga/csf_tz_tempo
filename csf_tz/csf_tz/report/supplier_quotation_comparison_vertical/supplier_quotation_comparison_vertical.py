@@ -43,6 +43,7 @@ def get_data(filters):
             sq.supplier.as_("supplier_name"),
             sq.valid_till,
             sq.terms,
+            sq.taxes_and_charges,
             sq.custom_warranty,
             sq.custom_bottom,
             sq.custom_right,
@@ -126,6 +127,7 @@ def prepare_data(supplier_quotation_data, filters):
             "custom_warranty": data.get("custom_warranty"),
             "custom_bottom": data.get("custom_bottom"),
             "custom_right": data.get("custom_right"),
+            "taxes_and_charges": data.get("taxes_and_charges"),
         }
         row["price_per_unit"] = flt(row["price"]) / (flt(data.get("stock_qty")) or 1)
 
