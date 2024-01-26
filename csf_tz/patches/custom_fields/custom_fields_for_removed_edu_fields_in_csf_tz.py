@@ -509,6 +509,7 @@ def execute():
                 "fieldtype": "Float",
                 "insert_after": "item_tax_template",
                 "label": "Withholding Tax Rate",
+                "no_copy": 1
             },
             {
                 "allow_on_submit": 1,
@@ -516,7 +517,8 @@ def execute():
                 "fieldtype": "Data",
                 "insert_after": "withholding_tax_rate",
                 "label": "Withholding Tax Entry",
-                "translatable": 1
+                "translatable": 1,
+                "no_copy": 1
             },
         ],
         "Purchase Order":[
@@ -665,6 +667,7 @@ def execute():
                 "fieldtype": "Percent",
                 "insert_after": "item_tax_template",
                 "label": "Withholding Tax Rate",
+                "no_copy": 1
             },
             {
                 "allow_on_submit": 1,
@@ -674,7 +677,8 @@ def execute():
                 "insert_after": "withholding_tax_rate",
                 "label": "Withholding Tax Entry",
                 "read_only": 1,
-                "translatable": 1
+                "translatable": 1,
+                "no_copy": 1
             },
             {
                 "fieldname": "allow_override_net_rate",
