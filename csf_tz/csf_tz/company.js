@@ -48,6 +48,48 @@ frappe.ui.form.on("Company", {
 		frm.add_custom_button(__('Create Tax Category'), function() {
 			frm.trigger("make_tax_category");
 		}, __("Setup"));
+		frm.add_custom_button(__('Create Salary Component'), function() {
+			frm.trigger("make_salary_components_and_structure");
+		}, __("Setup"));
+		frm.add_custom_button(__('Link Item Tax Template'), function() {
+			let d = new frappe.ui.Dialog({
+				title: 'Enter details',
+				fields: [
+					{
+						fieldtype: 'Link',
+						options: 'Item Tax Template',
+						label: __('Item Tax Category'),
+						fieldname: 'default_tax_template',
+						reqd: 1
+					}
+				],
+				primary_action_label: 'Submit',
+				primary_action(values) {
+					console.log(values);
+		
+					frappe.call({
+						method: 'csf_tz.custom_api.linking_tax_template',
+						args: {
+							doctype: 'Item',
+							default_tax_template: {
+								default_tax_template: values.default_tax_template
+							}
+						},
+						callback: function(response) {
+							if (response.message) {
+								frappe.msgprint(__('Item Tax Template Linked successfully.'));
+							}
+						}
+					});
+		
+					d.hide();
+				}
+			});
+		
+			d.show();
+		}, __("Setup"));
+		
+		
 	},
 
 	auto_create_account: function(frm) {
@@ -62,10 +104,10 @@ frappe.ui.form.on("Company", {
 	},
 	create_tax_template: function(frm) {
 		frappe.call({
-			method: 'csf_tz.custom_api.create_tax_template',
+			method: 'csf_tz.custom_api.create_item_tax_template',
 			callback: function(response) {
 				if (response.message) {
-					frappe.msgprint(__('Tax Category created successfully.'));
+					frappe.msgprint(__('Item Tax Templates created successfully.'));
 				}
 			}
 		})
@@ -77,6 +119,16 @@ frappe.ui.form.on("Company", {
 			callback: function(response) {
 				if (response.message) {
 					frappe.msgprint(__('Tax Category created successfully.'));
+				}
+			}
+		})
+	},
+	make_salary_components_and_structure: function(frm) {
+		frappe.call({
+			method: 'csf_tz.custom_api.make_salary_components_and_structure',
+			callback: function(response) {
+				if (response.message) {
+					frappe.msgprint(__('Salary Components and Structure are created successfully.'));
 				}
 			}
 		})
