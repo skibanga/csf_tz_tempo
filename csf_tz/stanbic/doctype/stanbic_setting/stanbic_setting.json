@@ -43,8 +43,7 @@
    "in_list_view": 1,
    "label": "Company",
    "options": "Company",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "sftp_details_section",
@@ -188,7 +187,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-04 17:58:31.763840",
+ "modified": "2024-01-26 18:33:28.572577",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Setting",
