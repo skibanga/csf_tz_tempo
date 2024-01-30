@@ -77,7 +77,7 @@
    "read_only": 1
   },
   {
-   "fetch_from": "employee.bank_account_name",
+   "fetch_from": "employee.employee_name",
    "fieldname": "beneficiary_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -132,7 +132,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-04 17:40:27.389543",
+ "modified": "2024-01-30 07:58:02.314197",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Info",
