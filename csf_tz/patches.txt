@@ -17,3 +17,4 @@ csf_tz.patches.add_custom_field_for_cusomer_suppliers_groups
 csf_tz.patches.fix_module_for_core_reports
 csf_tz.patches.create_the_stock_entry_type
 csf_tz.patches.custom_fields.add_fields_in_stock_entry
+csf_tz.patches.tz_post_code.create_tz_post_code
