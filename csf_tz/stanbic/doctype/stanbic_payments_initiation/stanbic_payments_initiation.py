@@ -52,7 +52,7 @@ class StanbicPaymentsInitiation(Document):
     def get_salary_slips(self):
         slips = frappe.get_all(
             "Salary Slip",
-            filters={"payroll_entry": self.payroll_entry},
+            filters={"payroll_entry": self.payroll_entry, "docstatus": ["in", [0, 1]]},
             fields=[
                 "name",
                 "employee",
@@ -65,7 +65,7 @@ class StanbicPaymentsInitiation(Document):
         )
         # check if all slips are submitted
         for slip in slips:
-            if slip.docstatus != 1:
+            if slip.docstatus == 0:
                 frappe.throw(
                     "Salary Slip {0} is not submitted".format(slip.name),
                     title="Salary Slip Not Submitted",
