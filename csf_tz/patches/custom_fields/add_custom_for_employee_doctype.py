@@ -39,6 +39,12 @@ def execute():
                 read_only= 1,         
                 translatable= 1,
             ),
+            dict(
+                fieldname= "beneficiary_bank_bic",
+                fieldtype="Data",
+                label="Beneficiary Bank BIC",
+                translatable= 1,
+            ),
         ]
     }
     create_custom_fields(fields, update=True) 
