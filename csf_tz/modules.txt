@@ -7,3 +7,4 @@ Sales And Marketing
 Workshop
 AuthOTP
 Meal Count
+Stanbic
