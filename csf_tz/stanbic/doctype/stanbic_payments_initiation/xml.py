@@ -96,13 +96,12 @@ def get_payment_part(payment):
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>
-						<BIC>{payment.beneficiary_bank_bic}</BIC>
 						<ClrSysMmbId>
 							<MmbId>{payment.beneficiary_bank_sort_code}</MmbId>
 						</ClrSysMmbId>
 						<Nm>{payment.beneficiary_bank_name}</Nm>
 						<PstlAdr>
-							<Ctry>{payment.beneficiary_bank_country_code.upper()}</Ctry>
+							<Ctry>{payment.beneficiary_bank_country_code.upper() if payment.beneficiary_bank_country_code else "TZ"}</Ctry>
 						</PstlAdr>
 					</FinInstnId>
 				</CdtrAgt>
