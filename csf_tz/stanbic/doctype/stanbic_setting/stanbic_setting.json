@@ -1,0 +1,214 @@
+{
+ "actions": [],
+ "autoname": "format:{company}-{currency}",
+ "creation": "2023-11-29 23:05:39.668688",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "column_break_gnbjj",
+  "currency",
+  "sftp_details_section",
+  "sftp_url",
+  "user",
+  "column_break_32vde",
+  "private_key",
+  "port",
+  "pgp_details_section",
+  "pgp_public_key",
+  "pgp_private_key",
+  "payments_initiation_details_section",
+  "initiating_party_name",
+  "customerid",
+  "column_break_9ivzn",
+  "payment_type",
+  "debtor_info_section",
+  "ordering_customer_account_number",
+  "ordering_account_type",
+  "ordering_account_currency",
+  "ordering_bank_bic",
+  "column_break_inqe1",
+  "ordering_bank_sort_code",
+  "ordering_bank_country",
+  "ordering_bank_country_code",
+  "section_break_cnx97",
+  "charges_bearer"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sftp_details_section",
+   "fieldtype": "Section Break",
+   "label": "SFTP Details"
+  },
+  {
+   "fieldname": "pgp_details_section",
+   "fieldtype": "Section Break",
+   "label": "PGP Details"
+  },
+  {
+   "fieldname": "payments_initiation_details_section",
+   "fieldtype": "Tab Break",
+   "label": "Payments Initiation Details"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User"
+  },
+  {
+   "fieldname": "private_key",
+   "fieldtype": "Attach",
+   "label": "Private Key"
+  },
+  {
+   "fieldname": "port",
+   "fieldtype": "Int",
+   "label": "Port"
+  },
+  {
+   "fieldname": "initiating_party_name",
+   "fieldtype": "Data",
+   "label": "Initiating Party Name"
+  },
+  {
+   "fieldname": "customerid",
+   "fieldtype": "Data",
+   "label": "CustomerID"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Data",
+   "label": "Payment type"
+  },
+  {
+   "fieldname": "debtor_info_section",
+   "fieldtype": "Section Break",
+   "label": "Debtor Info"
+  },
+  {
+   "fieldname": "ordering_customer_account_number",
+   "fieldtype": "Data",
+   "label": "Ordering Customer account number"
+  },
+  {
+   "fieldname": "ordering_account_type",
+   "fieldtype": "Select",
+   "label": "Ordering account type",
+   "options": "\nCACC\nSVGS",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ordering_account_currency",
+   "fieldtype": "Link",
+   "label": "Ordering account currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "ordering_bank_bic",
+   "fieldtype": "Data",
+   "label": "Ordering bank BIC"
+  },
+  {
+   "fieldname": "ordering_bank_sort_code",
+   "fieldtype": "Data",
+   "label": "Ordering bank sort code"
+  },
+  {
+   "fieldname": "ordering_bank_country",
+   "fieldtype": "Link",
+   "label": "Ordering bank country",
+   "options": "Country"
+  },
+  {
+   "fetch_from": "ordering_bank_country.code",
+   "fieldname": "ordering_bank_country_code",
+   "fieldtype": "Data",
+   "label": "Ordering bank country code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9ivzn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_cnx97",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "charges_bearer",
+   "fieldtype": "Select",
+   "label": "Charges bearer",
+   "options": "\nDEBT\nCRED\nSHAR"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pgp_public_key",
+   "fieldtype": "Small Text",
+   "label": "Bank PGP Public Key"
+  },
+  {
+   "fieldname": "pgp_private_key",
+   "fieldtype": "Attach",
+   "label": "Company PGP Private Key"
+  },
+  {
+   "fieldname": "sftp_url",
+   "fieldtype": "Data",
+   "label": "SFTP URL"
+  },
+  {
+   "fieldname": "column_break_32vde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gnbjj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_inqe1",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-26 18:33:28.572577",
+ "modified_by": "Administrator",
+ "module": "Stanbic",
+ "name": "Stanbic Setting",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
