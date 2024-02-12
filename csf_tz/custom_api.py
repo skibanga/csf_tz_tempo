@@ -2131,12 +2131,25 @@ def account_exists(account_name):
 def auto_create_account():
     abbr = frappe.get_value('Company', frappe.defaults.get_user_default("company"), 'abbr')
     account_data = [
+        {"account_name": "Payroll Payable", "is_group": 1, "parent_account": f"Current Liabilities - {abbr}"},
+        {"account_name": "NSSF Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "NHIF Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "PAYE Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "SDL Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "WCF Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "HESLB Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        
+        {"account_name": "Salaries and Wages", "is_group": 1, "parent_account": f"Indirect Expenses - {abbr}"},
+        {"account_name": "Salary Expense", "account_type": "Expense Account", "parent_account": f"Salaries and Wages - {abbr}"},
+        {"account_name": "NSSF Expense", "account_type": "Expense Account", "parent_account": f"Salaries and Wages - {abbr}"},
+        {"account_name": "NHIF Expense", "account_type": "Expense Account", "parent_account": f"Salaries and Wages - {abbr}"},
+        {"account_name": "SDL Expense", "account_type": "Expense Account", "parent_account": f"Salaries and Wages - {abbr}"},
+        {"account_name": "WCF Expense", "account_type": "Expense Account", "parent_account": f"Salaries and Wages - {abbr}"},
+        
+        
         {"account_name": "OUTPUT VAT - 18% ", "account_type": "Tax", "parent_account": f"Duties and Taxes - {abbr}"},
         {"account_name": "INPUT VAT - 18%  ", "account_type": "Tax", "parent_account": f"Tax Assets - {abbr}"},
         {"account_name": "VAT Payable Account ", "account_type": "Tax", "parent_account": f"Duties and Taxes - {abbr}"},
-        {"account_name": "Basic Salary - Expense", "account_type": "Expense Account", "parent_account": f"Direct Expenses - {abbr}"},
-        {"account_name": "Allowance - Expense", "account_type": "Expense Account", "parent_account": f"Direct Expenses - {abbr}"},
-        {"account_name": "Deductions - Expenses", "account_type": "Expense Account", "parent_account": f"Direct Expenses - {abbr}"},
         {"account_name": "Taxes - Expenses", "account_type": "Expense Account", "parent_account": f"Direct Expenses - {abbr}"},        
     ]
 
@@ -2145,7 +2158,8 @@ def auto_create_account():
 
         if not account_exists(account_name):
             account_doc = frappe.new_doc("Account")
-            account_doc.account_name = account_name
+            account_doc.account_name = account_info.get("account_name")
+            account_doc.is_group = account_info.get("is_group")
             account_doc.account_type = account_info.get("account_type")
             account_doc.parent_account = account_info.get("parent_account")
             account_doc.insert(ignore_permissions=True)
@@ -2154,15 +2168,15 @@ def auto_create_account():
     return "Account added successfully."
 
 @frappe.whitelist()
-def create_tax_template():
+def create_item_tax_template():
     abbr = frappe.get_value('Company', frappe.defaults.get_user_default("company"), 'abbr')
     item_tax_template_list = [
-        {"title": "Tanzania Exempted Sales", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
-        {"title": "Tanzania Exempted Purchases ", "tax_type": f"INPUT VAT - 18% - {abbr}"},
-        {"title": "Tanzania VAT 18%", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
-        {"title": "Tanzania Purchase VAT 18% ", "tax_type": f"INPUT VAT - 18% - {abbr}"},
-        {"title": "Zanzibar VAT Exempted", "tax_type": f"VAT Payable Account - {abbr}"},
-        {"title": "Zanzibar VAT Tax 0%", "tax_type": f"VAT Payable Account - {abbr}"},
+        {"title": f"Tanzania Exempted Sales", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
+        {"title": f"Tanzania Exempted Purchases", "tax_type": f"INPUT VAT - 18% - {abbr}"},
+        {"title": f"Tanzania VAT 18%", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
+        {"title": f"Tanzania Purchase VAT 18%", "tax_type": f"INPUT VAT - 18% - {abbr}"},
+        {"title": f"Zanzibar VAT Exempted", "tax_type": f"VAT Payable Account - {abbr}"},
+        {"title": f"Zanzibar VAT Tax 0%", "tax_type": f"VAT Payable Account - {abbr}"},
     ]
 
     for item_tax_template_info in item_tax_template_list:
@@ -2189,3 +2203,115 @@ def create_tax_category():
         tax_category_doc.save()
             
     return "Tax Template added to Supplier Groups successfully." 
+
+@frappe.whitelist()
+def linking_tax_template(doctype, default_tax_template):
+    # frappe.throw(str(default_tax_template))
+    # tax_template = default_tax_template[0]
+    # frappe.throw(str(tax_template))
+
+       
+    abbr = frappe.get_value('Company', frappe.defaults.get_user_default("company"), 'abbr')
+    item_list = frappe.get_all('Item', filters=default_tax_template)
+    # frappe.throw(str(item_list))
+
+    for item in item_list:
+        item_doc = frappe.get_doc("Item", item.name, fields=['default_tax_template'])
+        if item_doc.default_tax_template == f"Tanzania VAT 18% - {abbr}":
+
+            item_doc.append("taxes", {
+                "item_tax_template": f"Tanzania VAT 18% - {abbr}",
+                "tax_category": "Sales"
+            })
+            item_doc.append("taxes", {
+                "item_tax_template": f"Tanzania Purchase VAT 18% - {abbr}",
+                "tax_category": "Purchase"
+            })
+        elif item_doc.default_tax_template == f"Tanzania Exempted Sales - {abbr}":
+
+            item_doc.append("taxes", {
+                "item_tax_template": f"Tanzania VAT 18% - {abbr}",
+                "tax_category": "Sales"
+            })
+            item_doc.append("taxes", {
+                "item_tax_template": f"Tanzania Purchase VAT 18% - {abbr}",
+                "tax_category": "Purchase"
+            })
+        item_doc.save()
+    
+    return "Item Tax Template Linked successfully."
+
+
+@frappe.whitelist()
+def make_salary_components_and_structure():
+    abbr = frappe.get_value('Company', frappe.defaults.get_user_default("company"), 'abbr')
+    
+    salary_components_earnings_list = [
+        {"salary_component": "Basic", "abbr": "Basic", "depends_on_payment_days": 1, "is_tax_applicable": 1, "amount_based_on_formula": 1, "formula": "base"},
+        {"salary_component": "WCF Expenses", "abbr": "WCFExp", "do_not_include_in_total": 1, "is_tax_applicable": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.005"},
+        {"salary_component": "NSSF Expenses", "abbr": "NSSFExp", "do_not_include_in_total": 1, "is_tax_applicable": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.1"},
+        {"salary_component": "SDL Expenses","abbr": "SDLExp", "do_not_include_in_total": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.035"},
+    ]
+    salary_components_deduction_list = [
+        {"salary_component": "NSSF Employee", "abbr": "NSSFEmp", "amount_based_on_formula": 1, "formula": "gross_pay * 0.1"},
+        {"salary_component": "NSSF Employer", "abbr": "NSSF", "do_not_include_in_total": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.1"},
+        {"salary_component": "NHIF Employee", "abbr": "NHIF", "amount_based_on_formula": 1, "formula": "base * 0.03"},
+        {"salary_component": "HESLB","abbr": "HESLB","condition": "heslb_f4_index_number", "amount_based_on_formula": 1, "formula": "base * 0.15"},
+        {"salary_component": "WCF","abbr": "WCF", "do_not_include_in_total": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.005"},
+        {"salary_component": "SDL","abbr": "SDL", "do_not_include_in_total": 1, "amount_based_on_formula": 1, "formula": "gross_pay * 0.035"},
+        {"salary_component": "PAYE Payable","abbr": "PAYE", "do_not_include_in_total": 1, "condition": "((gross_pay - NSSFEmp) >= 270000) and ((gross_pay - NSSFEmp) < 520000)","amount_based_on_formula": 1, "formula": "(((gross_pay - NSSFEmp)) - 270000) * 0.08"},
+        {"salary_component": "PAYE Payable","abbr": "PAYE", "codition": "((gross_pay - NSSFEmp) >= 760000) and ((gross_pay - NSSFEmp) < 1000000)", "amount_based_on_formula": 1, "formula": "(((gross_pay - NSSFEmp) - 760000) * 0.25) + 68000"},
+        {"salary_component": "PAYE Payable","abbr": "PAYE", "codition": "((gross_pay - NSSFEmp) >= 760000) and ((gross_pay - NSSFEmp) < 1000000)", "amount_based_on_formula": 1, "formula": "(((gross_pay - NSSFEmp) - 760000) * 0.25) + 68000"},
+        {"salary_component": "PAYE Payable","abbr": "PAYE", "codition": "((gross_pay - NSSFEmp) >= 1000000)", "amount_based_on_formula": 1, "formula": "(((gross_pay - NSSFEmp) - 1000000) * 0.3) + 128000"},
+    ]
+    salary_components_list = [
+        {"salary_component": "WCF Expenses", "type": "Earning", "abbr": "WCFExp", "do_not_include_in_total": 1, "remove_if_zero_valued": 1, "account": f"WCF Expense - {abbr}"},
+        {"salary_component": "NSSF Expenses", "type": "Earning", "abbr": "NSSFExp", "do_not_include_in_total": 1, "remove_if_zero_valued": 1,"account": f"NSSF Expense - {abbr}"},
+        {"salary_component": "SDL Expenses","type": "Earning", "abbr": "SDLExp", "do_not_include_in_total": 1, "remove_if_zero_valued": 1,"account": f"SDL Expense - {abbr}"},
+        {"salary_component": "NSSF Employee", "type": "Deduction", "abbr": "NSSFEmp", "do_not_include_in_total": 1,"remove_if_zero_valued": 1,"account": f"NSSF Payable - {abbr}"},
+        {"salary_component": "NSSF Employer", "type": "Deduction", "abbr": "NSSF", "do_not_include_in_total": 1,"remove_if_zero_valued": 1,"account": f"NSSF Payable - {abbr}"},
+        {"salary_component": "NHIF Employee", "abbr": "NHIF","type": "Deduction", "abbr": "NHIF","remove_if_zero_valued": 1,"account": f"NHIF Payable - {abbr}"},
+        {"salary_component": "HESLB","abbr": "HESLB", "type": "Deduction", "remove_if_zero_valued": 1, "account": f"HESLB Payable - {abbr}"},
+        {"salary_component": "WCF","abbr": "WCF", "type": "Deduction", "do_not_include_in_total": 1, "remove_if_zero_valued": 1, "account": f"WCF Payable - {abbr}"},
+        {"salary_component": "SDL","abbr": "SDL", "type": "Deduction", "do_not_include_in_total": 1, "remove_if_zero_valued": 1, "account": f"SDL Payable - {abbr}"},
+        {"salary_component": "PAYE Payable","abbr": "PAYE", "type": "Deduction", "remove_if_zero_valued": 1, "account": f"PAYE Payable - {abbr}"},
+    ]
+    # frappe.throw(str(salary_components_list))
+    
+    for salary_component in salary_components_list:
+        salary_component_doc = frappe.new_doc('Salary Component')
+        salary_component_doc.salary_component = salary_component.get('salary_component')
+        salary_component_doc.type = salary_component.get('type')
+        salary_component_doc.abbr = salary_component.get('abbr')
+        salary_component_doc.remove_if_zero_valued = salary_component.get('remove_if_zero_valued')
+        salary_component_doc.do_not_include_in_total = salary_component.get('do_not_include_in_total')
+        salary_component_doc.append("accounts", {
+            "account": salary_component.get('account')
+        })
+        salary_component_doc.insert()
+    
+
+    salary_structure_doc = frappe.new_doc('Salary Structure')
+    salary_structure_doc.name = "Tanzania Mainland"
+    salary_structure_doc.is_active = "Yes"
+    for salary_components in salary_components_earnings_list:
+        salary_structure_doc.append("earnings", {
+            "salary_component": salary_components.get('salary_component'),
+            "depends_on_payment_days": salary_components.get('depends_on_payment_days'),
+            "is_tax_applicable": salary_components.get('is_tax_applicable'),
+            "amount_based_on_formula": salary_components.get('amount_based_on_formula'),
+            "do_not_include_in_total": salary_components.get('do_not_include_in_total'),
+            "formula": salary_components.get('formula'),
+        })
+    for salary_components in salary_components_deduction_list:
+        salary_structure_doc.append("deductions", {
+            "salary_component": salary_components.get('salary_component'),
+            "depends_on_payment_days": salary_components.get('depends_on_payment_days'),
+            "is_tax_applicable": salary_components.get('is_tax_applicable'),
+            "amount_based_on_formula": salary_components.get('amount_based_on_formula'),
+            "do_not_include_in_total": salary_components.get('do_not_include_in_total'),
+            "formula": salary_components.get('formula'),
+        })
+    salary_structure_doc.insert(ignore_permissions=True)
+    salary_structure_doc.submit()
+    return "Salary Components and Structure are created successfully."
