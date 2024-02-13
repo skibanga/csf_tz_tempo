@@ -10,44 +10,63 @@ class Paramiko:
         self.port = port
         self.key_path = key_path
         self.client = paramiko.SSHClient()
-        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connect()
 
     def connect(self):
-        self.client.connect(
-            self.hostname,
-            port=self.port,
-            username=self.user,
-            key_filename=self.key_path,
-            look_for_keys=False,
-            allow_agent=False,
-        )
+        try:
+            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            print("Connecting to the server")
+            self.client.connect(
+                self.hostname,
+                port=self.port,
+                username=self.user,
+                key_filename=self.key_path,
+                look_for_keys=False,
+                allow_agent=False,
+            )
+            print("Connected to the server")
+        except Exception as e:
+            frappe.throw(str(e))
 
     def download(self, remote_path, local_path, cleanup=False):
         create_dir_if_not_exists(local_path)
-        sftp = self.client.open_sftp()
-        sftp.get(remote_path, local_path)
-        if cleanup:
-            sftp.remove(remote_path)
-        sftp.close()
+        try:
+            sftp = self.client.open_sftp()
+            print("Connected to the sftp server")
+            sftp.get(remote_path, local_path)
+            print("Downloaded the files")
+            if cleanup:
+                print("Removing the files from the remote folder")
+                sftp.remove(remote_path)
+            sftp.close()
+        except Exception as e:
+            frappe.throw(str(e))
         # return list of names of the files downloaded
         return os.listdir(local_path)
 
     def upload(self, local_path, remote_path, cleanup=False):
         create_dir_if_not_exists(local_path)
-        sftp = self.client.open_sftp()
-        sftp.put(local_path, remote_path)
-        if cleanup:
-            sftp.remove(local_path)
-        sftp.close()
+        try:
+            sftp = self.client.open_sftp()
+            print("Connected to the sftp server")
+            sftp.put(local_path, remote_path)
+            print("Uploaded the files")
+            if cleanup:
+                print("Removing the files from the local folder")
+                sftp.remove(local_path)
+            sftp.close()
+        except Exception as e:
+            frappe.throw(str(e))
         # return list of names of the files uploaded
         return os.listdir(local_path)
 
     def close(self):
         self.client.close()
+        print("Connection closed")
 
     def execute(self, command):
         stdin, stdout, stderr = self.client.exec_command(command)
+        print("Executing the command")
         return stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
 
 
@@ -77,7 +96,9 @@ def get_stanbank_files(settings_name):
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
 
     # create the paramiko object
-    paramiko_obj = Paramiko(settings.sftp_url, settings.user, settings.private_key_path)
+    paramiko_obj = Paramiko(
+        settings.sftp_url, settings.user, frappe.get_site_path(settings.private_key)
+    )
 
     # download the files
     files = paramiko_obj.download(remote_path, local_path, cleanup=True)
@@ -102,7 +123,9 @@ def upload_stanbank_files(settings_name):
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
 
     # create the paramiko object
-    paramiko_obj = Paramiko(settings.sftp_url, settings.user, settings.private_key)
+    paramiko_obj = Paramiko(
+        settings.sftp_url, settings.user, frappe.get_site_path(settings.private_key)
+    )
 
     # upload the files
     files = paramiko_obj.upload(local_path, remote_path, cleanup=True)
