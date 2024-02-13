@@ -16,13 +16,14 @@ class Paramiko:
         try:
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             print("Connecting to the server")
+            print(self.hostname, self.port, self.user, self.key_path)
             self.client.connect(
                 self.hostname,
                 port=self.port,
                 username=self.user,
                 key_filename=self.key_path,
                 look_for_keys=False,
-                allow_agent=False,
+                timeout=20,
             )
             print("Connected to the server")
         except Exception as e:
@@ -95,10 +96,11 @@ def get_stanbank_files(settings_name):
     # get the settings
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
 
+    key_file_path = get_absolute_path(settings.private_key)
+    print("key_file_path", key_file_path)
+
     # create the paramiko object
-    paramiko_obj = Paramiko(
-        settings.sftp_url, settings.user, frappe.get_site_path(settings.private_key)
-    )
+    paramiko_obj = Paramiko(settings.sftp_url, settings.user, key_file_path)
 
     # download the files
     files = paramiko_obj.download(remote_path, local_path, cleanup=True)
@@ -122,10 +124,11 @@ def upload_stanbank_files(settings_name):
     # get the settings
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
 
+    key_file_path = get_absolute_path(settings.private_key)
+    print("key_file_path", key_file_path)
+
     # create the paramiko object
-    paramiko_obj = Paramiko(
-        settings.sftp_url, settings.user, frappe.get_site_path(settings.private_key)
-    )
+    paramiko_obj = Paramiko(settings.sftp_url, settings.user, key_file_path)
 
     # upload the files
     files = paramiko_obj.upload(local_path, remote_path, cleanup=True)
@@ -155,3 +158,18 @@ def sync_all_stanbank_files():
     settings = frappe.get_all("Stanbic Setting", filters={"enabled": 1})
     for setting in settings:
         sync_stanbank_files(setting.name, setting.is_test)
+
+
+def get_absolute_path(file_path):
+    from frappe.utils import cstr
+
+    site_name = cstr(frappe.local.site)
+    bench_path = frappe.utils.get_bench_path()
+
+    if file_path.startswith("/files/"):
+        return bench_path + "/sites/" + site_name + file_path
+    elif file_path.startswith("/private/files/"):
+        return bench_path + "/sites/" + site_name + file_path
+
+    else:
+        return file_path
