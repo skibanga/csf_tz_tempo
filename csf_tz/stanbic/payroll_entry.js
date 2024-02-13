@@ -2,11 +2,11 @@ const buttonName = "Generate Stanbic Payments Initiation";
 
 frappe.ui.form.on("Payroll Entry", {
   refresh: function (frm) {
-    // if (frm.doc.docstatus == 1) generate_payments_initiation(frm);
-    // else {
-    //   frm.remove_custom_button(__(buttonName));
-    //   // add_generate_payments_initiation_button(frm);
-    // }
+    if (frm.doc.docstatus == 1) generate_payments_initiation(frm);
+    else {
+      frm.remove_custom_button(__(buttonName));
+      // add_generate_payments_initiation_button(frm);
+    }
   },
 });
 
