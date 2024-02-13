@@ -1,12 +1,14 @@
 frappe.ui.form.on("Payroll Entry", {
-    setup: function(frm) {
+    setup: function (frm) {
         frm.trigger("control_action_buttons");
-        
+
     },
-    refresh:function(frm) {
+    refresh: function (frm) {
+        console.log("onload");
         frm.trigger("control_action_buttons");
     },
     onload: (frm) => {
+        console.log("onload");
         frm.trigger("control_action_buttons");
     },
     workflow_state: (frm) => {
@@ -18,13 +20,13 @@ frappe.ui.form.on("Payroll Entry", {
         if (frm.doc.docstatus != 1) {
             return
         }
-        frm.add_custom_button(__("Update Salary Slips"), function() {
+        frm.add_custom_button(__("Update Salary Slips"), function () {
             frappe.call({
                 method: 'csf_tz.csftz_hooks.payroll.update_slips',
                 args: {
                     payroll_entry: frm.doc.name,
                 },
-                callback: function(r) {
+                callback: function (r) {
                     if (r.message) {
                         console.log(r.message);
                     }
@@ -36,7 +38,7 @@ frappe.ui.form.on("Payroll Entry", {
         if (frm.doc.docstatus != 1) {
             return
         }
-        frm.add_custom_button(__("Print Salary Slips"), function() {
+        frm.add_custom_button(__("Print Salary Slips"), function () {
             frappe.call({
                 method: 'csf_tz.csftz_hooks.payroll.print_slips',
                 args: {
@@ -87,6 +89,7 @@ frappe.ui.form.on("Payroll Entry", {
                 frm.trigger("create_journal_entry_btn");
             }
         } else {
+            console.log("No action buttons");
             frm.trigger("create_update_slips_btn");
             frm.trigger("create_print_btn");
             frm.trigger("create_journal_entry_btn");

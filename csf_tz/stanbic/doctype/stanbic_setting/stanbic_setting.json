@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
+  "enabled",
   "column_break_gnbjj",
   "currency",
   "sftp_details_section",
@@ -183,11 +184,17 @@
   {
    "fieldname": "column_break_inqe1",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-26 18:33:28.572577",
+ "modified": "2024-02-13 12:57:56.502104",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Setting",
