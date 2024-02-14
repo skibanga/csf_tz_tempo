@@ -23,7 +23,7 @@ class Paramiko:
                 username=self.user,
                 key_filename=self.key_path,
                 look_for_keys=False,
-                timeout=20,
+                timeout=50,
             )
             print("Connected to the server")
         except Exception as e:
@@ -100,7 +100,9 @@ def get_stanbank_files(settings_name):
     print("key_file_path", key_file_path)
 
     # create the paramiko object
-    paramiko_obj = Paramiko(settings.sftp_url, settings.user, key_file_path)
+    paramiko_obj = Paramiko(
+        settings.sftp_url, settings.user, key_file_path, settings.port
+    )
 
     # download the files
     files = paramiko_obj.download(remote_path, local_path, cleanup=True)
@@ -128,7 +130,9 @@ def upload_stanbank_files(settings_name):
     print("key_file_path", key_file_path)
 
     # create the paramiko object
-    paramiko_obj = Paramiko(settings.sftp_url, settings.user, key_file_path)
+    paramiko_obj = Paramiko(
+        settings.sftp_url, settings.user, key_file_path, settings.port
+    )
 
     # upload the files
     files = paramiko_obj.upload(local_path, remote_path, cleanup=True)
