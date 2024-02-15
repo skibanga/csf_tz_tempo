@@ -53,20 +53,27 @@ class Paramiko:
         try:
             sftp = self.client.open_sftp()
             print("Connected to the sftp server")
-            sftp.put(local_path, remote_path)
-            print("Uploaded the files")
-            if cleanup:
-                print("Removing the files from the local folder")
-                sftp.remove(local_path)
+            lfiles = os.listdir(local_path)
+            lfile = ""
+            for lfile in lfiles:
+                sftp.put(local_path + "/" + lfile, remote_path + "/" + lfile)
+                print(
+                    f"Uploaded the file {lfile} to the local folder {local_path} from the remote folder {remote_path}"
+                )
+                if cleanup:
+                    os.remove(local_path + "/" + lfile)
+                    print(f"Removing the files from the remote folder: {lfile}")
             sftp.close()
         except Exception as e:
             frappe.throw(str(e))
         # return list of names of the files uploaded
-        return os.listdir(local_path)
+        return lfiles
+
 
     def close(self):
         self.client.close()
         print("Connection closed")
+
 
     def execute(self, command):
         stdin, stdout, stderr = self.client.exec_command(command)
@@ -89,7 +96,7 @@ def get_local_path(folders_name=[]):
     return path
 
 
-def get_stanbank_files(settings_name):
+def download_stanbank_files(settings_name):
     # get the files from the stanbic remote folder
     # download the files to the local folder
 
@@ -154,10 +161,10 @@ def sync_stanbank_files(settings_name, is_test=False):
     # download the files to the local folder
 
     # upload the files
-    upload_files = upload_stanbank_files(settings_name, is_test)
+    upload_files = upload_stanbank_files(settings_name)
 
     # download the files
-    download_files = get_stanbank_files(settings_name, is_test)
+    download_files = download_stanbank_files(settings_name)
 
     return upload_files, download_files
 
