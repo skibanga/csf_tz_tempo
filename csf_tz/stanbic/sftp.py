@@ -10,10 +10,10 @@ class Paramiko:
         self.port = port
         self.key_path = key_path
         self.client = paramiko.SSHClient()
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connect()
 
     def connect(self):
-        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         print("Connecting to the server")
         pkey = paramiko.RSAKey.from_private_key_file(self.key_path)
         self.client.connect(
@@ -32,11 +32,16 @@ class Paramiko:
         try:
             sftp = self.client.open_sftp()
             print("Connected to the sftp server")
-            sftp.get(remote_path, local_path)
-            print("Downloaded the files")
-            if cleanup:
-                print("Removing the files from the remote folder")
-                sftp.remove(remote_path)
+            rfiles = sftp.listdir(remote_path)
+            rfile = ""
+            for rfile in rfiles:
+                sftp.get(remote_path + "/" + rfile, local_path + "/" + rfile)
+                print(
+                    f"Downloaded the file {rfile} from the remote folder {remote_path} to the local folder {local_path}"
+                )
+                if cleanup:
+                    sftp.remove(remote_path + "/" + rfile)
+                    print(f"Removing the files from the remote folder: {rfile}")
             sftp.close()
         except Exception as e:
             frappe.throw(str(e))
@@ -79,7 +84,9 @@ def get_site_path():
 
 
 def get_local_path(folders_name=[]):
-    return os.path.join(get_site_path(), *folders_name)
+    path = get_absolute_path("/" + "/".join(folders_name))
+    print("path", path)
+    return path
 
 
 def get_stanbank_files(settings_name):
@@ -89,7 +96,7 @@ def get_stanbank_files(settings_name):
     # get the remote path
     remote_path = "/Inbox"
     # get the local path
-    local_path = get_local_path(["stanbic", "inbox"])
+    local_path = get_local_path(["private", "files", "stanbic", "inbox"])
 
     # get the settings
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
@@ -99,7 +106,7 @@ def get_stanbank_files(settings_name):
 
     # create the paramiko object
     paramiko_obj = Paramiko(
-        settings.sftp_url, settings.user, key_file_path, settings.port
+        settings.sftp_url, settings.sftp_user, key_file_path, settings.port
     )
 
     # download the files
@@ -119,7 +126,7 @@ def upload_stanbank_files(settings_name):
     remote_path = "/Outbox"
 
     # get the local path
-    local_path = get_local_path(["stanbic", "outbox"])
+    local_path = get_local_path(["private", "files", "stanbic", "outbox"])
 
     # get the settings
     settings = frappe.get_cached_doc("Stanbic Setting", settings_name)
@@ -129,7 +136,7 @@ def upload_stanbank_files(settings_name):
 
     # create the paramiko object
     paramiko_obj = Paramiko(
-        settings.sftp_url, settings.user, key_file_path, settings.port
+        settings.sftp_url, settings.sftp_user, key_file_path, settings.port
     )
 
     # upload the files
