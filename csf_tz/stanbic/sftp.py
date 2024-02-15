@@ -22,7 +22,8 @@ class Paramiko:
             username=self.user,
             pkey=pkey,
             look_for_keys=False,
-            timeout=50,
+            disabled_algorithms={"pubkeys": ["rsa-sha2-512", "rsa-sha2-256"]},
+            timeout=100,
         )
         print("Connected to the server")
 
