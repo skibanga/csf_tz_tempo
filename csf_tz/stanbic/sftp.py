@@ -13,21 +13,18 @@ class Paramiko:
         self.connect()
 
     def connect(self):
-        try:
-            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            print("Connecting to the server")
-            print(self.hostname, self.port, self.user, self.key_path)
-            self.client.connect(
-                self.hostname,
-                port=self.port,
-                username=self.user,
-                key_filename=self.key_path,
-                look_for_keys=False,
-                timeout=50,
-            )
-            print("Connected to the server")
-        except Exception as e:
-            frappe.throw(str(e))
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        print("Connecting to the server")
+        pkey = paramiko.RSAKey.from_private_key_file(self.key_path)
+        self.client.connect(
+            self.hostname,
+            port=self.port,
+            username=self.user,
+            pkey=pkey,
+            look_for_keys=False,
+            timeout=50,
+        )
+        print("Connected to the server")
 
     def download(self, remote_path, local_path, cleanup=False):
         create_dir_if_not_exists(local_path)
@@ -171,7 +168,7 @@ def get_absolute_path(file_path):
     bench_path = frappe.utils.get_bench_path()
 
     if file_path.startswith("/files/"):
-        return bench_path + "/sites/" + site_name + file_path
+        return bench_path + "/sites/" + site_name + "/public/" + file_path
     elif file_path.startswith("/private/files/"):
         return bench_path + "/sites/" + site_name + file_path
 
