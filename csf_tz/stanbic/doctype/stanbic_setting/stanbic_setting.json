@@ -8,11 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
+  "enabled",
   "column_break_gnbjj",
   "currency",
   "sftp_details_section",
   "sftp_url",
-  "user",
+  "sftp_user",
   "column_break_32vde",
   "private_key",
   "port",
@@ -24,6 +25,7 @@
   "customerid",
   "column_break_9ivzn",
   "payment_type",
+  "user",
   "debtor_info_section",
   "ordering_customer_account_number",
   "ordering_account_type",
@@ -183,11 +185,23 @@
   {
    "fieldname": "column_break_inqe1",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "sftp_user",
+   "fieldtype": "Data",
+   "label": "SFTP User",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-26 18:33:28.572577",
+ "modified": "2024-02-15 16:22:59.317413",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Setting",

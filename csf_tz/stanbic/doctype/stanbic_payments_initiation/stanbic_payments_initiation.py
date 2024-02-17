@@ -71,3 +71,14 @@ class StanbicPaymentsInitiation(Document):
                     title="Salary Slip Not Submitted",
                 )
         return slips
+
+    def on_submit(self):
+        import os
+        from csf_tz.stanbic.sftp import get_absolute_path
+        from frappe.utils import now, format_datetime
+        timestamp = format_datetime(now(), "yyyyMMddHHmmss") + "000"
+        filename=f"WASCO_H2H_Pain001v3_TZ_TST_{timestamp}.xml"
+        create_path = get_absolute_path("/private/files/stanbic/outbox")
+        file_path = os.path.join(create_path, filename)
+        with open(file_path, "w") as file:
+            file.write(self.encrypted_xml)
