@@ -11,6 +11,7 @@ from requests.exceptions import Timeout
 from bs4 import BeautifulSoup
 from csf_tz.custom_api import print_out
 import re
+import json
 
 
 class VehicleFineRecord(Document):
@@ -18,10 +19,12 @@ class VehicleFineRecord(Document):
 
 
 def check_fine_all_vehicles():
-    plate_list = frappe.get_all("Vehicle")
+    plate_list = frappe.get_all(
+        "Vehicle", fields=["name", "number_plate"], limit_page_length=0
+    )
     all_fine_list = []
     for vehicle in plate_list:
-        fine_list = get_fine(number_plate=vehicle["name"])
+        fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
         if fine_list and len(fine_list) > 0:
             all_fine_list.extend(fine_list)
     reference_list = frappe.get_all(
@@ -65,18 +68,17 @@ def get_fine(number_plate=None, reference=None):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             # Find the script tag that contains the AJAX call
-            script_tag = soup.find(
-                "script", string=re.compile(r"\$\.ajax\({.*_token.*}\);", re.DOTALL)
-            )
-            token = ""
-            if script_tag:
-                # Extract the value of _token using a regular expression
-                match = re.search(r"_token\s*:\s*'(.*)'", script_tag.string)
-                if match:
-                    token = match.group(1)
-                    print(token or "No token")
-                else:
-                    print("CSRF token not found in the script.")
+            # Regular expression to find the _token value
+            token_regex = re.compile(r"_token:\s*'([^']+)'")
+
+            # Searching for the _token pattern
+            match = token_regex.search(str(soup))
+
+            # Checking if a match was found and printing the token
+            if match:
+                token = match.group(1)
+            else:
+                print("CSRF token not found in the script.")
             if not token:
                 print_out(
                     "CSRF token not found in the script.",
@@ -101,7 +103,7 @@ def get_fine(number_plate=None, reference=None):
                 if response2.json:
                     data = response2.json().get("dataFromTms")
                     for key, value in data.items():
-                        if value.get(reference):
+                        if value.get("reference"):
                             fine_list.append(value["reference"])
                             if frappe.db.exists(
                                 "Vehicle Fine Record", value["reference"]
