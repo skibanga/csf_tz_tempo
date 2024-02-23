@@ -2315,3 +2315,29 @@ def make_salary_components_and_structure():
     salary_structure_doc.insert(ignore_permissions=True)
     salary_structure_doc.submit()
     return "Salary Components and Structure are created successfully."
+
+def target_warehouse_based_price_list(doc, method):
+    check = frappe.db.get_single_value(
+        "CSF TZ Settings", "target_warehouse_based_price_list"
+    )
+    if check:
+        for item in doc.items:
+            if item.item_code is None or item.warehouse is None:
+                frappe.throw(
+                    f"Both Item Code {item.item_code} and Warehouse {item.warehouse} are required."
+                )
+
+            price_list = frappe.db.get_value("Warehouse", item.warehouse, "price_list")
+            if not price_list:
+                frappe.throw(
+                    f"Price List not found. Please set one in Warehouse {item.warehouse}"
+                )
+
+            rate = frappe.db.get_value(
+                "Item Price",
+                {"item_code": item.item_code, "price_list": price_list},
+                "price_list_rate",
+            )
+            item.price_list_rate = rate
+            item.rate = rate
+            item.amount = item.qty * rate
