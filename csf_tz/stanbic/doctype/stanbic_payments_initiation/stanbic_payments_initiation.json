@@ -37,8 +37,15 @@
   "xml",
   "encrypted_xml_section",
   "encrypted_xml",
-  "section_break_obzlw",
-  "stanbic_response_log"
+  "stanbic_response_section",
+  "stanbic_ack",
+  "stanbic_intaud",
+  "stanbic_finaud",
+  "stanbic_status_update_section",
+  "stanbic_ack_status",
+  "stanbic_ack_change",
+  "stanbic_intaud_change",
+  "stanbic_finaud_change"
  ],
  "fields": [
   {
@@ -204,17 +211,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_obzlw",
-   "fieldtype": "Section Break",
-   "label": "Stanbic Response Log"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "stanbic_response_log",
-   "fieldtype": "Data",
-   "read_only": 1
-  },
-  {
    "collapsible": 1,
    "fieldname": "request_section",
    "fieldtype": "Section Break",
@@ -236,13 +232,80 @@
    "fieldname": "encrypted_xml_section",
    "fieldtype": "Section Break",
    "label": "Encrypted XML"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stanbic_response_section",
+   "fieldtype": "Section Break",
+   "label": "Stanbic Response"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_ack",
+   "fieldtype": "Code",
+   "label": "Stanbic ACK",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_intaud",
+   "fieldtype": "Code",
+   "label": "Stanbic INTAUD",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_finaud",
+   "fieldtype": "Code",
+   "label": "Stanbic FINAUD",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stanbic_status_update_section",
+   "fieldtype": "Section Break",
+   "label": "Stanbic Status Update"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_ack_status",
+   "fieldtype": "Data",
+   "label": "Stanbic ACK Status",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_ack_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic ACK Change",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_intaud_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic INTAUD Change",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_finaud_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic FINAUD Change",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-15 17:14:35.198323",
+ "modified": "2024-03-02 15:30:51.524750",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Initiation",

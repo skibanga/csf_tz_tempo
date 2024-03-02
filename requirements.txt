@@ -4,3 +4,4 @@ hrms
 pyotp
 PGPy
 paramiko
+xmltodict

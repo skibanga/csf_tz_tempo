@@ -5,6 +5,7 @@ import frappe
 from frappe.model.document import Document
 from csf_tz.stanbic.doctype.stanbic_payments_initiation.xml import get_xml
 from csf_tz.stanbic.pgp import encrypt_pgp
+import json
 
 
 class StanbicPaymentsInitiation(Document):
@@ -76,9 +77,37 @@ class StanbicPaymentsInitiation(Document):
         import os
         from csf_tz.stanbic.sftp import get_absolute_path
         from frappe.utils import now, format_datetime
+
         timestamp = format_datetime(now(), "yyyyMMddHHmmss") + "000"
-        filename=f"WASCO_H2H_Pain001v3_TZ_TST_{timestamp}.xml"
+        filename = f"WASCO_H2H_Pain001v3_TZ_TST_{timestamp}.xml"
         create_path = get_absolute_path("/private/files/stanbic/outbox")
         file_path = os.path.join(create_path, filename)
         with open(file_path, "w") as file:
             file.write(self.encrypted_xml)
+
+    def on_update_after_submit(self):
+        if self.docstatus != 1:
+            return
+        if self.stanbic_ack_change and self.stanbic_ack:
+            # self.stanbic_ack_change = 0
+            ack_dict = json.loads(self.stanbic_ack)
+            stanbic_ack_status = ack_dict["Document"]["CstmrPmtStsRpt"][
+                "OrgnlGrpInfAndSts"
+            ]["GrpSts"]
+            if ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlGrpInfAndSts"].get(
+                "StsRsnInf"
+            ):
+                stanbic_ack_status = (
+                    stanbic_ack_status
+                    + " "
+                    + ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlGrpInfAndSts"][
+                        "StsRsnInf"
+                    ]["AddtlInf"]
+                )
+
+            frappe.db.set_value(
+                "Stanbic Payments Initiation",
+                self.name,
+                "stanbic_ack_status",
+                stanbic_ack_status,
+            )
