@@ -89,7 +89,6 @@ class StanbicPaymentsInitiation(Document):
         if self.docstatus != 1:
             return
         if self.stanbic_ack_change and self.stanbic_ack:
-            # self.stanbic_ack_change = 0
             ack_dict = json.loads(self.stanbic_ack)
             stanbic_ack_status = ack_dict["Document"]["CstmrPmtStsRpt"][
                 "OrgnlGrpInfAndSts"
@@ -110,4 +109,80 @@ class StanbicPaymentsInitiation(Document):
                 self.name,
                 "stanbic_ack_status",
                 stanbic_ack_status,
+            )
+            frappe.db.set_value(
+                "Stanbic Payments Initiation",
+                self.name,
+                "stanbic_ack_change",
+                0,
+            )
+        if self.stanbic_intaud_change and self.stanbic_intaud:
+            ack_dict = json.loads(self.stanbic_intaud)
+            print(self.name)
+            TxInfAndSts = ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlPmtInfAndSts"][
+                "TxInfAndSts"
+            ]
+            for tx in TxInfAndSts:
+                try:
+                    if tx.get("OrgnlEndToEndId"):
+                        sal_slip_doc = frappe.get_doc(
+                            "Stanbic Payments Info",
+                            {"parent": self.name, "salary_slip": tx["OrgnlEndToEndId"]},
+                        )
+                        stanbic_intaud_status = frappe.as_json(
+                            tx["StsRsnInf"]["AddtlInf"]
+                            if tx.get("StsRsnInf").get("AddtlInf")
+                            else "STATUS NOT FOUND"
+                        )
+                        frappe.db.set_value(
+                            "Stanbic Payments Info",
+                            sal_slip_doc.name,
+                            "stanbic_intaud_status",
+                            stanbic_intaud_status,
+                        )
+                except Exception as e:
+                    print(f"Error {str(e)}")
+                    frappe.log_error(
+                        f"Error in {self.name}", f"Error {str(e)} {self.name} {str(tx)}"
+                    )
+            frappe.db.set_value(
+                "Stanbic Payments Initiation",
+                self.name,
+                "stanbic_intaud_change",
+                0,
+            )
+        if self.stanbic_finaud_change and self.stanbic_finaud:
+            ack_dict = json.loads(self.stanbic_finaud)
+            print(self.name)
+            TxInfAndSts = ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlPmtInfAndSts"][
+                "TxInfAndSts"
+            ]
+            for tx in TxInfAndSts:
+                try:
+                    if tx.get("OrgnlEndToEndId"):
+                        sal_slip_doc = frappe.get_doc(
+                            "Stanbic Payments Info",
+                            {"parent": self.name, "salary_slip": tx["OrgnlEndToEndId"]},
+                        )
+                        stanbic_finaud_status = frappe.as_json(
+                            tx["StsRsnInf"]["AddtlInf"]
+                            if tx.get("StsRsnInf").get("AddtlInf")
+                            else "STATUS NOT FOUND"
+                        )
+                        frappe.db.set_value(
+                            "Stanbic Payments Info",
+                            sal_slip_doc.name,
+                            "stanbic_finaud_status",
+                            stanbic_finaud_status,
+                        )
+                except Exception as e:
+                    print(f"Error {str(e)}")
+                    frappe.log_error(
+                        f"Error in {self.name}", f"Error {str(e)} {self.name} {str(tx)}"
+                    )
+            frappe.db.set_value(
+                "Stanbic Payments Initiation",
+                self.name,
+                "stanbic_finaud_change",
+                0,
             )

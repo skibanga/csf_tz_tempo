@@ -20,22 +20,21 @@
   "beneficiary_iban",
   "beneficiary_account_number",
   "beneficiary_account_type",
-  "beneficiary_account_currency"
+  "beneficiary_account_currency",
+  "stanbic_finaud_status",
+  "stanbic_intaud_status"
  ],
  "fields": [
   {
    "fieldname": "salary_slip",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Salary Slip",
-   "options": "Salary Slip",
-   "reqd": 1
+   "options": "Salary Slip"
   },
   {
    "fetch_from": "salary_slip.employee",
    "fieldname": "employee",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Employee",
    "options": "Employee",
    "read_only": 1
@@ -51,7 +50,6 @@
    "fetch_from": "salary_slip.net_pay",
    "fieldname": "transfer_amount",
    "fieldtype": "Currency",
-   "in_list_view": 1,
    "label": "Transfer amount",
    "options": "transfer_currency"
   },
@@ -127,12 +125,28 @@
    "fieldname": "beneficiary_country",
    "fieldtype": "Data",
    "label": "Beneficiary Country"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_intaud_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Stanbic INTAUD Status",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_finaud_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Stanbic FINAUD Status",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-30 07:58:02.314197",
+ "modified": "2024-03-03 00:47:31.793117",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Info",
