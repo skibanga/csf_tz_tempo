@@ -1,5 +1,6 @@
 frappe
 erpnext
+hrms
 pyotp
 PGPy
 paramiko

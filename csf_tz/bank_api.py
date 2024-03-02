@@ -214,20 +214,29 @@ def make_payment_entry(method="callback", **kwargs):
             if method == "callback":
                 frappe.set_user("Administrator")
             fees_name = doc_info["name"]
-            bank_reference = frappe.get_value("Fees", fees_name, "bank_reference")
+            bank_reference, receivable_account = frappe.get_value(
+                "Fees", fees_name, ["bank_reference", "receivable_account"]
+            )
             if bank_reference == nmb_doc.reference:
                 payment_entry = get_payment_entry(
-                    "Fees", fees_name, party_amount=nmb_amount
+                    "Fees",
+                    fees_name,
+                    party_amount=nmb_amount,
+                    bank_amount=nmb_amount,
+                    party_type="Student",
+                    payment_type="Receive",
                 )
                 payment_entry.update(
                     {
+                        "payment_date": nmb_doc.timestamp,
                         "posting_date": nmb_doc.timestamp,
                         "reference_no": nmb_doc.reference,
                         "reference_date": nmb_doc.timestamp,
                         "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format(
                             "Fees", fees_name, nmb_doc.reference
                         ),
-                        "paid_to": accounts["bank"],
+                        "paid_from": receivable_account,
+                        "party_account": receivable_account,
                     }
                 )
                 payment_entry.flags.ignore_permissions = True
