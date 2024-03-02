@@ -3,3 +3,4 @@ erpnext
 pyotp
 PGPy
 paramiko
+xmltodict

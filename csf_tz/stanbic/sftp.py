@@ -1,6 +1,7 @@
 import paramiko
 import os
 import frappe
+from csf_tz.stanbic.xml import parse_xml
 
 
 class Paramiko:
@@ -69,11 +70,9 @@ class Paramiko:
         # return list of names of the files uploaded
         return lfiles
 
-
     def close(self):
         self.client.close()
         print("Connection closed")
-
 
     def execute(self, command):
         stdin, stdout, stderr = self.client.exec_command(command)
@@ -92,7 +91,6 @@ def get_site_path():
 
 def get_local_path(folders_name=[]):
     path = get_absolute_path("/" + "/".join(folders_name))
-    print("path", path)
     return path
 
 
@@ -189,3 +187,37 @@ def get_absolute_path(file_path):
 
     else:
         return file_path
+
+
+def process_download_files():
+    inbox_file_path = get_local_path(["private", "files", "stanbic", "inbox"])
+    inbox_files_list = os.listdir(inbox_file_path)
+    for file in inbox_files_list:
+        try:
+            if file.endswith(".xml"):
+                if "ACK" in file or "INTAUD" in file or "FINAUD" in file:
+                    path = get_local_path(
+                        ["private", "files", "stanbic", "inbox", file]
+                    )
+                    file_dict = parse_xml(path)
+                    file_json = frappe.as_json(file_dict)
+                    print("filename", path)
+                    pain_doc_name = file_dict["Document"]["CstmrPmtStsRpt"][
+                        "OrgnlGrpInfAndSts"
+                    ]["OrgnlMsgId"]
+                    pain_doc = frappe.get_doc(
+                        "Stanbic Payments Initiation", pain_doc_name
+                    )
+                    if "ACK" in file:
+                        pain_doc.stanbic_ack = file_json
+                        pain_doc.stanbic_ack_change = 1
+                    elif "INTAUD" in file:
+                        pain_doc.stanbic_intaud = file_json
+                        pain_doc.stanbic_intaud_change = 1
+                    elif "FINAUD" in file:
+                        pain_doc.stanbic_finaud = file_json
+                        pain_doc.stanbic_finaud_change = 1
+                    pain_doc.save()
+        except Exception as e:
+            print("Error processing the file", file, str(e))
+    frappe.db.commit()
