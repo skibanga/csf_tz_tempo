@@ -80,7 +80,7 @@ class StanbicPaymentsInitiation(Document):
         from frappe.utils import now, format_datetime
 
         timestamp = format_datetime(now(), "yyyyMMddHHmmss") + "000"
-        filename = f"WASCO_H2H_Pain001v3_TZ_PRD_{timestamp}.xml"
+        filename = f"WASCO_H2H_Pain001v3_TZ_{self.file_code}_{timestamp}.xml"
         create_path = get_absolute_path("/private/files/stanbic/outbox")
         file_path = os.path.join(create_path, filename)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -143,7 +143,7 @@ class StanbicPaymentsInitiation(Document):
                             stanbic_intaud_status,
                         )
                 except Exception as e:
-                    print(f"Error {str(e)}")
+                    # print(f"Error {str(e)}")
                     frappe.log_error(
                         f"Error in {self.name}", f"Error {str(e)} {self.name} {str(tx)}"
                     )
