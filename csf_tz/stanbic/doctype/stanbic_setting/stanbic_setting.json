@@ -36,7 +36,8 @@
   "ordering_bank_country",
   "ordering_bank_country_code",
   "section_break_cnx97",
-  "charges_bearer"
+  "charges_bearer",
+  "file_code"
  ],
  "fields": [
   {
@@ -197,11 +198,16 @@
    "fieldtype": "Data",
    "label": "SFTP User",
    "reqd": 1
+  },
+  {
+   "fieldname": "file_code",
+   "fieldtype": "Data",
+   "label": "File Code"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-15 16:22:59.317413",
+ "modified": "2024-03-06 22:03:12.087367",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Setting",

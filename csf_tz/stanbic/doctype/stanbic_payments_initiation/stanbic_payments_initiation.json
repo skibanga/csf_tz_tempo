@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "payroll_entry",
+  "file_code",
   "amended_from",
   "column_break_vh6iw",
   "posting_date",
@@ -299,13 +300,19 @@
    "hidden": 1,
    "label": "Stanbic FINAUD Change",
    "read_only": 1
+  },
+  {
+   "fieldname": "file_code",
+   "fieldtype": "Data",
+   "label": "File Code",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-02 15:30:51.524750",
+ "modified": "2024-03-06 22:05:55.209393",
  "modified_by": "Administrator",
  "module": "Stanbic",
  "name": "Stanbic Payments Initiation",

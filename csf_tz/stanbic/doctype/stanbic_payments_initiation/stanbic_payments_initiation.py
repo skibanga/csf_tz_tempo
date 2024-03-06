@@ -18,9 +18,10 @@ class StanbicPaymentsInitiation(Document):
         self.insert(ignore_permissions=True)
         self.reload()
         self.xml = get_xml(self)
-        public_key = frappe.get_cached_value(
-            "Stanbic Setting", self.stanbic_setting, "pgp_public_key"
+        public_key, file_code = frappe.get_cached_value(
+            "Stanbic Setting", self.stanbic_setting, ["pgp_public_key", "file_code"]
         )
+        self.file_code = file_code
         self.encrypted_xml = encrypt_pgp(self.xml, public_key)
         self.save(ignore_permissions=True)
 
