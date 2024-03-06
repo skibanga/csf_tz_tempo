@@ -82,6 +82,7 @@ class StanbicPaymentsInitiation(Document):
         filename = f"WASCO_H2H_Pain001v3_TZ_PRD_{timestamp}.xml"
         create_path = get_absolute_path("/private/files/stanbic/outbox")
         file_path = os.path.join(create_path, filename)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w") as file:
             file.write(self.encrypted_xml)
 

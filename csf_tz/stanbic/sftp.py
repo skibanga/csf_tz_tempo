@@ -191,6 +191,7 @@ def get_absolute_path(file_path):
 
 def process_download_files():
     inbox_file_path = get_local_path(["private", "files", "stanbic", "inbox"])
+    os.makedirs(os.path.dirname(inbox_file_path), exist_ok=True)
     inbox_files_list = os.listdir(inbox_file_path)
     for file in inbox_files_list:
         try:
@@ -199,6 +200,7 @@ def process_download_files():
                     path = get_local_path(
                         ["private", "files", "stanbic", "inbox", file]
                     )
+
                     file_dict = parse_xml(path)
                     file_json = frappe.as_json(file_dict)
                     print("filename", path)
