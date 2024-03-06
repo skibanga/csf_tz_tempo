@@ -210,13 +210,13 @@ def process_download_files():
                     pain_doc = frappe.get_doc(
                         "Stanbic Payments Initiation", pain_doc_name
                     )
-                    if "ACK" in file:
+                    if "ACK" in file and not pain_doc.stanbic_ack:
                         pain_doc.stanbic_ack = file_json
                         pain_doc.stanbic_ack_change = 1
-                    elif "INTAUD" in file:
+                    elif "INTAUD" in file and not pain_doc.stanbic_intaud:
                         pain_doc.stanbic_intaud = file_json
                         pain_doc.stanbic_intaud_change = 1
-                    elif "FINAUD" in file:
+                    elif "FINAUD" in file and not pain_doc.stanbic_finaud:
                         pain_doc.stanbic_finaud = file_json
                         pain_doc.stanbic_finaud_change = 1
                     pain_doc.save()
