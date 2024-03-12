@@ -13,25 +13,27 @@ class InterCompanyStockTransfer(Document):
         for item in self.items_child:
             
             valuation_rate = get_valuation_rate(item.item_code, self.from_company, self.default_from_warehouse)
-            
-            item_list_from.append({
-                "item_name": item.item_name,
-                "item_code": item.item_code,
-                "uom": item.uom,
-                "qty": item.qty,
-                "s_warehouse": self.default_from_warehouse,
-                "valuation_rate": valuation_rate,
-            })
+            if valuation_rate == 0 or valuation_rate is None:
+                frappe.throw(f"Valuation rate is zero or not found for Item {item.item_code} in warehouse {self.default_from_warehouse}")
+            else:
+                item_list_from.append({
+                    "item_name": item.item_name,
+                    "item_code": item.item_code,
+                    "uom": item.uom,
+                    "qty": item.qty,
+                    "s_warehouse": self.default_from_warehouse,
+                    "valuation_rate": valuation_rate,
+                })
 
-            item_list_to.append({
-                "item_name": item.item_name,
-                "item_code": item.item_code,
-                "uom": item.uom,
-                "qty": item.qty,
-                "t_warehouse": self.default_to_warehouse,
-                "valuation_rate": valuation_rate,
-                "cost_center": ""
-            })
+                item_list_to.append({
+                    "item_name": item.item_name,
+                    "item_code": item.item_code,
+                    "uom": item.uom,
+                    "qty": item.qty,
+                    "t_warehouse": self.default_to_warehouse,
+                    "valuation_rate": valuation_rate,
+                    "cost_center": ""
+                })
 
         entry_from = frappe.get_doc({
             "doctype": "Stock Entry",
