@@ -61,7 +61,7 @@ doctype_js = {
     "Student Applicant": "csf_tz/student_applicant.js",
     "Bank Reconciliation": "csf_tz/bank_reconciliation.js",
     "Program Enrollment": "csf_tz/program_enrollment.js",
-    "Payroll Entry": "csf_tz/payroll_entry.js",
+    "Payroll Entry": ["csf_tz/payroll_entry.js", "stanbic/payroll_entry.js"],
     "Salary Slip": "csf_tz/salary_slip.js",
     "Landed Cost Voucher": "csf_tz/landed_cost_voucher.js",
     "Additional Salary": "csf_tz/additional_salary.js",
@@ -161,6 +161,9 @@ doc_events = {
     "Purchase Invoice": {
         "on_submit": "csf_tz.custom_api.make_withholding_tax_gl_entries_for_purchase",
     },
+    "Purchase Order": {
+        "validate": "csf_tz.custom_api.target_warehouse_based_price_list",
+    },
     "Fees": {
         "before_insert": "csf_tz.custom_api.set_fee_abbr",
         "after_insert": "csf_tz.bank_api.set_callback_token",
@@ -236,7 +239,9 @@ scheduler_events = {
             "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.check_fine_all_vehicles",
         ],
         "*/15 * * * *": [
-            "csf_tz.csftz_hooks.items_revaluation.process_incorrect_balance_qty"
+            "csf_tz.csftz_hooks.items_revaluation.process_incorrect_balance_qty",
+            "csf_tz.stanbic.sftp.sync_all_stanbank_files",
+            "csf_tz.stanbic.sftp.process_download_files",
         ],
         # Routine for every day 3:30am at night
         "30 3 * * *": [
