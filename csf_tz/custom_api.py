@@ -573,6 +573,9 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 
 
 def create_indirect_expense_item(doc, method=None):
+    if frappe.local.flags.ignore_root_company_validation:
+        return
+    
     if (
         not doc.parent_account
         or doc.is_group
@@ -618,6 +621,8 @@ def create_indirect_expense_item(doc, method=None):
             company_list.append(doc.company)
             doc.db_update()
         return item.name
+    
+    frappe.throw(str(item))
     new_item = frappe.get_doc(
         dict(
             doctype="Item",
