@@ -1,0 +1,339 @@
+{
+ "actions": [],
+ "autoname": "format:{payroll_entry}-{##}",
+ "creation": "2023-11-30 00:15:52.985740",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payroll_entry",
+  "file_code",
+  "amended_from",
+  "column_break_vh6iw",
+  "posting_date",
+  "posting_time",
+  "section_break_szydr",
+  "number_of_transactions",
+  "column_break_vezvb",
+  "control_sum",
+  "section_break_dyb66",
+  "stanbic_setting",
+  "section_break_aieun",
+  "initiating_party_name",
+  "customer_id",
+  "ordering_customer_name",
+  "ordering_customer_account_country",
+  "ordering_customer_account_number",
+  "column_break_6a5g3",
+  "ordering_account_type",
+  "ordering_account_currency",
+  "ordering_bank_bic",
+  "ordering_bank_sort_code",
+  "ordering_bank_country_code",
+  "charges_bearer",
+  "section_break_ppvse",
+  "stanbic_payments_info",
+  "request_section",
+  "xml",
+  "encrypted_xml_section",
+  "encrypted_xml",
+  "stanbic_response_section",
+  "stanbic_ack",
+  "stanbic_intaud",
+  "stanbic_finaud",
+  "stanbic_status_update_section",
+  "stanbic_ack_status",
+  "stanbic_ack_change",
+  "stanbic_intaud_change",
+  "stanbic_finaud_change"
+ ],
+ "fields": [
+  {
+   "fieldname": "payroll_entry",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payroll Entry",
+   "options": "Payroll Entry",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_vh6iw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Posting Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_szydr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "number_of_transactions",
+   "fieldtype": "Int",
+   "label": "Number of transactions"
+  },
+  {
+   "fieldname": "column_break_vezvb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "control_sum",
+   "fieldtype": "Float",
+   "label": "Control Sum"
+  },
+  {
+   "fieldname": "section_break_dyb66",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "stanbic_setting",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stanbic Setting",
+   "options": "Stanbic Setting",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_aieun",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "stanbic_setting.initiating_party_name",
+   "fieldname": "initiating_party_name",
+   "fieldtype": "Data",
+   "label": "Initiating Party Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.customerid",
+   "fieldname": "customer_id",
+   "fieldtype": "Data",
+   "label": "Customer ID",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.company",
+   "fieldname": "ordering_customer_name",
+   "fieldtype": "Data",
+   "label": "Ordering customer name"
+  },
+  {
+   "default": "TZ",
+   "fieldname": "ordering_customer_account_country",
+   "fieldtype": "Data",
+   "label": "Ordering customer account country"
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_customer_account_number",
+   "fieldname": "ordering_customer_account_number",
+   "fieldtype": "Data",
+   "label": "Ordering Customer account number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6a5g3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_account_type",
+   "fieldname": "ordering_account_type",
+   "fieldtype": "Data",
+   "label": "Ordering account type",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_account_currency",
+   "fieldname": "ordering_account_currency",
+   "fieldtype": "Data",
+   "label": "Ordering account currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_bank_bic",
+   "fieldname": "ordering_bank_bic",
+   "fieldtype": "Data",
+   "label": "Ordering bank BIC",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_bank_sort_code",
+   "fieldname": "ordering_bank_sort_code",
+   "fieldtype": "Data",
+   "label": "Ordering bank sort code",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "stanbic_setting.ordering_bank_country_code",
+   "fieldname": "ordering_bank_country_code",
+   "fieldtype": "Data",
+   "label": "Ordering bank country code",
+   "read_only": 1
+  },
+  {
+   "default": "DEBT",
+   "fieldname": "charges_bearer",
+   "fieldtype": "Data",
+   "label": "Charges bearer"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Stanbic Payments Initiation",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_ppvse",
+   "fieldtype": "Section Break",
+   "label": "Stanbic Payments Info"
+  },
+  {
+   "fieldname": "stanbic_payments_info",
+   "fieldtype": "Table",
+   "options": "Stanbic Payments Info",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "request_section",
+   "fieldtype": "Section Break",
+   "label": "Request"
+  },
+  {
+   "fieldname": "xml",
+   "fieldtype": "Code",
+   "options": "XML",
+   "read_only": 1
+  },
+  {
+   "fieldname": "encrypted_xml",
+   "fieldtype": "Code",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "encrypted_xml_section",
+   "fieldtype": "Section Break",
+   "label": "Encrypted XML"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stanbic_response_section",
+   "fieldtype": "Section Break",
+   "label": "Stanbic Response"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_ack",
+   "fieldtype": "Code",
+   "label": "Stanbic ACK",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_intaud",
+   "fieldtype": "Code",
+   "label": "Stanbic INTAUD",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_finaud",
+   "fieldtype": "Code",
+   "label": "Stanbic FINAUD",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stanbic_status_update_section",
+   "fieldtype": "Section Break",
+   "label": "Stanbic Status Update"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stanbic_ack_status",
+   "fieldtype": "Data",
+   "label": "Stanbic ACK Status",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_ack_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic ACK Change",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_intaud_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic INTAUD Change",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "stanbic_finaud_change",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stanbic FINAUD Change",
+   "read_only": 1
+  },
+  {
+   "fieldname": "file_code",
+   "fieldtype": "Data",
+   "label": "File Code",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-03-06 22:05:55.209393",
+ "modified_by": "Administrator",
+ "module": "Stanbic",
+ "name": "Stanbic Payments Initiation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
