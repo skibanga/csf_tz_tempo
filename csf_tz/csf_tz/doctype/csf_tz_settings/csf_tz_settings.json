@@ -25,9 +25,13 @@
   "start_sle_gle_reporting",
   "payroll_overrides_section",
   "enable_payroll_approval",
+  "override_salary_slip_email_message",
+  "salary_slip_email_message",
   "column_break_u48fq",
   "enable_fixed_working_days_per_month",
   "working_days_per_month",
+  "override_email_queue_batch_size",
+  "email_qatch_batch_size",
   "hr_settings_section",
   "enable_overtime_calculation",
   "column_break_ihhi5",
@@ -187,12 +191,38 @@
    "fieldname": "target_warehouse_based_price_list",
    "fieldtype": "Check",
    "label": "Enable Target Warehouse Based Buying Price List"
+  },
+  {
+   "default": "0",
+   "fieldname": "override_salary_slip_email_message",
+   "fieldtype": "Check",
+   "label": "Override Salary Slip Email Message"
+  },
+  {
+   "depends_on": "eval: doc.override_salary_slip_email_message == 1;",
+   "fieldname": "salary_slip_email_message",
+   "fieldtype": "Code",
+   "label": "Salary Slip Email Message",
+   "mandatory_depends_on": "eval: doc.override_salary_slip_email_message == 1;"
+  },
+  {
+   "default": "0",
+   "fieldname": "override_email_queue_batch_size",
+   "fieldtype": "Check",
+   "label": "Override Email Queue Batch Size"
+  },
+  {
+   "depends_on": "eval: doc.override_email_queue_batch_size == 1;",
+   "fieldname": "email_qatch_batch_size",
+   "fieldtype": "Int",
+   "label": "Email Qatch Batch Size",
+   "mandatory_depends_on": "eval: doc.override_email_queue_batch_size == 1;"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-02-23 14:21:15.142136",
+ "modified": "2024-03-21 19:04:19.134664",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
