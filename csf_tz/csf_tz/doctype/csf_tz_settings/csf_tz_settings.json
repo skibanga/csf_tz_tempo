@@ -199,11 +199,11 @@
    "label": "Override Salary Slip Email Message"
   },
   {
-   "depends_on": "eval: doc.override_salary_slip_email_message == 1;",
+   "depends_on": "eval: doc.override_salary_slip_email_message == 1",
    "fieldname": "salary_slip_email_message",
    "fieldtype": "Code",
    "label": "Salary Slip Email Message",
-   "mandatory_depends_on": "eval: doc.override_salary_slip_email_message == 1;"
+   "mandatory_depends_on": "eval: doc.override_salary_slip_email_message == 1"
   },
   {
    "default": "0",
