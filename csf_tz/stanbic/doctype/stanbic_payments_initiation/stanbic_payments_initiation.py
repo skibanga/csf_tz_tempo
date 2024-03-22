@@ -88,8 +88,6 @@ class StanbicPaymentsInitiation(Document):
             file.write(self.encrypted_xml)
 
     def on_update_after_submit(self):
-        if self.docstatus != 1:
-            return
         if self.stanbic_ack_change and self.stanbic_ack:
             ack_dict = json.loads(self.stanbic_ack)
             stanbic_ack_status = ack_dict["Document"]["CstmrPmtStsRpt"][
