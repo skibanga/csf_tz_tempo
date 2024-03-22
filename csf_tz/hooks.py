@@ -15,6 +15,7 @@ app_license = "GNU General Public License (v3)"
 # Override Document Class
 override_doctype_class = {
     "Salary Slip": "csf_tz.overrides.salary_slip.SalarySlip",
+    "Additional Salary": "csf_tz.overrides.additional_salary.AdditionalSalary",
 }
 
 # Includes in <head>
