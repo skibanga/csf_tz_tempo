@@ -5,7 +5,7 @@ import importlib
 
 import frappe
 
-__version__ = "14.3.1"
+__version__ = "14.4.0"
 
 patches_loaded = False
 app_name = "csf_tz"
