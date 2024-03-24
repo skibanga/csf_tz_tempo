@@ -15,7 +15,28 @@ import json
 
 
 class VehicleFineRecord(Document):
-    pass
+    def validate(self):
+        """
+        Validate the vehicle number plate and get the vehicle name
+
+        1. Check if the vehicle number plate is valid
+        2. Get the vehicle name from the vehicle number plate
+        3. If the vehicle name is not found, set the vehicle name as the vehicle number plate
+        """
+        try:
+            if self.vehicle:
+                vehicle_name = frappe.get_value(
+                    "Vehicle", {"number_plate": self.vehicle}, "name"
+                )
+                if vehicle_name:
+                    self.vehicle_doc = vehicle_name
+                else:
+                    self.vehicle_doc = self.vehicle
+        except Exception as e:
+            frappe.log_error(
+                title=f"Error in VehicleFineRecord.validate",
+                message=frappe.get_traceback(),
+            )
 
 
 def check_fine_all_vehicles():
