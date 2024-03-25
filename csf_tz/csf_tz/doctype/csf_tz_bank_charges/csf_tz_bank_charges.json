@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CTBC-{###}",
+ "creation": "2024-03-08 09:00:14.016189",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "bank_account",
+  "currency",
+  "company",
+  "column_break_ttbjl",
+  "account",
+  "bank_supplier",
+  "exchange_rate",
+  "section_break_31h9g",
+  "csf_tz_bank_charges_detail",
+  "total_bank_charges",
+  "ref_pi",
+  "section_break_x1dgr",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bank Account",
+   "options": "Bank Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Bank Account Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "column_break_ttbjl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "bank_account.custom_bank_supplier",
+   "fieldname": "bank_supplier",
+   "fieldtype": "Data",
+   "label": "Bank Supplier",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Currency",
+   "label": "Exchange Rate"
+  },
+  {
+   "fieldname": "section_break_31h9g",
+   "fieldtype": "Section Break",
+   "label": "CSF TZ Bank Charges Detail"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "csf_tz_bank_charges_detail",
+   "fieldtype": "Table",
+   "options": "CSF TZ Bank Charges Detail"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_bank_charges",
+   "fieldtype": "Currency",
+   "label": "Total Bank Charges",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_x1dgr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "CSF TZ Bank Charges",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "CSF TZ Bank Charges",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "bank_account.account_name",
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Account"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ref_pi",
+   "fieldtype": "Data",
+   "label": " Ref PI",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "bank_account.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-03-22 17:10:46.508416",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "CSF TZ Bank Charges",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
