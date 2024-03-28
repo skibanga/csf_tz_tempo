@@ -88,8 +88,6 @@ class StanbicPaymentsInitiation(Document):
             file.write(self.encrypted_xml)
 
     def on_update_after_submit(self):
-        if self.docstatus != 1:
-            return
         if self.stanbic_ack_change and self.stanbic_ack:
             ack_dict = json.loads(self.stanbic_ack)
             stanbic_ack_status = ack_dict["Document"]["CstmrPmtStsRpt"][
@@ -123,18 +121,20 @@ class StanbicPaymentsInitiation(Document):
             TxInfAndSts = ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlPmtInfAndSts"][
                 "TxInfAndSts"
             ]
-            try:
-                if TxInfAndSts.get("OrgnlEndToEndId"):
+            if not isinstance(TxInfAndSts, list):
+                TxInfAndSts = [TxInfAndSts]
+            for OrgnlEndToEndId in TxInfAndSts:
+                try:
                     sal_slip_doc = frappe.get_doc(
                         "Stanbic Payments Info",
                         {
                             "parent": self.name,
-                            "salary_slip": TxInfAndSts["OrgnlEndToEndId"],
+                            "salary_slip": OrgnlEndToEndId["OrgnlEndToEndId"],
                         },
                     )
                     stanbic_intaud_status = frappe.as_json(
-                        TxInfAndSts["StsRsnInf"]["AddtlInf"]
-                        if TxInfAndSts.get("StsRsnInf").get("AddtlInf")
+                        OrgnlEndToEndId["StsRsnInf"]["AddtlInf"]
+                        if OrgnlEndToEndId.get("StsRsnInf").get("AddtlInf")
                         else "STATUS NOT FOUND"
                     )
                     frappe.db.set_value(
@@ -143,11 +143,11 @@ class StanbicPaymentsInitiation(Document):
                         "stanbic_intaud_status",
                         stanbic_intaud_status,
                     )
-            except Exception as e:
-                frappe.log_error(
-                    f"Error in {self.name}",
-                    f"Error {str(e)} {self.name} {str(TxInfAndSts)}",
-                )
+                except Exception as e:
+                    frappe.log_error(
+                        f"Error in {self.name}",
+                        f"Error {str(e)} {self.name} {OrgnlEndToEndId}",
+                    )
             frappe.db.set_value(
                 "Stanbic Payments Initiation",
                 self.name,
@@ -159,18 +159,20 @@ class StanbicPaymentsInitiation(Document):
             TxInfAndSts = ack_dict["Document"]["CstmrPmtStsRpt"]["OrgnlPmtInfAndSts"][
                 "TxInfAndSts"
             ]
-            try:
-                if TxInfAndSts.get("OrgnlEndToEndId"):
+            if not isinstance(TxInfAndSts, list):
+                TxInfAndSts = [TxInfAndSts]
+            for OrgnlEndToEndId in TxInfAndSts:
+                try:
                     sal_slip_doc = frappe.get_doc(
                         "Stanbic Payments Info",
                         {
                             "parent": self.name,
-                            "salary_slip": TxInfAndSts["OrgnlEndToEndId"],
+                            "salary_slip": OrgnlEndToEndId["OrgnlEndToEndId"],
                         },
                     )
                     stanbic_finaud_status = frappe.as_json(
-                        TxInfAndSts["StsRsnInf"]["AddtlInf"]
-                        if TxInfAndSts.get("StsRsnInf").get("AddtlInf")
+                        OrgnlEndToEndId["StsRsnInf"]["AddtlInf"]
+                        if OrgnlEndToEndId.get("StsRsnInf").get("AddtlInf")
                         else "STATUS NOT FOUND"
                     )
                     frappe.db.set_value(
@@ -179,11 +181,11 @@ class StanbicPaymentsInitiation(Document):
                         "stanbic_finaud_status",
                         stanbic_finaud_status,
                     )
-            except Exception as e:
-                frappe.log_error(
-                    f"Error in {self.name}",
-                    f"Error {str(e)} {self.name} {str(TxInfAndSts)}",
-                )
+                except Exception as e:
+                    frappe.log_error(
+                        f"Error in {self.name}",
+                        f"Error {str(e)} {self.name} {str(OrgnlEndToEndId)}",
+                    )
             frappe.db.set_value(
                 "Stanbic Payments Initiation",
                 self.name,

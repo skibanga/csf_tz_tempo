@@ -55,33 +55,33 @@ def execute(filters=None):
             row["reconciliation_qty"] = math.floor(
                 row.stock_value_difference / row.valuation_rate
             )
-            row["reconciliation_value"] = row["reconciliation_qty"] * row.valuation_rate
+            row["reconciliation_value"] = row.stock_value_difference
 
         if (
             row.voucher_type == "Purchase Receipt"
             or row.voucher_type == "Purchase Invoice"
         ):
             row["purchase_qty"] = row.actual_qty
-            row["purchase_value"] = row["purchase_qty"] * row.valuation_rate
+            row["purchase_value"] = row.stock_value_difference
 
         if row.voucher_type == "Delivery Note" or row.voucher_type == "Sales Invoice":
             row["sold_qty"] = row.actual_qty
-            row["sold_value"] = row["sold_qty"] * row.valuation_rate
+            row["sold_value"] = row.stock_value_difference
 
         if row.voucher_type == "Stock Entry":
             row["adjustment_qty"] = row.actual_qty
-            row["adjustment_value"] = row["adjustment_qty"] * row.valuation_rate
+            row["adjustment_value"] = row.stock_value_difference
 
         row["closing_qty"] = (
             ((row.opening_qty or 0) + (row.purchase_qty or 0))
-            - (row.sold_qty or 0)
+            + (row.sold_qty or 0)
             + (row.adjustment_qty or 0)
             + (row.reconciliation_qty or 0)
         )
 
         row["closing_value"] = (
             ((row.opening_value or 0) + (row.purchase_value or 0))
-            - (row.sold_value or 0)
+            + (row.sold_value or 0)
             + (row.adjustment_value or 0)
             + (row.reconciliation_value or 0)
         )
