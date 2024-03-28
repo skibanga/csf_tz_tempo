@@ -78,6 +78,7 @@ def execute(filters=None):
             + (row.adjustment_qty or 0)
             + (row.reconciliation_qty or 0)
         )
+
         row["closing_value"] = (
             ((row.opening_value or 0) + (row.purchase_value or 0))
             + (row.sold_value or 0)
@@ -139,20 +140,6 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": "Item",
             "width": 100,
-        },
-        {
-            "label": _("Stock UOM"),
-            "fieldname": "voucher_type",
-            "fieldtype": "Link",
-            "options": "UOM",
-            "width": 90,
-        },
-        {
-            "label": _("Stock UOM"),
-            "fieldname": "voucher_no",
-            "fieldtype": "Link",
-            "options": "UOM",
-            "width": 90,
         },
         {
             "label": _("Stock UOM"),
