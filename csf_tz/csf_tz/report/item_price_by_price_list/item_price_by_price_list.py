@@ -13,7 +13,7 @@ def execute(filters=None):
 
 def get_columns():
     # Dynamically fetch Price Lists for dynamic column creation
-    price_lists = db.get_list("Price List", pluck="name")
+    price_lists = db.get_list("Price List", filters={"selling": 1}, pluck="name")
     price_list_columns = [
         {
             "label": _(f"{price_list} Rate"),
@@ -60,6 +60,18 @@ def get_columns():
                 "fieldtype": "Currency",
                 "width": 120,
             },
+            {
+                "label": _("Valuation Rate"),
+                "fieldname": "valuation_rate",
+                "fieldtype": "Currency",
+                "width": 120,
+            },
+            {
+                "label": _("Warehouse Qty"),
+                "fieldname": "warehouse_qty",
+                "fieldtype": "Data",
+                "width": 120,
+            },
         ]
     )
     return columns
@@ -79,12 +91,16 @@ def get_data(filters):
             i.item_code,
             i.description,
             i.default_tax_template,
-            (SELECT SUM(bin.actual_qty) FROM `tabBin` bin WHERE bin.item_code=i.item_code) as total_qty,
-            i.last_purchase_rate
+            SUM(b.actual_qty) as total_qty,
+            i.last_purchase_rate,
+            b.valuation_rate,
+            GROUP_CONCAT(CONCAT(b.warehouse, ' - ', CAST(b.actual_qty AS INTEGER), '<br>')) as warehouse_qty
         FROM
             `tabItem` i
+        LEFT OUTER JOIN `tabBin` b ON i.item_code = b.item_code
         WHERE
             i.disabled = 0 {conditions}
+        GROUP BY i.item_code
     """.format(
             conditions=conditions
         ),
