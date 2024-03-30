@@ -1,6 +1,7 @@
 # Copyright (c) 2024, Aakvatech and contributors
 # For license information, please see license.txt
 
+import frappe
 from frappe import _, db
 from frappe.utils import flt
 
@@ -16,10 +17,17 @@ def get_columns():
     price_lists = db.get_list("Price List", filters={"selling": 1}, pluck="name")
     price_list_columns = [
         {
+            "label": _(f"{price_list} Excl"),
+            "fieldname": f"rate_{price_list.replace(' ', '_').lower()}_excl",
+            "fieldtype": "Currency",
+        }
+        for price_list in price_lists
+    ]
+    price_list_columns += [
+        {
             "label": _(f"{price_list} Rate"),
             "fieldname": f"rate_{price_list.replace(' ', '_').lower()}",
             "fieldtype": "Currency",
-            "width": 120,
         }
         for price_list in price_lists
     ]
@@ -80,13 +88,10 @@ def get_columns():
 def get_data(filters):
     conditions = ""
     if filters.get("item_description"):
-        conditions += " AND i.description LIKE '%{}%'".format(
-            filters["item_description"]
-        )
+        conditions += f""" AND (i.description LIKE '%{filters["item_description"]}%' OR i.item_code = '{filters["item_description"]}')"""
 
     # Example SQL Query to fetch data
-    data = db.sql(
-        """
+    sql = f"""
         SELECT
             i.item_code,
             i.description,
@@ -98,23 +103,28 @@ def get_data(filters):
         FROM
             `tabItem` i
         LEFT OUTER JOIN `tabBin` b ON i.item_code = b.item_code
-        WHERE
-            i.disabled = 0 {conditions}
+        WHERE i.disabled = 0
+            AND i.is_sales_item = 1 {conditions}
         GROUP BY i.item_code
-    """.format(
-            conditions=conditions
-        ),
+    """
+    data = db.sql(
+        sql,
         as_dict=1,
     )
 
     # Add price list rates
     for d in data:
-        for price_list in db.get_list("Price List", pluck="name"):
+        for price_list in db.get_list(
+            "Price List", filters={"selling": 1}, pluck="name"
+        ):
             rate = db.get_value(
                 "Item Price",
                 {"item_code": d.item_code, "price_list": price_list},
                 "price_list_rate",
             )
             d[f"rate_{price_list.replace(' ', '_').lower()}"] = rate if rate else 0.0
+            d[f"rate_{price_list.replace(' ', '_').lower()}_excl"] = (
+                rate / (1 + (flt(filters["tax_rate"]) / 100)) if rate else 0.0
+            )
 
     return data

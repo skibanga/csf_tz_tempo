@@ -6,10 +6,15 @@ frappe.query_reports["Item Price by Price List"] = {
 	"filters": [
 		{
 			"fieldname": "item_description",
-			"label": __("Item Description"),
+			"label": __("Item or Part of Description"),
 			"fieldtype": "Data",
 			"default": "",
-			"wildcard_filter": 1,
+		},
+		{
+			"fieldname": "tax_rate",
+			"label": __("Tax Rate"),
+			"fieldtype": "Percent",
+			"default": "18",
 			"mandatory": 1,
 		}
 	]
