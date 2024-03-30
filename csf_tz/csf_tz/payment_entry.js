@@ -20,6 +20,8 @@ frappe.ui.form.on("Payment Entry", {
 			}
 			else if (frm.doc.payment_type == "Internal Transfer") {
 				frm.set_value("naming_series", "IT-.YYYY.-");
+				frm.set_value("party_type", "");
+				frm.set_value("party_name", "");
 			}
 		}
 		frm.refresh_fields()
