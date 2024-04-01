@@ -38,20 +38,17 @@ def get_columns():
                 "fieldname": "item_code",
                 "fieldtype": "Link",
                 "options": "Item",
-                "width": 150,
             },
             {
                 "label": _("Item Description"),
                 "fieldname": "description",
                 "fieldtype": "Data",
-                "width": 200,
             },
             {
                 "label": _("Default Item Tax Template"),
                 "fieldname": "default_tax_template",
                 "fieldtype": "Link",
                 "options": "Item Tax Template",
-                "width": 200,
             },
         ]
         + price_list_columns
@@ -60,25 +57,21 @@ def get_columns():
                 "label": _("Total Qty"),
                 "fieldname": "total_qty",
                 "fieldtype": "Float",
-                "width": 100,
             },
             {
                 "label": _("Last Purchase Rate"),
                 "fieldname": "last_purchase_rate",
                 "fieldtype": "Currency",
-                "width": 120,
             },
             {
                 "label": _("Valuation Rate"),
                 "fieldname": "valuation_rate",
                 "fieldtype": "Currency",
-                "width": 120,
             },
             {
                 "label": _("Warehouse Qty"),
                 "fieldname": "warehouse_qty",
                 "fieldtype": "Data",
-                "width": 120,
             },
         ]
     )
