@@ -38,7 +38,8 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Old Price",
-   "read_only": 1
+   "read_only": 1,
+   "options": "price_list_currency"
   },
   {
    "fieldname": "column_break_4",
@@ -54,7 +55,8 @@
    "fieldname": "new_price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "New Price"
+   "label": "New Price",
+   "options": "price_list_currency"
   },
   {
    "fieldname": "cost",
@@ -74,6 +76,13 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Valid To"
+  },
+  {
+   "fieldname": "price_list_currency",
+   "fieldtype": "Link",
+   "label": "Price List Currency",
+   "options": "Currency",
+   "fetch_from": "price_list.currency"
   }
  ],
  "index_web_pages_for_search": 1,
