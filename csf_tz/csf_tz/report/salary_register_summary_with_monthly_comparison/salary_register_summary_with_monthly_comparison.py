@@ -660,7 +660,7 @@ def get_prev_ss_basic_map(filters, prev_salary_slips):
             prev_ss_basic_query = prev_ss_basic_query.where(
                 ss.payroll_cost_center == filters.get("cost_center")
             )
-
+    prev_ss_basic_query = prev_ss_basic_query.groupby(sd.salary_component)
     prev_ss_basic_data = prev_ss_basic_query.run(as_dict=1)
 
     return prev_ss_basic_data or []
@@ -696,7 +696,7 @@ def get_prev_ss_earn_map(filters, prev_salary_slips):
             prev_ss_earnings_query = prev_ss_earnings_query.where(
                 ss.payroll_cost_center == filters.get("cost_center")
             )
-
+    prev_ss_earnings_query = prev_ss_earnings_query.groupby(sd.salary_component)
     prev_ss_earnings_data = prev_ss_earnings_query.run(as_dict=1)
 
     return prev_ss_earnings_data or []
@@ -735,7 +735,7 @@ def get_prev_ss_ded_map(filters, prev_salary_slips):
             prev_ss_deductions_query = prev_ss_deductions_query.where(
                 ss.payroll_cost_center == filters.get("cost_center")
             )
-
+    prev_ss_deductions_query = prev_ss_deductions_query.groupby(sd.salary_component)
     prev_ss_deductions_data = prev_ss_deductions_query.run(as_dict=1)
 
     return prev_ss_deductions_data or []
@@ -840,7 +840,7 @@ def get_cur_ss_basic_map(filters, cur_salary_slips):
             cur_ss_basic_query = cur_ss_basic_query.where(
                 ss.payroll_cost_center == filters.get("cost_center")
             )
-
+    cur_ss_basic_query = cur_ss_basic_query.groupby(sd.salary_component)
     cur_ss_basic_data = cur_ss_basic_query.run(as_dict=1)
 
     return cur_ss_basic_data or []
@@ -877,6 +877,7 @@ def get_cur_ss_earning_map(filters, cur_salary_slips):
                 ss.payroll_cost_center == filters.get("cost_center")
             )
 
+    cur_ss_earnings_query = cur_ss_earnings_query.groupby(sd.salary_component)
     cur_ss_earnings_data = cur_ss_earnings_query.run(as_dict=1)
 
     return cur_ss_earnings_data or []
@@ -909,7 +910,7 @@ def get_cur_ss_ded_map(filters, cur_salary_slips):
             cur_ss_deduction_query = cur_ss_deduction_query.where(
                 ss.payroll_cost_center == filters.get("cost_center")
             )
-
+    cur_ss_deduction_query = cur_ss_deduction_query.groupby(sd.salary_component)
     cur_ss_deductions_data = cur_ss_deduction_query.run(as_dict=1)
 
     return cur_ss_deductions_data or []
