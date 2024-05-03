@@ -26,6 +26,8 @@ class CSFTZBankCharges(Document):
 
         pi = frappe.new_doc("Purchase Invoice")
         pi.supplier = self.bank_supplier
+        pi.exchange_rate = self.exchange_rate
+        pi.currency = self.currency
         pi.append(
             "items",
             {
