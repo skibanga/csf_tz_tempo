@@ -79,27 +79,7 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "CSF TZ Bank Charges",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "CSF TZ Bank Charges",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fetch_from": "bank_account.account_name",
+   "fetch_from": "bank_account.account",
    "fieldname": "account",
    "fieldtype": "Link",
    "label": "Account",
@@ -124,12 +104,22 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "CSF TZ Bank Charges",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-22 17:10:46.508416",
+ "modified": "2024-05-03 18:07:21.621574",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Bank Charges",
