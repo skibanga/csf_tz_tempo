@@ -25,6 +25,7 @@ class CSFTZBankCharges(Document):
             payments.append(pe_details)
 
         pi = frappe.new_doc("Purchase Invoice")
+        pi.posting_date = self.posting_date
         pi.supplier = self.bank_supplier
         pi.exchange_rate = self.exchange_rate
         pi.currency = self.currency
@@ -57,6 +58,7 @@ class CSFTZBankCharges(Document):
 
     def create_pe(self, debit_amount, value_date, reference_number):
         pe = frappe.new_doc("Payment Entry")
+        pe.posting_date = value_date
         pe.payment_type = "Pay"
         pe.party_type = "Supplier"
         pe.party = self.bank_supplier
