@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from csf_tz.custom_api import print_out
 import re
 import json
+from time import sleep
 
 
 class VehicleFineRecord(Document):
@@ -45,6 +46,8 @@ def check_fine_all_vehicles():
     )
     all_fine_list = []
     for vehicle in plate_list:
+        # Limit sending 1 every 5 seconds
+        sleep(2)
         fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
         if fine_list and len(fine_list) > 0:
             all_fine_list.extend(fine_list)
@@ -53,6 +56,8 @@ def check_fine_all_vehicles():
         filters={"status": ["!=", "PAID"], "reference": ["not in", all_fine_list]},
     )
     for reference in reference_list:
+        # Limit sending 1 every 5 seconds
+        sleep(2)
         get_fine(reference=reference["name"])
 
 
@@ -118,9 +123,16 @@ def get_fine(number_plate=None, reference=None):
             elif reference:
                 payload["option"] = "REFERENCE"
                 payload["searchable"] = reference
-            # send the payload to the server as a POST request as form data
-            response2 = session.post(url=url + "results", data=payload, timeout=5)
-            if response2.status_code == 200:
+            try:
+                # send the payload to the server as a POST request as form data
+                response2 = session.post(url=url + "results", data=payload, timeout=5)
+            except Timeout:
+                frappe.log_error(
+                    title="Timeout",
+                    message=f"""Timeout for {payload["option"]}: {payload["searchable"]}""",
+                )
+                response2 = None
+            if response2 and response2.status_code == 200:
                 if response2.json:
                     data = response2.json().get("dataFromTms")
                     for key, value in data.items():
@@ -139,16 +151,24 @@ def get_fine(number_plate=None, reference=None):
                                     {"doctype": "Vehicle Fine Record", **value}
                                 )
                                 fine_doc.insert()
+                        elif (
+                            reference
+                            and value.get("1")
+                            and "HAIDAIWI" in value["1"].get("status")
+                        ):
+                            # {"dataFromTms":{"1":{"status":"VEHICLE:T123ABC HAIDAIWI."}}}
+                            doc = frappe.get_doc("Vehicle Fine Record", reference)
+                            if doc:
+                                doc.update({"status": "PAID"})
+                                doc.save()
+                                frappe.db.commit()
+                            else:
+                                frappe.log_error(
+                                    title="Number plate response exception!",
+                                    message=response2,
+                                )
 
                     frappe.db.commit()
-            else:
-                print_out(
-                    response2,
-                    alert=True,
-                    add_traceback=True,
-                    to_error_log=True,
-                )
-
         else:
             print_out(response)
     return fine_list
