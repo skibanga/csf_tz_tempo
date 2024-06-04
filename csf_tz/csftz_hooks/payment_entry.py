@@ -100,6 +100,7 @@ def get_outstanding_reference_documents(args):
 
     for d in outstanding_invoices:
         d["exchange_rate"] = 1
+        d["posting_date"] = frappe.db.get_value(d.voucher_type, d.voucher_no, "posting_date")
         if party_account_currency != company_currency:
             if d.voucher_type in frappe.get_hooks("invoice_doctypes"):
                 d["exchange_rate"] = frappe.db.get_value(
