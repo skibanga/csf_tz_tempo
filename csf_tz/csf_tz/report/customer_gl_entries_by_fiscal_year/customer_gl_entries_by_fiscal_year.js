@@ -15,6 +15,13 @@ frappe.query_reports["Customer GL Entries by Fiscal Year"] = {
             label: __('To Date'),
             fieldtype: 'Date',
 			mandatory: 1
+        },
+        {
+            fieldname: 'company',
+            label: __('Company'),
+            fieldtype: 'Link',
+            options: 'Company',
+			mandatory: 1
         }
 
 	]
