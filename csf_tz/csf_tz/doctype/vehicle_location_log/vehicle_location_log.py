@@ -20,16 +20,23 @@ class VehicleLocationLog(Document):
             self.location_details = coordinates.get('display_name')
 
     def fetch_coordinates(self, location_name):
-        url = f"https://nominatim.openstreetmap.org/search?format=json&q={location_name}"
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {
+            'format': 'json',
+            'q': location_name
+        }
+        headers = {
+            'User-Agent': 'MyApp/1.0 (youremail@example.com)'
+        }
         try:
-            response = requests.get(url)
+            response = requests.get(url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
 
             if not data:
                 return None
 
-            # Select the entry with the highest importance
+            # Select the first entry from the results
             location = max(data, key=lambda x: x.get('importance', 0))
             return {
                 'latitude': location.get('lat'),
@@ -50,9 +57,9 @@ class VehicleLocationLog(Document):
                         "coordinates": [float(coordinates['longitude']), float(coordinates['latitude'])]
                     },
                     "properties": {
-                        "icon": "car"  # Custom property for vehicle icon
+                        "icon": "vehicle"  
                     }
                 }
             ]
         }
-        return json.dumps(map_data)  # Serialize map_data to a JSON string
+        return json.dumps(map_data)
