@@ -40,25 +40,31 @@ class VehicleFineRecord(Document):
             )
 
 
-def check_fine_all_vehicles():
+def check_fine_all_vehicles(batch_size=20):
     plate_list = frappe.get_all(
         "Vehicle", fields=["name", "number_plate"], limit_page_length=0
     )
     all_fine_list = []
-    for vehicle in plate_list:
-        # Limit sending 1 every 5 seconds
-        sleep(2)
-        fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
-        if fine_list and len(fine_list) > 0:
-            all_fine_list.extend(fine_list)
+    total_vehicles = len(plate_list)
+    
+    for i in range(0, total_vehicles, batch_size):
+        batch_vehicles = plate_list[i:i + batch_size]
+        for vehicle in batch_vehicles:
+            fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
+            if fine_list and len(fine_list) > 0:
+                all_fine_list.extend(fine_list)
+            sleep(2)  # Sleep to avoid hitting the server too frequently
+
     reference_list = frappe.get_all(
         "Vehicle Fine Record",
         filters={"status": ["!=", "PAID"], "reference": ["not in", all_fine_list]},
     )
-    for reference in reference_list:
-        # Limit sending 1 every 5 seconds
-        sleep(2)
-        get_fine(reference=reference["name"])
+    
+    for i in range(0, len(reference_list), batch_size):
+        batch_references = reference_list[i:i + batch_size]
+        for reference in batch_references:
+            get_fine(reference=reference["name"])
+            sleep(2)  # Sleep to avoid hitting the server too frequently
 
 
 def get_fine(number_plate=None, reference=None):
@@ -70,7 +76,7 @@ def get_fine(number_plate=None, reference=None):
             to_error_log=True,
         )
         return
-    # check if the number plate is less than 7 characters
+
     if number_plate and len(number_plate) < 7:
         print_out(
             f"Please provide a valid number plate for {number_plate}",
@@ -79,6 +85,7 @@ def get_fine(number_plate=None, reference=None):
             to_error_log=True,
         )
         return
+
     fine_list = []
     token = ""
     url = "https://tms.tpf.go.tz/"
@@ -89,18 +96,13 @@ def get_fine(number_plate=None, reference=None):
     except Timeout:
         frappe.msgprint(_("Error"))
         print("Timeout")
+        return
     else:
-        print(response.status_code)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
-            # Find the script tag that contains the AJAX call
-            # Regular expression to find the _token value
             token_regex = re.compile(r"_token:\s*'([^']+)'")
-
-            # Searching for the _token pattern
             match = token_regex.search(str(soup))
 
-            # Checking if a match was found and printing the token
             if match:
                 token = match.group(1)
             else:
@@ -124,7 +126,6 @@ def get_fine(number_plate=None, reference=None):
                 payload["option"] = "REFERENCE"
                 payload["searchable"] = reference
             try:
-                # send the payload to the server as a POST request as form data
                 response2 = session.post(url=url + "results", data=payload, timeout=5)
             except Timeout:
                 frappe.log_error(
@@ -156,7 +157,6 @@ def get_fine(number_plate=None, reference=None):
                             and value.get("1")
                             and "HAIDAIWI" in value["1"].get("status")
                         ):
-                            # {"dataFromTms":{"1":{"status":"VEHICLE:T123ABC HAIDAIWI."}}}
                             doc = frappe.get_doc("Vehicle Fine Record", reference)
                             if doc:
                                 doc.update({"status": "PAID"})
