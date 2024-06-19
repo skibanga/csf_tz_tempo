@@ -67,7 +67,10 @@ doctype_js = {
     "Landed Cost Voucher": "csf_tz/landed_cost_voucher.js",
     "Additional Salary": "csf_tz/additional_salary.js",
 }
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {
+    "Custom Field": "csf_tz/custom_field.js",
+    "Property Setter": "csf_tz/property_setter.js",
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -104,6 +107,13 @@ after_install = [
     "csf_tz.patches.custom_fields.create_custom_fields_for_additional_salary.execute",
     "csf_tz.patches.custom_fields.auth_otp_custom_fields.execute",
     "csf_tz.patches.custom_fields.payroll_approval_custom_fields.execute",
+    "csf_tz.utils.create_custom_fields.execute",
+    "csf_tz.utils.create_custom_fields.create_property_setter",
+]
+
+after_migrate = [
+    "csf_tz.utils.create_custom_fields.execute",
+    "csf_tz.utils.create_property_setter.execute",
 ]
 
 # Desk Notifications
