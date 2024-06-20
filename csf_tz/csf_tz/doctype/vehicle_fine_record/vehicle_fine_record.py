@@ -64,7 +64,7 @@ def check_fine_all_vehicles(batch_size=20):
         batch_references = reference_list[i:i + batch_size]
         for reference in batch_references:
             get_fine(reference=reference["name"])
-            sleep(2)  # Sleep to avoid hitting the server too frequently
+            # sleep(2)  # Sleep to avoid hitting the server too frequently
 
 
 def get_fine(number_plate=None, reference=None):
