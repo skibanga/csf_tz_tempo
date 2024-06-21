@@ -52,12 +52,9 @@ def execute(filters=None):
                 )
 
         if row.voucher_type == "Stock Reconciliation":
-            if row.valuation_rate != 0:
-                row["reconciliation_qty"] = math.floor(
-                    row.stock_value_difference / row.valuation_rate
-                )
-            else:
-                row["reconciliation_qty"] = 0 
+            row["reconciliation_qty"] = math.floor(
+                row.stock_value_difference / (row.valuation_rate or 1)
+            )
             row["reconciliation_value"] = row.stock_value_difference
 
         if (
