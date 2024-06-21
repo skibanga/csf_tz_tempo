@@ -116,13 +116,6 @@ def execute():
             {
                 "doctype": "Vehicle Service",
                 "field_name": "frequency",
-                "property": "options",
-                "property_type": "Text",
-                "value": "NOT SELECTED\nMileage\nMonthly\nQuarterly\nHalf Yearly\nYearly"
-            },
-            {
-                "doctype": "Vehicle Service",
-                "field_name": "frequency",
                 "property": "in_list_view",
                 "property_type": "Check",
                 "value": "0"
