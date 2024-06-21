@@ -96,7 +96,7 @@
         "__last_sync_on": "2024-06-18T12:27:17.729Z"
     },
     {
-        "name": "Employee-custom_bank_country",
+        "name": "Employee-bank_country",
         "owner": "info@aakvatech.com",
         "creation": "2023-12-04 17:35:21.645060",
         "modified": "2024-04-12 17:04:58.597745",
@@ -146,7 +146,7 @@
         "__last_sync_on": "2024-06-18T12:05:49.512Z"
       },
       {
-        "name": "Employee-custom_bank_country_code",
+        "name": "Employee-bank_country_code",
         "owner": "info@aakvatech.com",
         "creation": "2023-12-04 17:35:22.103394",
         "modified": "2024-04-12 17:04:58.888127",
