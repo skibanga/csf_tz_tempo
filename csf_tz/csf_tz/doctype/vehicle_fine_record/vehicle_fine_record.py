@@ -66,7 +66,7 @@ def check_fine_all_vehicles(batch_size=20):
             get_fine(reference=reference["name"])
             # sleep(2)  # Sleep to avoid hitting the server too frequently
 
-
+@frappe.whitelist()
 def get_fine(number_plate=None, reference=None):
     if not number_plate and not reference:
         print_out(
