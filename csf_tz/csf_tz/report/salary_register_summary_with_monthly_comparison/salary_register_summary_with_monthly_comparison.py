@@ -753,22 +753,24 @@ def get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_
         )
     )
     if filters.get("employee"):
-        prev_ss_query.where(ss.employee == filters.get("employee"))
+        prev_ss_query = prev_ss_query.where(ss.employee == filters.get("employee"))
 
     if filters.get("currency") and filters.get("currency") != company_currency:
-        prev_ss_query.where(ss.currency == filters.get("currency"))
+        prev_ss_query = prev_ss_query.where(ss.currency == filters.get("currency"))
 
     if filters.get("department") and filters.get("company"):
         department_list = get_departments(
             filters.get("department"), filters.get("company")
         )
-        prev_ss_query.where(ss.department.isin(department_list))
+        prev_ss_query = prev_ss_query.where(ss.department.isin(department_list))
 
     if filters.get("cost_center") and filters.get("company"):
         cost_center_list = get_cost_costs(
             filters.get("cost_center"), filters.get("company")
         )
-        prev_ss_query.where(ss.payroll_cost_center.isin(cost_center_list))
+        prev_ss_query = prev_ss_query.where(
+            ss.payroll_cost_center.isin(cost_center_list)
+        )
 
     prev_salary_slips = prev_ss_query.run(as_dict=1)
 
@@ -788,22 +790,22 @@ def get_cur_salary_slips(filters, company_currency):
         )
     )
     if filters.get("employee"):
-        cur_ss_query.where(ss.employee == filters.get("employee"))
+        cur_ss_query = cur_ss_query.where(ss.employee == filters.get("employee"))
 
     if filters.get("currency") and filters.get("currency") != company_currency:
-        cur_ss_query.where(ss.currency == filters.get("currency"))
+        cur_ss_query = cur_ss_query.where(ss.currency == filters.get("currency"))
 
     if filters.get("department") and filters.get("company"):
         department_list = get_departments(
             filters.get("department"), filters.get("company")
         )
-        cur_ss_query.where(ss.department.isin(department_list))
+        cur_ss_query = cur_ss_query.where(ss.department.isin(department_list))
 
     if filters.get("cost_center") and filters.get("company"):
         cost_center_list = get_cost_costs(
             filters.get("cost_center"), filters.get("company")
         )
-        cur_ss_query.where(ss.payroll_cost_center.isin(cost_center_list))
+        cur_ss_query = cur_ss_query.where(ss.payroll_cost_center.isin(cost_center_list))
 
     cur_salary_slips = cur_ss_query.run(as_dict=1)
 
