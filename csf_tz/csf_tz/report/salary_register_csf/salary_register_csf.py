@@ -241,13 +241,6 @@ def get_data(filters, salary_slips, currency, company_currency):
                         frappe.scrub(d) + "_" + str(company_currency).lower()
                     )
 
-        row.update(
-            {
-                "loan_repayment": ss.total_loan_repayment,
-                "total_deduction": ss.total_deduction,
-                "net_pay": ss.net_pay,
-            }
-        )
         for field in ["loan_repayment", "total_deduction", "net_pay"]:
             if field not in unique_columns:
                 columns.append(
@@ -261,31 +254,19 @@ def get_data(filters, salary_slips, currency, company_currency):
                 )
                 unique_columns.append(field)
 
-        if filters.get("multi_currency") and ss.currency != company_currency:
-            row.update(
-                {
-                    "loan_repayment_"
-                    + str(company_currency).lower(): flt(ss.total_loan_repayment)
-                    * flt(ss.exchange_rate),
-                    "total_deduction_"
-                    + str(company_currency).lower(): flt(ss.total_deduction)
-                    * flt(ss.exchange_rate),
-                    "net_pay_"
-                    + str(company_currency).lower(): flt(ss.net_pay)
-                    * flt(ss.exchange_rate),
-                }
-            )
-            for field in ["loan_repayment", "total_deduction", "net_pay"]:
-                if field not in unique_columns:
+            if filters.get("multi_currency") and ss.currency != company_currency:
+                report_fieldname = field + "_" + str(company_currency).lower()
+                if report_fieldname not in unique_columns:
                     columns.append(
                         {
                             "label": _(f"{frappe.unscrub(field)} {company_currency}"),
-                            "fieldname": field + "_" + str(company_currency).lower(),
+                            "fieldname": report_fieldname,
                             "fieldtype": "Currency",
                             "options": "company_currency",
                             "width": 120,
                         }
                     )
+                    unique_columns.append(report_fieldname)
 
         data.append(row)
 
