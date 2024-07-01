@@ -53,7 +53,7 @@ def check_fine_all_vehicles(batch_size=20):
             fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
             if fine_list and len(fine_list) > 0:
                 all_fine_list.extend(fine_list)
-            sleep(2)  # Sleep to avoid hitting the server too frequently
+            # sleep(2)  # Sleep to avoid hitting the server too frequently
 
     reference_list = frappe.get_all(
         "Vehicle Fine Record",
