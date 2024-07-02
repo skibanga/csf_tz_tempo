@@ -46,25 +46,40 @@ def check_fine_all_vehicles(batch_size=20):
     )
     all_fine_list = []
     total_vehicles = len(plate_list)
-    
+
     for i in range(0, total_vehicles, batch_size):
-        batch_vehicles = plate_list[i:i + batch_size]
+        batch_vehicles = plate_list[i : i + batch_size]
         for vehicle in batch_vehicles:
-            fine_list = get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
+            # Enqueue get_fine(number_plate=vehicle["number_plate"] or vehicle["name"])
+            frappe.enqueue(
+                "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.get_fine",
+                number_plate=vehicle["number_plate"] or vehicle["name"],
+            )
+
+            fine_list = []
+            # fine_list = get_fine(
+            #     number_plate=vehicle["number_plate"] or vehicle["name"]
+            # )
             if fine_list and len(fine_list) > 0:
                 all_fine_list.extend(fine_list)
             # sleep(2)  # Sleep to avoid hitting the server too frequently
 
+    # Get all the references that are not paid
     reference_list = frappe.get_all(
         "Vehicle Fine Record",
         filters={"status": ["!=", "PAID"], "reference": ["not in", all_fine_list]},
     )
-    
+
     for i in range(0, len(reference_list), batch_size):
-        batch_references = reference_list[i:i + batch_size]
+        batch_references = reference_list[i : i + batch_size]
         for reference in batch_references:
-            get_fine(reference=reference["name"])
+            # Enqueue get_fine(reference=reference["name"])
+            frappe.enqueue(
+                "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.get_fine",
+                reference=reference["name"],
+            )
             # sleep(2)  # Sleep to avoid hitting the server too frequently
+
 
 @frappe.whitelist()
 def get_fine(number_plate=None, reference=None):
@@ -92,7 +107,7 @@ def get_fine(number_plate=None, reference=None):
 
     session = requests.Session()
     try:
-        response = session.get(url=url, timeout=30)
+        response = session.get(url=url, timeout=60)
     except Timeout:
         frappe.msgprint(_("Error"))
         print("Timeout")
