@@ -34,7 +34,7 @@ def get_data(filters):
         WHERE
             party_type = 'Customer'
             AND is_cancelled = 0
-            AND posting_date BETWEEN %(from_date)s AND %(to_date)s
+            AND posting_date BETWEEN %(from_date)s AND %(to_date)s AND company = %(company)s
         GROUP BY
             party, account, fiscal_year
     """, filters, as_dict=True)
