@@ -10,6 +10,7 @@ from itertools import groupby
 from operator import itemgetter
 import math
 
+
 def execute(filters=None):
     is_reposting_item_valuation_in_progress()
     columns = get_columns(filters)
@@ -21,7 +22,7 @@ def execute(filters=None):
     for row in sl_entries:
         item_detail = item_details[row.item_code]
         row.update(item_detail)
-    
+
         row["opening_qty"] = row["opening_value"] = row["reconciliation_qty"] = row[
             "reconciliation_value"
         ] = row["purchase_qty"] = row["purchase_value"] = row["sold_qty"] = row[
@@ -32,11 +33,14 @@ def execute(filters=None):
             "adjustment_value"
         ] = 0
 
-        if not any(record["item_code"] == row.item_code and record["warehouse"] == row.warehouse for record in opening_balance_item_wise):
-            opening_balance_item_wise.append({
-                "item_code":  row.item_code,
-                "warehouse":  row.warehouse
-            })
+        if not any(
+            record["item_code"] == row.item_code
+            and record["warehouse"] == row.warehouse
+            for record in opening_balance_item_wise
+        ):
+            opening_balance_item_wise.append(
+                {"item_code": row.item_code, "warehouse": row.warehouse}
+            )
             opening_row = get_opening_balance(
                 filters, row.item_code, row.warehouse, sl_entries
             )
@@ -48,33 +52,36 @@ def execute(filters=None):
                 )
 
         if row.voucher_type == "Stock Reconciliation":
-            row["reconciliation_qty"] = math.floor(row.stock_value_difference / row.valuation_rate)
-            row["reconciliation_value"] = row["reconciliation_qty"] * row.valuation_rate
+            row["reconciliation_qty"] = math.floor(
+                row.stock_value_difference / (row.valuation_rate or 1)
+            )
+            row["reconciliation_value"] = row.stock_value_difference
 
         if (
             row.voucher_type == "Purchase Receipt"
             or row.voucher_type == "Purchase Invoice"
         ):
             row["purchase_qty"] = row.actual_qty
-            row["purchase_value"] = row["purchase_qty"] * row.valuation_rate
+            row["purchase_value"] = row.stock_value_difference
 
         if row.voucher_type == "Delivery Note" or row.voucher_type == "Sales Invoice":
             row["sold_qty"] = row.actual_qty
-            row["sold_value"] = row["sold_qty"] * row.valuation_rate
+            row["sold_value"] = row.stock_value_difference
 
         if row.voucher_type == "Stock Entry":
             row["adjustment_qty"] = row.actual_qty
-            row["adjustment_value"] = row["adjustment_qty"] * row.valuation_rate
+            row["adjustment_value"] = row.stock_value_difference
 
-        row["closing_qty"] = ((row.opening_qty or 0) + (row.purchase_qty or 0)) - (
-            (row.sold_qty or 0)
+        row["closing_qty"] = (
+            ((row.opening_qty or 0) + (row.purchase_qty or 0))
+            + (row.sold_qty or 0)
             + (row.adjustment_qty or 0)
             + (row.reconciliation_qty or 0)
         )
+
         row["closing_value"] = (
-            (row.opening_value or 0) + (row.purchase_value or 0)
-        ) - (
-            (row.sold_value or 0)
+            ((row.opening_value or 0) + (row.purchase_value or 0))
+            + (row.sold_value or 0)
             + (row.adjustment_value or 0)
             + (row.reconciliation_value or 0)
         )
@@ -133,20 +140,6 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": "Item",
             "width": 100,
-        },
-        {
-            "label": _("Stock UOM"),
-            "fieldname": "voucher_type",
-            "fieldtype": "Link",
-            "options": "UOM",
-            "width": 90,
-        },
-        {
-            "label": _("Stock UOM"),
-            "fieldname": "voucher_no",
-            "fieldtype": "Link",
-            "options": "UOM",
-            "width": 90,
         },
         {
             "label": _("Stock UOM"),
@@ -276,11 +269,12 @@ def get_stock_ledger_entries(filters, items):
         .orderby(sle.creation)
     )
     if filters.warehouse:
-        query = query.where(sle.warehouse == filters.get("warehouse"))  
+        query = query.where(sle.warehouse == filters.get("warehouse"))
     if filters.item_code:
-        query = query.where(sle.item_code == filters.get("item_code"))	
+        query = query.where(sle.item_code == filters.get("item_code"))
 
     return query.run(as_dict=True)
+
 
 def get_items(filters):
     item = frappe.qb.DocType("Item")
@@ -407,4 +401,3 @@ def get_item_group_condition(item_group, item_table=None):
 				where ig.lft >= %s and ig.rgt <= %s and item.item_group = ig.name)"
                 % (item_group_details.lft, item_group_details.rgt)
             )
-

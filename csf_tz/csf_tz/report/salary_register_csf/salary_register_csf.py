@@ -248,19 +248,6 @@ def get_data(filters, salary_slips, currency, company_currency):
                 "net_pay": ss.net_pay,
             }
         )
-        for field in ["loan_repayment", "total_deduction", "net_pay"]:
-            if field not in unique_columns:
-                columns.append(
-                    {
-                        "label": _(frappe.unscrub(field)),
-                        "fieldname": field,
-                        "fieldtype": "Currency",
-                        "options": "currency",
-                        "width": 120,
-                    }
-                )
-                unique_columns.append(field)
-
         if filters.get("multi_currency") and ss.currency != company_currency:
             row.update(
                 {
@@ -275,17 +262,33 @@ def get_data(filters, salary_slips, currency, company_currency):
                     * flt(ss.exchange_rate),
                 }
             )
-            for field in ["loan_repayment", "total_deduction", "net_pay"]:
-                if field not in unique_columns:
+
+        for field in ["loan_repayment", "total_deduction", "net_pay"]:
+            if field not in unique_columns:
+                columns.append(
+                    {
+                        "label": _(frappe.unscrub(field)),
+                        "fieldname": field,
+                        "fieldtype": "Currency",
+                        "options": "currency",
+                        "width": 120,
+                    }
+                )
+                unique_columns.append(field)
+
+            if filters.get("multi_currency") and ss.currency != company_currency:
+                report_fieldname = field + "_" + str(company_currency).lower()
+                if report_fieldname not in unique_columns:
                     columns.append(
                         {
                             "label": _(f"{frappe.unscrub(field)} {company_currency}"),
-                            "fieldname": field + "_" + str(company_currency).lower(),
+                            "fieldname": report_fieldname,
                             "fieldtype": "Currency",
                             "options": "company_currency",
                             "width": 120,
                         }
                     )
+                    unique_columns.append(report_fieldname)
 
         data.append(row)
 
@@ -384,26 +387,26 @@ def get_columns(filters, company_currency, earning_types, ded_types):
         {
             "label": _("Start Date"),
             "fieldname": "start_date",
-            "fieldtype": "Data",
+            "fieldtype": "Date",
             "width": 80,
         },
         {
             "label": _("End Date"),
             "fieldname": "end_date",
-            "fieldtype": "Data",
+            "fieldtype": "Date",
             "width": 80,
         },
-        {
-            "label": _("Currency"),
-            "fieldtype": "Data",
-            "fieldname": "currency",
-            "options": "Currency",
-            "hidden": 1,
-        },
+        # {
+        #     "label": _("Currency"),
+        #     "fieldtype": "Link",
+        #     "fieldname": "currency",
+        #     "options": "Currency",
+        #     "hidden": 1,
+        # },
         {
             "label": _("Payment Days"),
             "fieldname": "payment_days",
-            "fieldtype": "Float",
+            "fieldtype": "Int",
             "width": 120,
         },
     ]

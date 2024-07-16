@@ -70,6 +70,7 @@ frappe.ui.form.on("Company", {
 					frappe.call({
 						method: 'csf_tz.custom_api.linking_tax_template',
 						args: {
+							abbr: frm.doc.abbr,
 							doctype: 'Item',
 							default_tax_template: {
 								default_tax_template: values.default_tax_template
@@ -95,6 +96,10 @@ frappe.ui.form.on("Company", {
 	auto_create_account: function(frm) {
 		frappe.call({
 			method: 'csf_tz.custom_api.auto_create_account',
+			args:{
+				abbr: frm.doc.abbr
+
+			},
 			callback: function(response) {
 				if (response.message) {
 					frappe.msgprint(__('Accounts created successfully.'));
@@ -105,6 +110,10 @@ frappe.ui.form.on("Company", {
 	create_tax_template: function(frm) {
 		frappe.call({
 			method: 'csf_tz.custom_api.create_item_tax_template',
+			args:{
+				abbr: frm.doc.abbr
+
+			},
 			callback: function(response) {
 				if (response.message) {
 					frappe.msgprint(__('Item Tax Templates created successfully.'));
@@ -116,6 +125,10 @@ frappe.ui.form.on("Company", {
 	make_tax_category: function(frm) {
 		frappe.call({
 			method: 'csf_tz.custom_api.create_tax_category',
+			args:{
+				abbr: frm.doc.abbr
+
+			},
 			callback: function(response) {
 				if (response.message) {
 					frappe.msgprint(__('Tax Category created successfully.'));
@@ -126,6 +139,10 @@ frappe.ui.form.on("Company", {
 	make_salary_components_and_structure: function(frm) {
 		frappe.call({
 			method: 'csf_tz.custom_api.make_salary_components_and_structure',
+			args:{
+				abbr: frm.doc.abbr
+
+			},
 			callback: function(response) {
 				if (response.message) {
 					frappe.msgprint(__('Salary Components and Structure are created successfully.'));

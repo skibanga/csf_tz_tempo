@@ -20,6 +20,8 @@ frappe.ui.form.on("Payment Entry", {
 			}
 			else if (frm.doc.payment_type == "Internal Transfer") {
 				frm.set_value("naming_series", "IT-.YYYY.-");
+				frm.set_value("party_type", "");
+				frm.set_value("party_name", "");
 			}
 		}
 		frm.refresh_fields()
@@ -86,6 +88,7 @@ frappe.ui.form.on("Payment Entry", {
 						c.reference_doctype = d.voucher_type;
 						c.reference_name = d.voucher_no;
 						c.due_date = d.due_date
+						c.posting_date = d.posting_date
 						c.total_amount = d.invoice_amount;
 						c.outstanding_amount = d.outstanding_amount;
 						c.bill_no = d.bill_no;

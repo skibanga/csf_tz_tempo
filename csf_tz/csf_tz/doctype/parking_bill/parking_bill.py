@@ -14,20 +14,20 @@ from frappe.model.document import Document
 class ParkingBill(Document):
     pass
 
-
+@frappe.whitelist()
 def check_bills_all_vehicles():
-    plate_list = frappe.get_all("Vehicle")
+    plate_list = frappe.get_all("Vehicle",fields=['name','number_plate','license_plate'])
     for vehicle in plate_list:
-        try:
-            bill = get_bills(vehicle["name"])
-            if (
-                bill and bill.code == 6000
-            ):
-                update_bill(vehicle["name"], bill)
-        except Exception as e:
-            frappe.log_error(frappe.get_traceback(), str(e))
+        number_plate = vehicle.get("number_plate") or vehicle.get("license_plate")
+        vehicle_name = vehicle.get("name")
+        if number_plate:
+            try:
+                bill = get_bills(number_plate)
+                if bill and bill.code == 6000:
+                    update_bill(vehicle_name, bill)
+            except Exception as e:
+                frappe.log_error(frappe.get_traceback(), str(e))
     frappe.db.commit()
-
 
 def get_bills(number_plate):
     headers = {
@@ -35,7 +35,7 @@ def get_bills(number_plate):
     }
 
     url = (
-        "https://termis.tarura.go.tz:6003/termis-parking-service/api/v1/parkingDetails/debts/plateNumber/"
+        "http://termis.tarura.go.tz:6003/termis-parking-service/api/v1/parkingDetails/debts/plateNumber/"
         + number_plate
     )
     try:
@@ -57,7 +57,7 @@ def get_bills(number_plate):
         frappe.log_error(e)
 
 
-def update_bill(number_plate, bills):
+def update_bill(name, bills):
     if not bills.get("data"):
         return
     for row in bills.data:
@@ -69,7 +69,7 @@ def update_bill(number_plate, bills):
         else:
             doc = frappe.new_doc("Parking Bill")
             doc.billreference = data.billReference
-        doc.vehicle = number_plate
+        doc.vehicle = name
         doc.billstatus = row.billStatus
         doc.billid = data.billId
         doc.approvedby = data.approvedBy

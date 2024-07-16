@@ -194,6 +194,7 @@ def process_download_files():
     os.makedirs(os.path.dirname(inbox_file_path), exist_ok=True)
     inbox_files_list = os.listdir(inbox_file_path)
     for file in inbox_files_list:
+        doc_changed = 0
         try:
             if file.endswith(".xml"):
                 if "ACK" in file or "INTAUD" in file or "FINAUD" in file:
@@ -213,13 +214,17 @@ def process_download_files():
                     if "ACK" in file and not pain_doc.stanbic_ack:
                         pain_doc.stanbic_ack = file_json
                         pain_doc.stanbic_ack_change = 1
+                        doc_changed = 1
                     elif "INTAUD" in file and not pain_doc.stanbic_intaud:
                         pain_doc.stanbic_intaud = file_json
                         pain_doc.stanbic_intaud_change = 1
+                        doc_changed = 1
                     elif "FINAUD" in file and not pain_doc.stanbic_finaud:
                         pain_doc.stanbic_finaud = file_json
                         pain_doc.stanbic_finaud_change = 1
-                    pain_doc.save()
+                        doc_changed = 1
         except Exception as e:
             print("Error processing the file", file, str(e))
-    frappe.db.commit()
+        if doc_changed:
+            pain_doc.save()
+            frappe.db.commit()
