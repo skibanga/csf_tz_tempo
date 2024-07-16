@@ -30,6 +30,8 @@
   "column_break_u48fq",
   "enable_fixed_working_days_per_month",
   "working_days_per_month",
+  "override_email_queue_batch_size",
+  "email_qatch_batch_size",
   "hr_settings_section",
   "enable_overtime_calculation",
   "column_break_ihhi5",
@@ -234,12 +236,25 @@
    "fieldname": "ot_module",
    "fieldtype": "Check",
    "label": "OT Module"
+  },
+  {
+   "default": "0",
+   "fieldname": "override_email_queue_batch_size",
+   "fieldtype": "Check",
+   "label": "Override Email Queue Batch Size"
+  },
+  {
+   "depends_on": "eval: doc.override_email_queue_batch_size == 1;",
+   "fieldname": "email_qatch_batch_size",
+   "fieldtype": "Int",
+   "label": "Email Qatch Batch Size",
+   "mandatory_depends_on": "eval: doc.override_email_queue_batch_size == 1;"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-14 17:04:04.804029",
+ "modified": "2024-03-21 19:04:19.134664",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",

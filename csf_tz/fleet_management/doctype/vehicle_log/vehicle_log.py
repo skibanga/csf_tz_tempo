@@ -11,9 +11,6 @@ from frappe.model.document import Document
 
 class VehicleLog(Document):
 	def validate(self):
-		last_odometer=frappe.db.get_value("Vehicle", self.license_plate, "last_odometer")
-		if flt(self.odometer) < flt(last_odometer):
-			frappe.throw(_("Current Odometer reading entered should be greater than initial Vehicle Odometer {0}").format(last_odometer))
 		for service_detail in self.service_detail:
 			if (service_detail.service_item or service_detail.type or service_detail.frequency or service_detail.expense_amount):
 					if not (service_detail.service_item and service_detail.type and service_detail.frequency and service_detail.expense_amount):

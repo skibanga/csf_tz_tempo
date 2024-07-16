@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:reference",
  "creation": "2020-07-12 16:43:35.877811",
  "doctype": "DocType",
@@ -9,6 +10,7 @@
   "issued_date",
   "officer",
   "vehicle",
+  "vehicle_doc",
   "licence",
   "status",
   "offence",
@@ -44,11 +46,8 @@
   },
   {
    "fieldname": "vehicle",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "VEHICLE",
-   "options": "Vehicle",
-   "read_only": 1
+   "fieldtype": "Data",
+   "label": "VEHICLE"
   },
   {
    "fieldname": "licence",
@@ -101,12 +100,22 @@
    "in_standard_filter": 1,
    "label": "STATUS",
    "read_only": 1
+  },
+  {
+   "fieldname": "vehicle_doc",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "VEHICLE DOC",
+   "options": "Vehicle",
+   "read_only": 1
   }
  ],
- "modified": "2021-02-04 08:41:39.513542",
+ "links": [],
+ "modified": "2024-03-24 22:31:52.756513",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Vehicle Fine Record",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -124,6 +133,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "vehicle",
  "track_changes": 1
 }

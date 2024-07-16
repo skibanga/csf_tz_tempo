@@ -573,6 +573,9 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 
 
 def create_indirect_expense_item(doc, method=None):
+    if frappe.local.flags.ignore_root_company_validation:
+        return
+
     if (
         not doc.parent_account
         or doc.is_group
@@ -1533,7 +1536,7 @@ def enroll_students(self):
     This is a copy of ERPNext function meant to allow loading from custom doctypes and frappe.enqueue
     Used in csf_tz.custom_api.enroll_students
     """
-    from erpnext.education.api import enroll_student
+    from education.education.api import enroll_student
 
     total = len(self.students)
     for i, stud in enumerate(self.students):
@@ -2274,24 +2277,21 @@ def account_exists(account_name):
 
 
 @frappe.whitelist()
-def auto_create_account():
-    abbr = frappe.get_value(
-        "Company", frappe.defaults.get_user_default("company"), "abbr"
-    )
+def auto_create_account(abbr):
     account_data = [
         {
-            "account_name": "Payroll Payable",
+            "account_name": "Payroll Liabilities",
             "is_group": 1,
             "parent_account": f"Current Liabilities - {abbr}",
         },
-        {"account_name": "NSSF Payable", "parent_account": f"Payroll Payable - {abbr}"},
-        {"account_name": "NHIF Payable", "parent_account": f"Payroll Payable - {abbr}"},
-        {"account_name": "PAYE Payable", "parent_account": f"Payroll Payable - {abbr}"},
-        {"account_name": "SDL Payable", "parent_account": f"Payroll Payable - {abbr}"},
-        {"account_name": "WCF Payable", "parent_account": f"Payroll Payable - {abbr}"},
+        {"account_name": "NSSF Payable", "parent_account": f"Payroll Liabilities - {abbr}"},
+        {"account_name": "NHIF Payable", "parent_account": f"Payroll Liabilities - {abbr}"},
+        {"account_name": "PAYE Payable", "parent_account": f"Payroll Liabilities - {abbr}"},
+        {"account_name": "SDL Payable", "parent_account": f"Payroll Liabilities - {abbr}"},
+        {"account_name": "WCF Payable", "parent_account": f"Payroll Liabilities - {abbr}"},
         {
             "account_name": "HESLB Payable",
-            "parent_account": f"Payroll Payable - {abbr}",
+            "parent_account": f"Payroll Liabilities - {abbr}",
         },
         {
             "account_name": "Salaries and Wages",
@@ -2361,10 +2361,7 @@ def auto_create_account():
 
 
 @frappe.whitelist()
-def create_item_tax_template():
-    abbr = frappe.get_value(
-        "Company", frappe.defaults.get_user_default("company"), "abbr"
-    )
+def create_item_tax_template(abbr):
     item_tax_template_list = [
         {"title": f"Tanzania Exempted Sales", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
         {
@@ -2410,16 +2407,8 @@ def create_tax_category():
 
 
 @frappe.whitelist()
-def linking_tax_template(doctype, default_tax_template):
-    # frappe.throw(str(default_tax_template))
-    # tax_template = default_tax_template[0]
-    # frappe.throw(str(tax_template))
-
-    abbr = frappe.get_value(
-        "Company", frappe.defaults.get_user_default("company"), "abbr"
-    )
+def linking_tax_template(doctype, default_tax_template, abbr):
     item_list = frappe.get_all("Item", filters=default_tax_template)
-    # frappe.throw(str(item_list))
 
     for item in item_list:
         item_doc = frappe.get_doc("Item", item.name, fields=["default_tax_template"])
@@ -2461,10 +2450,7 @@ def linking_tax_template(doctype, default_tax_template):
 
 
 @frappe.whitelist()
-def make_salary_components_and_structure():
-    abbr = frappe.get_value(
-        "Company", frappe.defaults.get_user_default("company"), "abbr"
-    )
+def make_salary_components_and_structure(abbr ):
 
     salary_components_earnings_list = [
         {
