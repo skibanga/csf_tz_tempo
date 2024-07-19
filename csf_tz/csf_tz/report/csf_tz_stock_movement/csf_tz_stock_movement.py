@@ -72,17 +72,52 @@ def execute(filters=None):
             row["adjustment_qty"] = row.actual_qty
             row["adjustment_value"] = row.stock_value_difference
 
+            stock_entry_type = frappe.db.get_value(
+                row.voucher_type, row.voucher_no, "stock_entry_type"
+            )
+            if stock_entry_type == "Material Transfer for Manufacture":
+                row["consumed_qty"] = row.actual_qty
+                row["consumed_value"] = row.stock_value_difference
+
+            if stock_entry_type == "Manufacture":
+                row["produced_qty"] = row.actual_qty
+                row["produced_value"] = row.stock_value_difference
+
+            if stock_entry_type == "Material Receipt":
+                row["received_qty"] = row.actual_qty
+                row["received_value"] = row.stock_value_difference
+
+            if stock_entry_type == "Material Issue":
+                row["issued_qty"] = row.actual_qty
+                row["issued_value"] = row.stock_value_difference
+
         row["closing_qty"] = (
             ((row.opening_qty or 0) + (row.purchase_qty or 0))
             + (row.sold_qty or 0)
-            + (row.adjustment_qty or 0)
+            + (
+                (row.adjustment_qty or 0)
+                + (
+                    (row.consumed_qty or 0)
+                    + (row.produced_qty or 0)
+                    + (row.received_qty or 0)
+                    + (row.issued_qty or 0)
+                )
+            )
             + (row.reconciliation_qty or 0)
         )
 
         row["closing_value"] = (
             ((row.opening_value or 0) + (row.purchase_value or 0))
             + (row.sold_value or 0)
-            + (row.adjustment_value or 0)
+            + (
+                (row.adjustment_value or 0)
+                + (
+                    (row.consumed_value or 0)
+                    + (row.produced_value or 0)
+                    + (row.received_value or 0)
+                    + (row.issued_value or 0)
+                )
+            )
             + (row.reconciliation_value or 0)
         )
 
@@ -214,6 +249,62 @@ def get_columns(filters):
         {
             "label": _("Reconciliation Value"),
             "fieldname": "reconciliation_value",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Consumed Qty"),
+            "fieldname": "consumed_qty",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Consumed Value"),
+            "fieldname": "consumed_value",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Produced Qty"),
+            "fieldname": "produced_qty",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Produced Value"),
+            "fieldname": "produced_value",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Received Qty"),
+            "fieldname": "received_qty",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Received Value"),
+            "fieldname": "received_value",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Issued Qty"),
+            "fieldname": "issued_qty",
+            "fieldtype": "Float",
+            "width": 150,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Issued Value"),
+            "fieldname": "issued_value",
             "fieldtype": "Float",
             "width": 150,
             "convertible": "qty",
