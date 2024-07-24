@@ -31,6 +31,22 @@ def execute(filters=None):
             "adjustment_qty"
         ] = row[
             "adjustment_value"
+        ] = row[
+            "consumed_qty"
+        ] = row[
+            "consumed_value"
+        ] = row[
+            "produced_qty"
+        ] = row[
+            "produced_value"
+        ] = row[
+            "received_qty"
+        ] = row[
+            "received_value"
+        ] = row[
+            "issued_qty"
+        ] = row[
+            "issued_value"
         ] = 0
 
         if not any(
@@ -148,6 +164,14 @@ def prepare_data(data):
                 "sold_value": sum(entry["sold_value"] for entry in group),
                 "adjustment_qty": sum(entry["adjustment_qty"] for entry in group),
                 "adjustment_value": sum(entry["adjustment_value"] for entry in group),
+                "consumed_qty": sum(entry["consumed_qty"] for entry in group),
+                "consumed_value": sum(entry["consumed_value"] for entry in group),
+                "produced_qty": sum(entry["produced_qty"] for entry in group),
+                "produced_value": sum(entry["produced_value"] for entry in group),
+                "received_qty": sum(entry["received_qty"] for entry in group),
+                "received_value": sum(entry["received_value"] for entry in group),
+                "issued_qty": sum(entry["issued_qty"] for entry in group),
+                "issued_value": sum(entry["issued_value"] for entry in group),
                 "reconciliation_qty": sum(
                     entry["reconciliation_qty"] for entry in group
                 ),
