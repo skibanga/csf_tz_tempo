@@ -5,9 +5,6 @@ frappe.require([
 
 frappe.ui.form.on("Stock Entry", {
     setup: function (frm) {
-        if (me.frm.fields_dict["items"]) {
-            me["items_remove"] = me.calculate_net_weight;
-        }
         frm.trigger("set_warehouse_options");
     },
     refresh: (frm) => {
