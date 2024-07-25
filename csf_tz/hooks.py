@@ -66,6 +66,7 @@ doctype_js = {
     "Salary Slip": "csf_tz/salary_slip.js",
     "Landed Cost Voucher": "csf_tz/landed_cost_voucher.js",
     "Additional Salary": "csf_tz/additional_salary.js",
+    "BOM": "csf_tz/bom_addittional_costs.js"
 }
 doctype_list_js = {
     "Custom Field": "csf_tz/custom_field.js",
@@ -214,6 +215,7 @@ doc_events = {
     },
     "Stock Entry": {
         "validate": "csf_tz.custom_api.calculate_total_net_weight",
+        "before_save": "csf_tz.csftz_hooks.stock.import_from_bom",
     },
     "Student Applicant": {
         "on_update_after_submit": "csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
