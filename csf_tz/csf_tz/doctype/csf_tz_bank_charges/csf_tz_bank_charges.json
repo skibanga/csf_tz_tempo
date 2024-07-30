@@ -43,7 +43,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "bank_account.custom_bank_supplier",
+   "fetch_from": "bank_account.bank_supplier",
    "fieldname": "bank_supplier",
    "fieldtype": "Data",
    "label": "Bank Supplier",
