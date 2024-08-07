@@ -24,7 +24,7 @@ def validate_with_material_request_override(doc, method):
 def import_from_bom(self, method):
     if self.stock_entry_type == "Manufacture" and self.bom_no:
         bom = frappe.get_doc("BOM", self.bom_no)
-        for d in bom.custom_additional_costs:
+        for d in bom.additional_costs:
             self.append("additional_costs", {
                 "expense_account": d.expense_account,
                 "amount": d.cost_per_unit,
