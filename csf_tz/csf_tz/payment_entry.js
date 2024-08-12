@@ -55,6 +55,14 @@ frappe.ui.form.on("Payment Entry", {
 		}
 
 		frm.events.check_mandatory_to_fetch(frm);
+
+		// Ensure party account is set based on payment type
+		var party_account = frm.doc.payment_type == "Receive" ? frm.doc.paid_from : frm.doc.paid_to;
+		if (!party_account) {
+			frappe.msgprint(__("Please set the appropriate account for the selected payment type."));
+			return;
+		}
+
 		var company_currency = frappe.get_doc(":Company", frm.doc.company).default_currency;
 
 		var args = {
@@ -63,7 +71,7 @@ frappe.ui.form.on("Payment Entry", {
 			"party_type": frm.doc.party_type,
 			"payment_type": frm.doc.payment_type,
 			"party": frm.doc.party,
-			"party_account": frm.doc.payment_type == "Receive" ? frm.doc.paid_from : frm.doc.paid_to,
+			"party_account": party_account,
 			"cost_center": frm.doc.cost_center
 		}
 
@@ -87,8 +95,8 @@ frappe.ui.form.on("Payment Entry", {
 						var c = frm.add_child("references");
 						c.reference_doctype = d.voucher_type;
 						c.reference_name = d.voucher_no;
-						c.due_date = d.due_date
-						c.posting_date = d.posting_date
+						c.due_date = d.due_date;
+						c.posting_date = d.posting_date;
 						c.total_amount = d.invoice_amount;
 						c.outstanding_amount = d.outstanding_amount;
 						c.bill_no = d.bill_no;
