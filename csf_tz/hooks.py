@@ -264,7 +264,7 @@ scheduler_events = {
         ],
         # Routine for every day 3:40am at night
         "40 3 * * *": [
-            "csf_tz.custom_api.auto_close_material_request",
+            "csf_tz.csftz_hooks.material_request.auto_close_material_request",
         ],
     },
     "daily": [
@@ -295,5 +295,6 @@ jinja = {"methods": ["csf_tz.custom_api.generate_qrcode"]}
 # ------------------------------
 #
 override_whitelisted_methods = {
-    "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script"
+    "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script",
+    "erpnext.stock.doctype.material_request.material_request.update_status": "csf_tz.csftz_hooks.material_request.update_mr_status",
 }

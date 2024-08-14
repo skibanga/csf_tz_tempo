@@ -1797,59 +1797,6 @@ def auto_close_dn():
         frappe.db.commit()
 
 
-def auto_close_material_request():
-    """
-    Auto close Material Request based on settings specified on Company under section of stock settings
-    """
-
-    def close_request_docs(date_before):
-        from erpnext.stock.doctype.material_request.material_request import update_status
-        mr = DocType("Material Request")
-        material_requests = (
-            frappe.qb.from_(mr)
-            .select(
-                mr.name
-            )
-            .where(
-                (mr.docstatus == 1)
-                & (mr.company == company.name)
-                & (mr.status != "Stopped")
-                & (mr.transaction_date <= date_before)
-            )
-        ).run(as_dict=True)
-
-        if len(material_requests) == 0:
-            return
-
-        for records in create_batch(material_requests, 100):
-            for record in records:
-                try:
-                    material_request_doc = frappe.get_doc("Material Request", record.name)
-                    material_request_doc.update_status("Stopped")
-                
-                except Exception as e:
-                    frappe.log_error(frappe.get_traceback(), f"Auto Close Material Request Error: {record.name}")
-
-    cp = DocType("Company")
-    companies = (
-        frappe.qb.from_(cp)
-        .select(
-            cp.name,
-            cp.close_material_request_after
-        )
-        .where(
-            cp.enable_auto_close_material_request == 1
-        )
-    ).run(as_dict=True)
-    
-    if len(companies) == 0:
-        return
-    
-    for company in companies:
-        before_days = add_days(nowdate(), -company.close_material_request_after)
-        close_request_docs(before_days)
-
-
 def batch_splitting(doc, method):
     """Splitting of batches before insert of sales invoice
     this works only if is_return = 0, update_stock = 1 and allow batch splitting is ticked on CSF TZ Settings
