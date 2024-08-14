@@ -262,6 +262,10 @@ scheduler_events = {
         "30 3 * * *": [
             "csf_tz.custom_api.auto_close_dn",
         ],
+        # Routine for every day 3:40am at night
+        "40 3 * * *": [
+            "csf_tz.csftz_hooks.material_request.auto_close_material_request",
+        ],
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
@@ -293,5 +297,6 @@ jinja = {"methods": ["csf_tz.custom_api.generate_qrcode"]}
 override_whitelisted_methods = {
     "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script",
     "erpnext.buying.doctype.purchase_order.purchase_order.update_status": "csf_tz.csftz_hooks.purchase_order.update_po_status",
-    "erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders": "csf_tz.csftz_hooks.purchase_order.close_or_unclose_purchase_orders"
+    "erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders": "csf_tz.csftz_hooks.purchase_order.close_or_unclose_purchase_orders",
+    "erpnext.stock.doctype.material_request.material_request.update_status": "csf_tz.csftz_hooks.material_request.update_mr_status"
 }
