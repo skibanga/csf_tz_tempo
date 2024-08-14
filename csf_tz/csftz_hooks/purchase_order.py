@@ -14,7 +14,7 @@ def update_po_status(status, name):
     csf_tz_settings = frappe.get_doc("CSF TZ Settings")
     if csf_tz_settings.allow_reopen_of_po_based_on_role == 1:
         roles = frappe.get_roles()
-        if csf_tz_settings.role in roles:
+        if csf_tz_settings.role_to_reopen_po and csf_tz_settings.role_to_reopen_po in roles:
             update_status(status, name)
         else:
             frappe.throw(_(f"You are not allowed to reopen this Purchase Order: <b>{name}</b>"))
@@ -31,7 +31,7 @@ def close_or_unclose_purchase_orders(names, status):
     csf_tz_settings = frappe.get_doc("CSF TZ Settings")
     if csf_tz_settings.allow_reopen_of_po_based_on_role == 1:
         roles = frappe.get_roles()
-        if csf_tz_settings.role in roles:
+        if csf_tz_settings.role_to_reopen_po and csf_tz_settings.role_to_reopen_po in roles:
             close_or_unclose_purchase_orders(names, status)
         else:
             frappe.throw(_("<b>You are not allowed to reopen Purchase Orders</b>"))
