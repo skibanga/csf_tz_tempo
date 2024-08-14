@@ -39,7 +39,12 @@
   "hr_settings_section",
   "enable_overtime_calculation",
   "column_break_ihhi5",
-  "override_fetch_shift_details"
+  "override_fetch_shift_details",
+  "payware_settings_section",
+  "working_hours_per_month",
+  "default_account_for_additional_component_cash_journal",
+  "column_break_bhc2q",
+  "ot_module"
  ],
  "fields": [
   {
@@ -208,6 +213,33 @@
    "fieldtype": "Code",
    "label": "Salary Slip Email Message",
    "mandatory_depends_on": "eval: doc.override_salary_slip_email_message == 1"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "payware_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Payware Settings"
+  },
+  {
+   "fieldname": "working_hours_per_month",
+   "fieldtype": "Float",
+   "label": "Working Hours per Month"
+  },
+  {
+   "fieldname": "default_account_for_additional_component_cash_journal",
+   "fieldtype": "Link",
+   "label": "Default Account for additional component cash journal",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_bhc2q",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "ot_module",
+   "fieldtype": "Check",
+   "label": "OT Module"
   },
   {
    "default": "0",
