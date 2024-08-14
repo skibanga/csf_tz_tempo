@@ -11,6 +11,10 @@
   "enable_dependent_auto_permission",
   "limit_uom_as_item_uom",
   "show_customer_outstanding_in_sales_order",
+  "allow_reopen_of_po_based_on_role",
+  "role_to_reopen_po",
+  "allow_reopen_of_material_request_based_on_role",
+  "role_to_reopen_material_request",
   "column_break_3",
   "auto_pos_for_role",
   "is_manufacture",
@@ -217,12 +221,40 @@
    "fieldtype": "Int",
    "label": "Email Qatch Batch Size",
    "mandatory_depends_on": "eval: doc.override_email_queue_batch_size == 1;"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_reopen_of_po_based_on_role",
+   "fieldtype": "Check",
+   "label": "Allow Reopen of Purchase Order based on Role"
+  },
+  {
+   "depends_on": "eval: doc.allow_reopen_of_po_based_on_role == 1",
+   "fieldname": "role_to_reopen_po",
+   "fieldtype": "Link",
+   "label": "Role to Reopen PO",
+   "mandatory_depends_on": "eval: doc.allow_reopen_of_po_based_on_role == 1",
+   "options": "Role"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_reopen_of_material_request_based_on_role",
+   "fieldtype": "Check",
+   "label": "Allow Reopen of Material Request based on Role"
+  },
+  {
+   "depends_on": "eval: doc.allow_reopen_of_material_request_based_on_role == 1",
+   "fieldname": "role_to_reopen_material_request",
+   "fieldtype": "Link",
+   "label": "Role to Reopen Material Request",
+   "mandatory_depends_on": "eval: doc.allow_reopen_of_material_request_based_on_role == 1",
+   "options": "Role"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-21 19:04:19.134664",
+ "modified": "2024-08-14 10:53:56.231838",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",

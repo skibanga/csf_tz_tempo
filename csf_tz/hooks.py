@@ -291,5 +291,7 @@ jinja = {"methods": ["csf_tz.custom_api.generate_qrcode"]}
 # ------------------------------
 #
 override_whitelisted_methods = {
-    "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script"
+    "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script",
+    "erpnext.buying.doctype.purchase_order.purchase_order.update_status": "csf_tz.csftz_hooks.purchase_order.update_po_status",
+    "erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders": "csf_tz.csftz_hooks.purchase_order.close_or_unclose_purchase_orders"
 }
