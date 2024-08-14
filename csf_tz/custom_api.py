@@ -17,6 +17,7 @@ from frappe.utils import (
     nowtime,
     add_days,
     unique,
+    create_batch
 )
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
@@ -26,6 +27,8 @@ from erpnext.accounts.utils import get_account_currency
 import csf_tz
 from csf_tz import console
 import json
+from frappe.query_builder import DocType
+from frappe.utils.background_jobs import enqueue
 
 
 @frappe.whitelist()
@@ -1792,6 +1795,60 @@ def auto_close_dn():
         frappe.db.set_value("Delivery Note", dn, "status", "Closed")
 
         frappe.db.commit()
+
+
+def auto_close_material_request():
+    """
+    Auto close Material Request based on settings specified on Company under section of stock settings
+    """
+
+    def close_request_docs(date_before):
+        from erpnext.stock.doctype.material_request.material_request import update_status
+        mr = DocType("Material Request")
+        material_requests = (
+            frappe.qb.from_(mr)
+            .select(
+                mr.name
+            )
+            .where(
+                (mr.docstatus == 1)
+                & (mr.company == company.name)
+                & (mr.status == "Pending")
+                # & (mr.status != "Stopped")
+                & (mr.transaction_date <= date_before)
+            )
+        ).run(as_dict=True)
+
+        if len(material_requests) == 0:
+            return
+
+        for records in create_batch(material_requests, 100):
+            for record in records:
+                try:
+                    material_request_doc = frappe.get_doc("Material Request", record.name)
+                    material_request_doc.update_status("Stopped")
+                
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback(), f"Auto Close Material Request Error: {record.name}")
+
+    cp = DocType("Company")
+    companies = (
+        frappe.qb.from_(cp)
+        .select(
+            cp.name,
+            cp.close_material_request_after
+        )
+        .where(
+            cp.enable_auto_close_material_request == 1
+        )
+    ).run(as_dict=True)
+    
+    if len(companies) == 0:
+        return
+    
+    for company in companies:
+        before_days = add_days(nowdate(), -company.close_material_request_after)
+        close_request_docs(before_days)
 
 
 def batch_splitting(doc, method):

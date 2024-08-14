@@ -262,6 +262,10 @@ scheduler_events = {
         "30 3 * * *": [
             "csf_tz.custom_api.auto_close_dn",
         ],
+        # Routine for every day 3:40am at night
+        "40 3 * * *": [
+            "csf_tz.custom_api.auto_close_material_request",
+        ],
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
