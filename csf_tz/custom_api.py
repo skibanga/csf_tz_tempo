@@ -1813,8 +1813,7 @@ def auto_close_material_request():
             .where(
                 (mr.docstatus == 1)
                 & (mr.company == company.name)
-                & (mr.status == "Pending")
-                # & (mr.status != "Stopped")
+                & (mr.status != "Stopped")
                 & (mr.transaction_date <= date_before)
             )
         ).run(as_dict=True)
