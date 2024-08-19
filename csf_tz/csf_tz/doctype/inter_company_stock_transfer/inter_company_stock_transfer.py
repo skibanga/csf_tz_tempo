@@ -23,6 +23,7 @@ class InterCompanyStockTransfer(Document):
                     "qty": item.qty,
                     "s_warehouse": self.default_from_warehouse,
                     "valuation_rate": valuation_rate,
+                    "batch_no": item.batch_no,
                 })
 
                 item_list_to.append({
@@ -32,6 +33,7 @@ class InterCompanyStockTransfer(Document):
                     "qty": item.qty,
                     "t_warehouse": self.default_to_warehouse,
                     "valuation_rate": valuation_rate,
+                    "batch_no": item.batch_no,
                     "cost_center": ""
                 })
 
