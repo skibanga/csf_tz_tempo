@@ -90,7 +90,7 @@ We welcome contributions to improve and expand this application. If you have sug
 
 ## **Support**
 
-For support and assistance, please contact our support team at support@yourcompany.com or visit our official documentation.
+For support and assistance, please create a github issue.
 
 ## **Licence**
 
