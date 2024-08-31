@@ -98,15 +98,27 @@ def create_order_minimal(order_data):
     if form_type not in package_prices:
         frappe.throw("Unknown form type")
 
-    package_type = order_data.get("package")
-    currency = order_data.get("package_currency")
-    try:
-        amount = package_prices[form_type][package_type][currency]
-    except KeyError:
-        frappe.throw("Package type or currency is not defined correctly.")
+    if order_data.get("package_amount") is not None:
+        # Sanitize the input to remove commas before conversion
+        package_amount_str = order_data.get("package_amount").replace(",", "")
 
-    package_qty = int(order_data.get("package_qty", 1))
-    amount *= package_qty
+        if float(package_amount_str) > 0:
+            currency = order_data.get("package_currency")
+            amount = float(package_amount_str)
+        else:
+            return
+    elif order_data.get("package"):
+        package_type = order_data.get("package")
+        currency = order_data.get("package_currency")
+        try:
+            amount = float(package_prices[form_type][package_type][currency])
+        except KeyError:
+            frappe.throw("Package type or currency is not defined correctly.")
+
+        package_qty = int(order_data.get("package_qty", 1))
+        amount *= package_qty
+    else:
+        return
 
     coupon_code = order_data.get("coupon")
     company = order_data.get("company")
@@ -120,6 +132,7 @@ def create_order_minimal(order_data):
             amount = 0
         else:
             amount -= discount
+        frappe.msgprint(message, alert=True)
 
     redirect_url = "https://tafina-rsvp.aakvaerp.com/thank-you-for-the-payment"
     redirect_encoded_url = base64.b64encode(redirect_url.encode()).decode()
