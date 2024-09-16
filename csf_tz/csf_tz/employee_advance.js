@@ -29,7 +29,7 @@ function checkUnclaimedEAAndMaxLimit(frm) {
         args: {
             doctype: 'Employee Advance',
             filters: {
-                status: 'Draft',
+                status: ['not in', ['Claimed', 'Cancelled']],
                 employee: frm.doc.employee
             },
             fields: ['name']
