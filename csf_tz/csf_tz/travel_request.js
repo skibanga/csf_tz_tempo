@@ -11,14 +11,25 @@ frappe.ui.form.on('Travel Request', {
     validate: function (frm) {
         calculateTotalTravelCost(frm);
     }
-
 });
 
-function makeFrappeCall(method, args, callback) {
+function makeFrappeCall(method, args, successCallback, errorCallback = () => { }) {
     frappe.call({
         method: method,
         args: args,
-        callback: callback
+        callback: function (response) {
+            if (response && response.message) {
+                successCallback(response.message);
+            } else {
+                frappe.msgprint(__('An error occurred during the request.'));
+                errorCallback();
+            }
+        },
+        error: function (error) {
+            frappe.msgprint(__('Failed to process the request.'));
+            console.error(error);
+            errorCallback();
+        }
     });
 }
 
@@ -30,13 +41,33 @@ function checkSettingsAndCreateEA(frm) {
             fieldname: ['track_unclaimed_employee_advances']
         },
         function (settings_response) {
-            if (settings_response && settings_response.message) {
-                const trackUnclaimed = settings_response.message.track_unclaimed_employee_advances;
-                if (trackUnclaimed != 0) {
-                    checkUnclaimedCountAndCreateEA(frm);
-                } else {
-                    frappe.msgprint(__('Please enable <b>Track Unclaimed Employee Advances</b> in the CSF TZ Settings.'));
-                }
+            const trackUnclaimed = settings_response.track_unclaimed_employee_advances;
+            if (trackUnclaimed != 0) {
+                checkIfEAExists(frm);
+            } else {
+                frappe.msgprint(__('Please enable <b>Track Unclaimed Employee Advances</b> in the CSF TZ Settings.'));
+            }
+        }
+    );
+}
+
+function checkIfEAExists(frm) {
+    makeFrappeCall(
+        'frappe.client.get_list',
+        {
+            doctype: 'Employee Advance',
+            filters: {
+                travel_request_ref: frm.doc.name,
+                docstatus: ['<', 2]
+            },
+            fields: ['name']
+        },
+        function (ea_response) {
+            if (ea_response.length > 0) {
+                let advanceNames = ea_response.map(ea => ea.name).join(', ');
+                frappe.msgprint(__('Employee Advances already exist for this Travel Request: {0}. Cannot create another.', [advanceNames]));
+            } else {
+                checkUnclaimedCountAndCreateEA(frm);
             }
         }
     );
@@ -48,15 +79,14 @@ function checkUnclaimedCountAndCreateEA(frm) {
         {
             doctype: 'Employee Advance',
             filters: {
-                status: 'Draft'
+                status: 'Draft',
+                employee: frm.doc.employee
             },
             fields: ['name']
         },
         function (ea_response) {
-            if (ea_response && ea_response.message) {
-                let unclaimed_count = ea_response.message.length;
-                checkMaxUnclaimedAndCreateEA(frm, unclaimed_count);
-            }
+            let unclaimed_count = ea_response.length;
+            checkMaxUnclaimedAndCreateEA(frm, unclaimed_count);
         }
     );
 }
@@ -69,15 +99,13 @@ function checkMaxUnclaimedAndCreateEA(frm, unclaimed_count) {
             fieldname: ['max_unclaimed_ea', 'abbr']
         },
         function (company_response) {
-            if (company_response && company_response.message) {
-                let max_unclaimed_ea = company_response.message.max_unclaimed_ea;
-                let company_abbr = company_response.message.abbr;
+            let max_unclaimed_ea = company_response.max_unclaimed_ea;
+            let company_abbr = company_response.abbr;
 
-                if (unclaimed_count < max_unclaimed_ea) {
-                    createEmployeeAdvance(frm, company_abbr);
-                } else {
-                    frappe.msgprint(__('The maximum number of unclaimed Employee Advances has been reached. Cannot create a new Employee Advance.'));
-                }
+            if (unclaimed_count < max_unclaimed_ea) {
+                createEmployeeAdvance(frm, company_abbr);
+            } else {
+                frappe.msgprint(__('The maximum number of unclaimed Employee Advances has been reached. Cannot create a new Employee Advance.'));
             }
         }
     );
@@ -99,12 +127,15 @@ function createEmployeeAdvance(frm, company_abbr) {
                 company: frm.doc.company,
                 advance_account: advance_account,
                 exchange_rate: 1,
-                status: 'Draft'
+                travel_request_ref: frm.doc.name,
             }
         },
         function (response) {
-            if (response && response.message) {
-                frappe.set_route('Form', 'Employee Advance', response.message.name);
+            if (response) {
+                frm.set_value('employee_advance_ref', response.name);
+                frm.save_or_update();
+
+                frappe.set_route('Form', 'Employee Advance', response.name);
             }
         }
     );
