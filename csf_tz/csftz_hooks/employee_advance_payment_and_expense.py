@@ -98,9 +98,7 @@ def create_expense_claim(doc):
         # expense_claim.submit()
         doc.reload()
 
-        frappe.msgprint(
-            f"Expense Claim {expense_claim.name} created and submitted successfully."
-        )
+        frappe.msgprint(f"Expense Claim {expense_claim.name} created successfully.")
 
     except Exception as e:
         frappe.throw(f"Error creating Expense Claim: {str(e)}")
