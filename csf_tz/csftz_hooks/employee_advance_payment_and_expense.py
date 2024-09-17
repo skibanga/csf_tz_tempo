@@ -95,7 +95,7 @@ def create_expense_claim(doc):
 
         # Insert and submit the expense claim
         expense_claim.insert(ignore_permissions=True)
-        expense_claim.submit()
+        # expense_claim.submit()
         doc.reload()
 
         frappe.msgprint(
