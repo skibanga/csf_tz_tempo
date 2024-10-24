@@ -117,6 +117,7 @@ after_install = [
 after_migrate = [
     "csf_tz.utils.create_custom_fields.execute",
     "csf_tz.utils.create_property_setter.execute",
+    "csf_tz.patches.update_payware_settings_values_to_csf_tz_settings.execute"
 ]
 
 # Desk Notifications
