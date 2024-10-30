@@ -197,7 +197,8 @@ def create_journal_entry(payroll_entry):
     if draft_slips_count > 0:
         frappe.throw(_("Salary Slips are not submitted"))
     else:
-        jv_name = payroll_entry_doc.make_accrual_jv_entry()
+        submitted_ss = payroll_entry_doc.get_sal_slip_list(ss_status=1)
+        jv_name = payroll_entry_doc.make_accrual_jv_entry(submitted_ss)
         jv_url = frappe.utils.get_url_to_form("Journal Entry", jv_name)
         si_msgprint = _("Journal Entry Created <a href='{0}'>{1}</a>").format(
             jv_url, jv_name
@@ -285,7 +286,7 @@ def generate_component_in_salary_slip_update(doc, method):
                 base = component.amount / doc.payment_days * doc.total_working_days
                 list.append(component)
         if base == 0:
-                f"Basic Component not Found on this Salary Slip: <b>{doc.name}</b>"
+            f"Basic Component not Found on this Salary Slip: <b>{doc.name}</b>"
 
         for component in doc.salary_slip_ot_component:
             earning_dict = frappe.new_doc("Salary Detail")
