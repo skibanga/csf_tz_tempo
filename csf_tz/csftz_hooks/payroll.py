@@ -197,7 +197,7 @@ def create_journal_entry(payroll_entry):
     if draft_slips_count > 0:
         frappe.throw(_("Salary Slips are not submitted"))
     else:
-        submitted_ss = payroll_entry_doc.get_sal_slip_list(ss_status=1)
+        submitted_ss = payroll_entry_doc.get_sal_slip_list(ss_status=1, as_dict=True)
         jv_name = payroll_entry_doc.make_accrual_jv_entry(submitted_ss)
         jv_url = frappe.utils.get_url_to_form("Journal Entry", jv_name)
         si_msgprint = _("Journal Entry Created <a href='{0}'>{1}</a>").format(
