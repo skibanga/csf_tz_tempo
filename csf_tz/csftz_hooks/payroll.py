@@ -5,7 +5,7 @@ import frappe
 import os
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.pdf import get_pdf, cleanup
-from PyPDF2 import PdfFileWriter
+from PyPDF3 import PdfFileWriter
 from csf_tz import console
 from frappe.model.workflow import apply_workflow
 from frappe.utils import cint, flt
@@ -285,7 +285,7 @@ def generate_component_in_salary_slip_update(doc, method):
                 base = component.amount / doc.payment_days * doc.total_working_days
                 list.append(component)
         if base == 0:
-                f"Basic Component not Found on this Salary Slip: <b>{doc.name}</b>"
+            f"Basic Component not Found on this Salary Slip: <b>{doc.name}</b>"
 
         for component in doc.salary_slip_ot_component:
             earning_dict = frappe.new_doc("Salary Detail")
