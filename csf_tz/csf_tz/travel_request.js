@@ -112,31 +112,48 @@ function checkMaxUnclaimedAndCreateEA(frm, unclaimed_count) {
 }
 
 function createEmployeeAdvance(frm, company_abbr) {
-    let advance_account = "Employee Advances - " + company_abbr;
-
     makeFrappeCall(
-        'frappe.client.insert',
+        'frappe.client.get_value',
         {
-            doc: {
-                doctype: 'Employee Advance',
-                employee: frm.doc.employee,
-                employee_name: frm.doc.employee_name,
-                posting_date: frappe.datetime.nowdate(),
-                purpose: frm.doc.purpose_of_travel,
-                advance_amount: frm.doc.costings.reduce((total, costing) => total + costing.total_amount, 0),
-                company: frm.doc.company,
-                advance_account: advance_account,
-                exchange_rate: 1,
-                travel_request_ref: frm.doc.name,
+            doctype: 'Company',
+            fieldname: ['default_employee_advance_account'],
+            filters: {
+                name: frm.doc.company
             }
         },
-        function (response) {
-            if (response) {
-                frm.set_value('employee_advance_ref', response.name);
-                frm.save_or_update();
+        function (company_response) {
+            let advance_account = company_response.default_employee_advance_account;
 
-                frappe.set_route('Form', 'Employee Advance', response.name);
+            if (!advance_account) {
+                frappe.msgprint(__('The default Employee Advance Account is not set in the Company. Please configure it to proceed.'));
+                return;
             }
+
+            makeFrappeCall(
+                'frappe.client.insert',
+                {
+                    doc: {
+                        doctype: 'Employee Advance',
+                        employee: frm.doc.employee,
+                        employee_name: frm.doc.employee_name,
+                        posting_date: frappe.datetime.nowdate(),
+                        purpose: frm.doc.purpose_of_travel,
+                        advance_amount: frm.doc.costings.reduce((total, costing) => total + costing.total_amount, 0),
+                        company: frm.doc.company,
+                        advance_account: advance_account,
+                        exchange_rate: 1,
+                        travel_request_ref: frm.doc.name,
+                    }
+                },
+                function (response) {
+                    if (response) {
+                        frm.set_value('employee_advance_ref', response.name);
+                        frm.save_or_update();
+
+                        frappe.set_route('Form', 'Employee Advance', response.name);
+                    }
+                }
+            );
         }
     );
 }
