@@ -5,3 +5,5 @@ pyotp
 PGPy
 paramiko
 xmltodict
+PyPDF2
+PyPDF3
