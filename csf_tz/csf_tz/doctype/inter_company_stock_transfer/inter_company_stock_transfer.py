@@ -7,13 +7,12 @@ from erpnext.stock.get_item_details import get_valuation_rate
 
 class InterCompanyStockTransfer(Document):
     def before_submit(self,warehouse=None):
-        item_list_from = []
-        item_list_to = []
+        item_list_from, item_list_to = [], []
 
         for item in self.items_child:
             
-            valuation_rate = get_valuation_rate(item.item_code, self.from_company, self.default_from_warehouse)
-            if valuation_rate == 0 or valuation_rate is None:
+            valuation_rate_data = get_valuation_rate(item.item_code, self.from_company, self.default_from_warehouse)
+            if valuation_rate_data == 0 or valuation_rate_data is None:
                 frappe.throw(f"Valuation rate is zero or not found for Item {item.item_code} in warehouse {self.default_from_warehouse}")
             else:
                 item_list_from.append({
@@ -22,7 +21,7 @@ class InterCompanyStockTransfer(Document):
                     "uom": item.uom,
                     "qty": item.qty,
                     "s_warehouse": self.default_from_warehouse,
-                    "valuation_rate": valuation_rate,
+                    "basic_rate": valuation_rate_data.valuation_rate,
                     "batch_no": item.batch_no,
                 })
 
@@ -32,11 +31,10 @@ class InterCompanyStockTransfer(Document):
                     "uom": item.uom,
                     "qty": item.qty,
                     "t_warehouse": self.default_to_warehouse,
-                    "valuation_rate": valuation_rate,
+                    "basic_rate": valuation_rate_data.valuation_rate,
                     "batch_no": item.batch_no,
                     "cost_center": ""
                 })
-
         entry_from = frappe.get_doc({
             "doctype": "Stock Entry",
             "company": self.from_company,
