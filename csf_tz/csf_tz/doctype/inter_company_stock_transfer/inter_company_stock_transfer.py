@@ -12,7 +12,7 @@ class InterCompanyStockTransfer(Document):
         for item in self.items_child:
             
             valuation_rate_data = get_valuation_rate(item.item_code, self.from_company, self.default_from_warehouse)
-            if valuation_rate_data.valuation_rate == 0 or valuation_rate_data.valuation_rate is None:
+            if not valuation_rate_data or valuation_rate_data.valuation_rate is None or valuation_rate_data.valuation_rate == 0:
                 frappe.throw(f"Valuation rate is zero or not found for Item {item.item_code} in warehouse {self.default_from_warehouse}")
             else:
                 item_list_from.append({
