@@ -28,6 +28,7 @@ import csf_tz
 from csf_tz import console
 import json
 from frappe.query_builder import DocType
+from frappe.query_builder.functions import Sum
 from frappe.utils.background_jobs import enqueue
 
 
@@ -1863,33 +1864,33 @@ def get_item_duplicates(source_doc):
 def get_batch_per_item(item_code, posting_date, warehouse):
     """ "fetch batch details for item code and warehouse"""
 
-    conditions = ""
-    if warehouse:
-        conditions = (
-            "sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != '' and sle.warehouse = '%s' "
-            % (item_code, warehouse)
-        )
-    else:
-        conditions = (
-            "sle.item_code = '%s' and sle.is_cancelled = 0 and sle.batch_no != '' "
-            % (item_code)
-        )
+    sle = DocType("Stock Ledger Entry")
+    ba = DocType("Batch")
 
-    batch_records = frappe.db.sql(
-        """
-        select sle.batch_no, sle.warehouse, sum(sle.actual_qty) as qty, ba.stock_uom, ba.expiry_date
-        from `tabStock Ledger Entry` sle 
-        inner join `tabBatch` ba on sle.batch_no = ba.batch_id
-        where {conditions}
-        AND ba.expiry_date >= %s
-        group by sle.batch_no, sle.warehouse
-        order by ba.expiry_date
-        """.format(
-            conditions=conditions
-        ),
-        posting_date,
-        as_dict=True,
+    batch_query = (
+        frappe.qb.from_(sle)
+        .inner_join(ba)
+        .on(sle.batch_no == ba.batch_id)
+        .select(
+            sle.batch_no,
+            sle.warehouse,
+            Sum(sle.actual_qty).as_("qty"),
+            ba.stock_uom,
+            ba.expiry_date,
+        )
+        .where(
+            (sle.item_code == item_code) &
+            (sle.is_cancelled == 0) &
+            (sle.batch_no != "") &
+            (ba.expiry_date >= posting_date)
+        )
     )
+
+    if warehouse:
+        batch_query = batch_query.where(sle.warehouse == warehouse)
+    
+    batch_records = batch_query.run(as_dict=True)
+    
     return batch_records
 
 
