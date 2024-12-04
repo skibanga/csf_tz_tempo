@@ -31,7 +31,7 @@ def create_payment_entry(doc):
             payment_entry.reference_no = doc.name
             payment_entry.reference_date = frappe.utils.nowdate()
 
-            payment_entry.submit()
+            # payment_entry.submit()
             frappe.msgprint(f"Payment Entry {payment_entry.name} created successfully")
 
             return payment_entry
