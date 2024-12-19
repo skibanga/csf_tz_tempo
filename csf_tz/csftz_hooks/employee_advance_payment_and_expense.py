@@ -16,8 +16,8 @@ def execute(doc, method):
         payment_entry = create_payment_entry(doc)
         doc.reload()
 
-        if payment_entry:
-            create_expense_claim(doc)
+        # if payment_entry:
+        #     create_expense_claim(doc)
 
     except Exception as e:
         frappe.throw(f"Error during Employee Advance submission: {str(e)}")
