@@ -26,9 +26,7 @@
   "api_responses_tab",
   "file_details_response",
   "upload_file_response",
-  "latest_status_response",
-  "kcb_status_code",
-  "kcb_status_description"
+  "latest_status_response"
  ],
  "fields": [
   {
@@ -159,18 +157,6 @@
    "fieldtype": "Code",
    "options": "JSON",
    "label": "Latest Status Response",
-   "read_only": 1
-  },
-  {
-   "fieldname": "kcb_status_code",
-   "fieldtype": "Data",
-   "label": "KCB Status Code",
-   "read_only": 1
-  },
-  {
-   "fieldname": "kcb_status_description",
-   "fieldtype": "Data",
-   "label": "KCB Status Description",
    "read_only": 1
   }
  ],
