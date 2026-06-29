@@ -227,6 +227,7 @@ def check_file_status(docname: str):
 
     resp_json = response.json()
     
-    doc.db_set("latest_status_response", frappe.as_json(resp_json), update_modified=False)
+    doc.latest_status_response = frappe.as_json(resp_json)
+    doc.db_set("latest_status_response", doc.latest_status_response, update_modified=False)
 
     return resp_json

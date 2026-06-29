@@ -84,7 +84,9 @@ class KCBPaymentsInitiation(Document):
 
     def on_submit(self):
         details_resp = submit_file_details(self)
-        self.db_set("file_details_response", frappe.as_json(details_resp), update_modified=False)
+        self.file_details_response = frappe.as_json(details_resp)
+        self.db_set("file_details_response", self.file_details_response, update_modified=False)
         
         upload_resp = upload_encrypted_file(self)
-        self.db_set("upload_file_response", frappe.as_json(upload_resp), update_modified=False)
+        self.upload_file_response = frappe.as_json(upload_resp)
+        self.db_set("upload_file_response", self.upload_file_response, update_modified=False)
