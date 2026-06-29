@@ -225,4 +225,14 @@ def check_file_status(docname: str):
     if response.status_code != 200:
         frappe.throw(f"File status check failed: {response.text}")
 
-    return response.json()
+    resp_json = response.json()
+    status_code = resp_json.get("status") or resp_json.get("statusCode")
+    status_desc = resp_json.get("statusDescription")
+    
+    doc.db_set("latest_status_response", frappe.as_json(resp_json), update_modified=False)
+    if status_code:
+        doc.db_set("kcb_status_code", str(status_code), update_modified=False)
+    if status_desc:
+        doc.db_set("kcb_status_description", str(status_desc), update_modified=False)
+
+    return resp_json

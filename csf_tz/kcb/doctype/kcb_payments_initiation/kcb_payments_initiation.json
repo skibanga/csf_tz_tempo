@@ -22,7 +22,13 @@
   "checksum_signature",
   "column_break_ohxf",
   "payment_file",
-  "encrypted_file"
+  "encrypted_file",
+  "api_responses_tab",
+  "file_details_response",
+  "upload_file_response",
+  "latest_status_response",
+  "kcb_status_code",
+  "kcb_status_description"
  ],
  "fields": [
   {
@@ -128,6 +134,44 @@
    "fieldname": "checksum_signature",
    "fieldtype": "Text",
    "label": "Signature (Base64)"
+  },
+  {
+   "fieldname": "api_responses_tab",
+   "fieldtype": "Tab Break",
+   "label": "API Responses"
+  },
+  {
+   "fieldname": "file_details_response",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "File Details Response",
+   "read_only": 1
+  },
+  {
+   "fieldname": "upload_file_response",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "Upload File Response",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_status_response",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "Latest Status Response",
+   "read_only": 1
+  },
+  {
+   "fieldname": "kcb_status_code",
+   "fieldtype": "Data",
+   "label": "KCB Status Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "kcb_status_description",
+   "fieldtype": "Data",
+   "label": "KCB Status Description",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,

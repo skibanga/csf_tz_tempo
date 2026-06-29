@@ -83,5 +83,8 @@ class KCBPaymentsInitiation(Document):
         self.encrypted_file = gpg_file.file_url
 
     def on_submit(self):
-        submit_file_details(self)
-        upload_encrypted_file(self)
+        details_resp = submit_file_details(self)
+        self.db_set("file_details_response", frappe.as_json(details_resp), update_modified=False)
+        
+        upload_resp = upload_encrypted_file(self)
+        self.db_set("upload_file_response", frappe.as_json(upload_resp), update_modified=False)

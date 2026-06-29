@@ -15,6 +15,7 @@ frappe.ui.form.on("KCB Payments Initiation", {
 					args: { docname: frm.doc.name },
 					callback: (r) => {
 						if (r.message) {
+							frm.reload_doc();
 							const pretty = JSON.stringify(r.message, null, 2);
 							frappe.msgprint({
 								title: __("KCB Status"),
