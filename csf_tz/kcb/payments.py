@@ -13,12 +13,15 @@ from frappe.utils.pdf import get_pdf
 def _get_bank_account_details(bank_account_name: str | None) -> dict:
     if not bank_account_name:
         return {}
-    return frappe.get_value(
-        "Bank Account",
-        bank_account_name,
-        ["bank_account_no", "kcb_beneficiary_clearing_code", "bank"],
-        as_dict=True,
-    ) or {}
+    return (
+        frappe.get_value(
+            "Bank Account",
+            bank_account_name,
+            ["account_name", "bank_account_no", "kcb_beneficiary_clearing_code", "bank"],
+            as_dict=True,
+        )
+        or {}
+    )
 
 
 def _require_kcb_enabled():
@@ -243,7 +246,7 @@ def make_kcb_payments_initiation_from_payment_entries(payment_entries):
         row = doc.append("kcb_payments_initiation_info", {})
         row.source_doctype = "Payment Entry"
         row.source_name = pe.name
-        row.beneficiary_name = pe.party_name or pe.party
+        row.beneficiary_name = party_bank_details.get("account_name") or pe.party_name or pe.party
         row.amount = pe.paid_amount
         row.currency = currency
         row.beneficiary_account = beneficiary_account or ""
