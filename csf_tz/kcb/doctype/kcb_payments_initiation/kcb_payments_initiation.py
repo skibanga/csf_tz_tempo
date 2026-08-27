@@ -20,6 +20,13 @@ def _purpose(value) -> str:
     return _clean(value)[:25]
 
 
+def _sanitize_file_name(value) -> str:
+	text = _clean(value)
+	for char in '<>:"/\\|?*':
+		text = text.replace(char, "")
+	return text.strip()
+
+
 class KCBPaymentsInitiation(Document):
 
     def before_save(self):
@@ -57,7 +64,7 @@ class KCBPaymentsInitiation(Document):
         if not encrypted_data:
             frappe.throw("Encryption failed: empty result")
 
-        file_base_name = self.name
+        file_base_name = _sanitize_file_name(self.file_reference) if self.file_reference else self.name
 
         txt_file = frappe.get_doc({
             "doctype": "File",
