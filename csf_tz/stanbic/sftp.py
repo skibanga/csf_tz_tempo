@@ -190,8 +190,11 @@ def get_absolute_path(file_path):
 
 
 def process_download_files():
+    if not frappe.db.exists("Stanbic Setting", {"enabled": 1}):
+        return
+
     inbox_file_path = get_local_path(["private", "files", "stanbic", "inbox"])
-    os.makedirs(os.path.dirname(inbox_file_path), exist_ok=True)
+    os.makedirs(inbox_file_path, exist_ok=True)
     inbox_files_list = os.listdir(inbox_file_path)
     for file in inbox_files_list:
         doc_changed = 0
